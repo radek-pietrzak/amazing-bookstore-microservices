@@ -1,4 +1,4 @@
-package com.productservice;
+package com.productservice.api;
 
 public interface API {
 

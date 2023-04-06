@@ -1,5 +1,8 @@
-package com.productservice;
+package com.productservice.api;
 
+import com.productservice.api.request.BookRequest;
+import com.productservice.api.response.BookResponse;
+import com.productservice.api.response.BookResponseList;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.QueryParam;
