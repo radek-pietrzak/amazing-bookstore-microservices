@@ -6,5 +6,4 @@ public class Author {
 
     private String name;
     private String description;
-    private List<Book> books;
 }

@@ -16,9 +16,9 @@ public class Book {
     private Date deletedDate;
     private String ISBN;
     private String title;
-    private List<Author> author;
+    private List<Author> authors;
     private String description;
-    private List<Category> category;
+    private List<Category> categories;
     private Publisher publisher;
     private Date publishDate;
     private int pageCount;
