@@ -1,4 +1,4 @@
-package com.productservice.api;
+package com.productservice.api.controller;
 
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.BookResponse;
