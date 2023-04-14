@@ -6,14 +6,12 @@ import com.productservice.api.request.BookRequest;
 import com.productservice.api.request.PublisherRequest;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 
 public interface RequestBookExamples {
 
     BookRequest SAVE_BOOK_1 = BookRequest.builder()
-            .createdDate(LocalDateTime.of(2014, Month.JULY, 16, 10, 55, 22))
             .ISBN("9780316769488")
             .title("The Catcher in the Rye")
             .description("The story of Holden Caulfield, a teenage boy who has been expelled from prep school and is wandering around New York City.")

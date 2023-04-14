@@ -32,4 +32,13 @@ public enum Category {
     public String getName() {
         return name;
     }
+
+    public static Category getCategoryByName(String categoryName) {
+        for (Category category : Category.values()) {
+            if (category.getName().equals(categoryName)) {
+                return category;
+            }
+        }
+        throw new IllegalArgumentException("No category found with name: " + categoryName);
+    }
 }

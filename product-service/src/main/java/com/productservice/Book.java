@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Document("books")
 public class Book {
@@ -56,22 +57,86 @@ public class Book {
         this.language = language;
     }
 
-    private Book(Builder builder) {
-        this.createdDate = builder.createdDate;
-        this.lastEditDate = builder.lastEditDate;
-        this.deletedDate = builder.deletedDate;
-        this.ISBN = builder.ISBN;
-        this.title = builder.title;
-        this.authors = builder.authors;
-        this.description = builder.description;
-        this.categories = builder.categories;
-        this.publisher = builder.publisher;
-        this.publishDate = builder.publishDate;
-        this.pageCount = builder.pageCount;
-        this.language = builder.language;
+    private Book(BookBuilder bookBuilder) {
+        this.createdDate = bookBuilder.createdDate;
+        this.lastEditDate = bookBuilder.lastEditDate;
+        this.deletedDate = bookBuilder.deletedDate;
+        this.ISBN = bookBuilder.ISBN;
+        this.title = bookBuilder.title;
+        this.authors = bookBuilder.authors;
+        this.description = bookBuilder.description;
+        this.categories = bookBuilder.categories;
+        this.publisher = bookBuilder.publisher;
+        this.publishDate = bookBuilder.publishDate;
+        this.pageCount = bookBuilder.pageCount;
+        this.language = bookBuilder.language;
     }
 
-    public static class Builder {
+    public String getId() {
+        return id;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public LocalDateTime getLastEditDate() {
+        return lastEditDate;
+    }
+
+    public LocalDateTime getDeletedDate() {
+        return deletedDate;
+    }
+
+    public String getISBN() {
+        return ISBN;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public List<Author> getAuthors() {
+        return authors;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public Publisher getPublisher() {
+        return publisher;
+    }
+
+    public LocalDate getPublishDate() {
+        return publishDate;
+    }
+
+    public int getPageCount() {
+        return pageCount;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Book book)) return false;
+        return getPageCount() == book.getPageCount() && Objects.equals(getISBN(), book.getISBN()) && Objects.equals(getTitle(), book.getTitle()) && Objects.equals(getAuthors(), book.getAuthors()) && Objects.equals(getDescription(), book.getDescription()) && Objects.equals(getCategories(), book.getCategories()) && Objects.equals(getPublisher(), book.getPublisher()) && Objects.equals(getPublishDate(), book.getPublishDate()) && Objects.equals(getLanguage(), book.getLanguage());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getISBN(), getTitle(), getAuthors(), getDescription(), getCategories(), getPublisher(), getPublishDate(), getPageCount(), getLanguage());
+    }
+
+    public static class BookBuilder {
         private LocalDateTime createdDate;
         private LocalDateTime lastEditDate;
         private LocalDateTime deletedDate;
@@ -85,10 +150,10 @@ public class Book {
         private int pageCount;
         private String language;
 
-        public Builder() {
+        public BookBuilder() {
         }
 
-        public Builder(
+        public BookBuilder(
                 LocalDateTime createdDate,
                 LocalDateTime lastEditDate,
                 LocalDateTime deletedDate,
@@ -115,62 +180,62 @@ public class Book {
             this.language = language;
         }
 
-        public Builder createdDate(LocalDateTime createdDate) {
+        public BookBuilder createdDate(LocalDateTime createdDate) {
             this.createdDate = createdDate;
             return this;
         }
 
-        public Builder lastEditDate(LocalDateTime lastEditDate) {
+        public BookBuilder lastEditDate(LocalDateTime lastEditDate) {
             this.lastEditDate = lastEditDate;
             return this;
         }
 
-        public Builder deletedDate(LocalDateTime deletedDate) {
+        public BookBuilder deletedDate(LocalDateTime deletedDate) {
             this.deletedDate = deletedDate;
             return this;
         }
 
-        public Builder ISBN(String ISBN) {
+        public BookBuilder ISBN(String ISBN) {
             this.ISBN = ISBN;
             return this;
         }
 
-        public Builder title(String title) {
+        public BookBuilder title(String title) {
             this.title = title;
             return this;
         }
 
-        public Builder authors(List<Author> authors) {
+        public BookBuilder authors(List<Author> authors) {
             this.authors = authors;
             return this;
         }
 
-        public Builder description(String description) {
+        public BookBuilder description(String description) {
             this.description = description;
             return this;
         }
 
-        public Builder categories(List<Category> categories) {
+        public BookBuilder categories(List<Category> categories) {
             this.categories = categories;
             return this;
         }
 
-        public Builder publisher(Publisher publisher) {
+        public BookBuilder publisher(Publisher publisher) {
             this.publisher = publisher;
             return this;
         }
 
-        public Builder publishDate(LocalDate publishDate) {
+        public BookBuilder publishDate(LocalDate publishDate) {
             this.publishDate = publishDate;
             return this;
         }
 
-        public Builder pageCount(int pageCount) {
+        public BookBuilder pageCount(int pageCount) {
             this.pageCount = pageCount;
             return this;
         }
 
-        public Builder language(String language) {
+        public BookBuilder language(String language) {
             this.language = language;
             return this;
         }
