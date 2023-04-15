@@ -22,4 +22,14 @@ public interface RequestBookExamples {
             .categories(List.of(Category.FICTION.getName()))
             .publisher(new PublisherRequest("Little, Brown and Company", "Boston"))
             .build();
+
+    BookRequest BOOK_ALL_NULLS = new BookRequest();
+
+    BookRequest BOOK_AUTHOR_NULLS = BookRequest.builder()
+            .authors(List.of(new AuthorRequest()))
+            .build();
+
+    BookRequest BOOK_PUBLISHER_NULLS = BookRequest.builder()
+            .publisher(new PublisherRequest())
+            .build();
 }

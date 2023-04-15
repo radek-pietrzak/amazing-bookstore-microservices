@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.QueryParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 public interface BookApi {
@@ -16,7 +17,7 @@ public interface BookApi {
     ResponseEntity<BookResponse> getBook(@NotNull @PathVariable String id);
 
     @PostMapping(path = API.BOOK_SAVE)
-    ResponseEntity<HttpStatus> saveBook(@Valid @RequestBody BookRequest request);
+    ResponseEntity<?> saveBook(@Valid @RequestBody BookRequest request, BindingResult bindingResult);
 
     @PostMapping(path = API.BOOK_EDIT)
     ResponseEntity<HttpStatus> editBook(@NotNull @PathVariable String id, @Valid @RequestBody BookRequest request);
