@@ -1,6 +1,7 @@
 package com.productservice.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.productservice.ValidationErrors;
 import com.productservice.api.repository.RequestBookExamples;
 import com.productservice.api.request.BookRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,15 +46,15 @@ class BookControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        assertTrue(result.contains("ISBN cannot be null"));
-        assertTrue(result.contains("Title cannot be null"));
-        assertTrue(result.contains("Description cannot be null"));
-        assertTrue(result.contains("Publish Date cannot be null"));
-        assertTrue(result.contains("Page Count cannot be null"));
-        assertTrue(result.contains("Language cannot be null"));
-        assertTrue(result.contains("Authors cannot be null"));
-        assertTrue(result.contains("Categories cannot be null"));
-        assertTrue(result.contains("Publisher cannot be null"));
+        assertTrue(result.contains(ValidationErrors.ISBN_NULL));
+        assertTrue(result.contains(ValidationErrors.TITLE_NULL));
+        assertTrue(result.contains(ValidationErrors.DESCRIPTION_NULL));
+        assertTrue(result.contains(ValidationErrors.PUBLISH_DATE_NULL));
+        assertTrue(result.contains(ValidationErrors.PAGE_COUNT_NULL));
+        assertTrue(result.contains(ValidationErrors.LANGUAGE_NULL));
+        assertTrue(result.contains(ValidationErrors.AUTHORS_NULL));
+        assertTrue(result.contains(ValidationErrors.CATEGORIES_NULL));
+        assertTrue(result.contains(ValidationErrors.PUBLISHER_NULL));
 
     }
 
@@ -73,7 +74,7 @@ class BookControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        assertTrue(result.contains("Author Name cannot be null"));
+        assertTrue(result.contains(ValidationErrors.AUTHOR_NAME_NULL));
 
     }
 
@@ -93,7 +94,7 @@ class BookControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        assertTrue(result.contains("Publisher Name cannot be null"));
+        assertTrue(result.contains(ValidationErrors.PUBLISHER_NAME_NULL));
 
     }
 }

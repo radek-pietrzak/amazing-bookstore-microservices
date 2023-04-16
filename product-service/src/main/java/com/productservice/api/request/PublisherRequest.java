@@ -1,9 +1,10 @@
 package com.productservice.api.request;
 
+import com.productservice.ValidationErrors;
 import jakarta.validation.constraints.NotNull;
 
 public class PublisherRequest {
-    @NotNull(message = "Publisher Name cannot be null")
+    @NotNull(message = ValidationErrors.PUBLISHER_NAME_NULL)
     private String publisherName;
     private String description;
 

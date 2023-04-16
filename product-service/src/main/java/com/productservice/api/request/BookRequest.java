@@ -1,5 +1,6 @@
 package com.productservice.api.request;
 
+import com.productservice.ValidationErrors;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
@@ -7,24 +8,24 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class BookRequest {
-    @NotNull(message = "ISBN cannot be null")
+    @NotNull(message = ValidationErrors.ISBN_NULL)
     private String ISBN;
-    @NotNull(message = "Title cannot be null")
+    @NotNull(message = ValidationErrors.TITLE_NULL)
     private String title;
-    @NotNull(message = "Description cannot be null")
+    @NotNull(message = ValidationErrors.DESCRIPTION_NULL)
     private String description;
-    @NotNull(message = "Publish Date cannot be null")
+    @NotNull(message = ValidationErrors.PUBLISH_DATE_NULL)
     private LocalDate publishDate;
-    @NotNull(message = "Page Count cannot be null")
+    @NotNull(message = ValidationErrors.PAGE_COUNT_NULL)
     private String pageCount;
-    @NotNull(message = "Language cannot be null")
+    @NotNull(message = ValidationErrors.LANGUAGE_NULL)
     private String language;
-    @NotNull(message = "Authors cannot be null")
+    @NotNull(message = ValidationErrors.AUTHORS_NULL)
     @Valid
     private List<AuthorRequest> authors;
-    @NotNull(message = "Categories cannot be null")
+    @NotNull(message = ValidationErrors.CATEGORIES_NULL)
     private List<String> categories;
-    @NotNull(message = "Publisher cannot be null")
+    @NotNull(message = ValidationErrors.PUBLISHER_NULL)
     @Valid
     private PublisherRequest publisher;
 

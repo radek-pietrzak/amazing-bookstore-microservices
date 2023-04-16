@@ -1,10 +1,11 @@
 package com.productservice.api.request;
 
+import com.productservice.ValidationErrors;
 import jakarta.validation.constraints.NotNull;
 
 public class AuthorRequest {
 
-    @NotNull(message = "Author Name cannot be null")
+    @NotNull(message = ValidationErrors.AUTHOR_NAME_NULL)
     private String name;
     private String description;
 
