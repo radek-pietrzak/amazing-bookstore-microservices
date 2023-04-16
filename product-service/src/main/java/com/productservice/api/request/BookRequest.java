@@ -3,12 +3,14 @@ package com.productservice.api.request;
 import com.productservice.ValidationErrors;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.ISBN;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public class BookRequest {
     @NotNull(message = ValidationErrors.ISBN_NULL)
+    @ISBN(message = ValidationErrors.ISBN_INVALID)
     private String ISBN;
     @NotNull(message = ValidationErrors.TITLE_NULL)
     private String title;
@@ -46,6 +48,10 @@ public class BookRequest {
 
     public String getISBN() {
         return ISBN;
+    }
+
+    public void setISBN(String ISBN) {
+        this.ISBN = ISBN;
     }
 
     public String getTitle() {
@@ -137,6 +143,19 @@ public class BookRequest {
 
         public BookRequestBuilder publisher(PublisherRequest publisher) {
             this.publisher = publisher;
+            return this;
+        }
+
+        public BookRequestBuilder bookRequest(BookRequest bookRequest) {
+            this.ISBN = bookRequest.ISBN;
+            this.title = bookRequest.title;
+            this.description = bookRequest.description;
+            this.publishDate = bookRequest.publishDate;
+            this.pageCount = bookRequest.pageCount;
+            this.language = bookRequest.language;
+            this.authors = bookRequest.authors;
+            this.categories = bookRequest.categories;
+            this.publisher = bookRequest.publisher;
             return this;
         }
 

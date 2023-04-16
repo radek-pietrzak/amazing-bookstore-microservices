@@ -13,5 +13,7 @@ public interface ValidationErrors {
     String PUBLISHER_NULL = "Publisher cannot be null";
     String AUTHOR_NAME_NULL = "Author Name cannot be null";
     String PUBLISHER_NAME_NULL = "Publisher Name cannot be null";
+    String ISBN_INVALID = "Invalid ISBN";
+
 
 }

@@ -32,4 +32,25 @@ public interface RequestBookExamples {
     BookRequest BOOK_PUBLISHER_NULLS = BookRequest.builder()
             .publisher(new PublisherRequest())
             .build();
+
+    BookRequest INVALID_ISBN_1 = BookRequest.builder()
+            .bookRequest(SAVE_BOOK_1)
+            .ISBN("9780316769489")
+            .build();
+
+    BookRequest INVALID_ISBN_2 = BookRequest.builder()
+            .bookRequest(SAVE_BOOK_1)
+            .ISBN("978031676948")
+            .build();
+
+    BookRequest INVALID_ISBN_3 = BookRequest.builder()
+            .bookRequest(SAVE_BOOK_1)
+            .ISBN("978031676948c")
+            .build();
+
+    BookRequest INVALID_ISBN_4 = BookRequest.builder()
+            .bookRequest(SAVE_BOOK_1)
+            .ISBN("")
+            .build();
+
 }
