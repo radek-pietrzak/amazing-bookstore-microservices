@@ -53,4 +53,14 @@ public interface RequestBookExamples {
             .ISBN("")
             .build();
 
+    BookRequest INVALID_TITLE_SIZE_MIN = BookRequest.builder()
+            .bookRequest(SAVE_BOOK_1)
+            .title("")
+            .build();
+
+    BookRequest INVALID_TITLE_SIZE_MAX = BookRequest.builder()
+            .bookRequest(SAVE_BOOK_1)
+            .title(new String(new char[256]).replace('\0', 'a'))
+            .build();
+
 }

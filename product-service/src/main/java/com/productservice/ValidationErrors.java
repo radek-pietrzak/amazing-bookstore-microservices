@@ -14,6 +14,7 @@ public interface ValidationErrors {
     String AUTHOR_NAME_NULL = "Author Name cannot be null";
     String PUBLISHER_NAME_NULL = "Publisher Name cannot be null";
     String ISBN_INVALID = "Invalid ISBN";
+    String TITLE_LENGTH = "Title length must be between 1 and 255";
 
 
 }

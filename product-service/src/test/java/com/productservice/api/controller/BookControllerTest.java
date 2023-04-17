@@ -30,9 +30,13 @@ class BookControllerTest {
     @InjectMocks
     private BookController bookController;
 
+    private ObjectMapper mapper;
+
     @BeforeEach
-    public void sutUp() {
+    public void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(bookController).build();
+        mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
     }
 
     @Test
@@ -44,7 +48,7 @@ class BookControllerTest {
         //then
         String result = mockMvc.perform(post(API.BOOK_SAVE)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(request)))
+                        .content(mapper.writeValueAsString(request)))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andReturn()
@@ -72,7 +76,7 @@ class BookControllerTest {
         //then
         String result = mockMvc.perform(post(API.BOOK_SAVE)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(request)))
+                        .content(mapper.writeValueAsString(request)))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andReturn()
@@ -92,7 +96,7 @@ class BookControllerTest {
         //then
         String result = mockMvc.perform(post(API.BOOK_SAVE)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(request)))
+                        .content(mapper.writeValueAsString(request)))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andReturn()
@@ -104,11 +108,9 @@ class BookControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("invalidISBProvider")
+    @MethodSource("invalidISBNProvider")
     void saveBook_shouldValidateISBN(BookRequest request) throws Exception {
         //given
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
         //when
         //then
         String result = mockMvc.perform(post(API.BOOK_SAVE)
@@ -124,7 +126,7 @@ class BookControllerTest {
 
     }
 
-    private static List<BookRequest> invalidISBProvider() {
+    private static List<BookRequest> invalidISBNProvider() {
         return List.of(
                 RequestBookExamples.INVALID_ISBN_1,
                 RequestBookExamples.INVALID_ISBN_2,
@@ -132,4 +134,31 @@ class BookControllerTest {
                 RequestBookExamples.INVALID_ISBN_4
         );
     }
+
+    @ParameterizedTest
+    @MethodSource("invalidTitleSizeProvider")
+    void saveBook_shouldValidateTitleSize(BookRequest request) throws Exception {
+        //given
+        //when
+        //then
+        String result = mockMvc.perform(post(API.BOOK_SAVE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertTrue(result.contains(ValidationErrors.TITLE_LENGTH));
+
+    }
+
+    private static List<BookRequest> invalidTitleSizeProvider() {
+        return List.of(
+                RequestBookExamples.INVALID_TITLE_SIZE_MIN,
+                RequestBookExamples.INVALID_TITLE_SIZE_MAX
+        );
+    }
+
 }

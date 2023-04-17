@@ -3,6 +3,7 @@ package com.productservice.api.request;
 import com.productservice.ValidationErrors;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.hibernate.validator.constraints.ISBN;
 
 import java.time.LocalDate;
@@ -13,6 +14,7 @@ public class BookRequest {
     @ISBN(message = ValidationErrors.ISBN_INVALID)
     private String ISBN;
     @NotNull(message = ValidationErrors.TITLE_NULL)
+    @Size(min = 1, max = 255, message = ValidationErrors.TITLE_LENGTH)
     private String title;
     @NotNull(message = ValidationErrors.DESCRIPTION_NULL)
     private String description;
