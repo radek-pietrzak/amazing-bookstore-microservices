@@ -3,7 +3,7 @@ package com.productservice.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.productservice.ValidationErrors;
-import com.productservice.api.repository.RequestBookExamples;
+import com.productservice.api.repository.BookRequestExamples;
 import com.productservice.api.request.BookRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ class BookControllerTest {
     @Test
     void saveBook_shouldValidateBookIfNulls() throws Exception {
         //given
-        BookRequest request = RequestBookExamples.BOOK_ALL_NULLS;
+        BookRequest request = BookRequestExamples.BOOK_ALL_NULLS;
 
         //when
         //then
@@ -70,7 +70,7 @@ class BookControllerTest {
     @Test
     void saveBook_shouldValidateAuthorIfNulls() throws Exception {
         //given
-        BookRequest request = RequestBookExamples.BOOK_AUTHOR_NULLS;
+        BookRequest request = BookRequestExamples.BOOK_AUTHOR_NULLS;
 
         //when
         //then
@@ -90,7 +90,7 @@ class BookControllerTest {
     @Test
     void saveBook_shouldValidatePublisherIfNulls() throws Exception {
         //given
-        BookRequest request = RequestBookExamples.BOOK_PUBLISHER_NULLS;
+        BookRequest request = BookRequestExamples.BOOK_PUBLISHER_NULLS;
 
         //when
         //then
@@ -128,10 +128,10 @@ class BookControllerTest {
 
     private static List<BookRequest> invalidISBNProvider() {
         return List.of(
-                RequestBookExamples.INVALID_ISBN_1,
-                RequestBookExamples.INVALID_ISBN_2,
-                RequestBookExamples.INVALID_ISBN_3,
-                RequestBookExamples.INVALID_ISBN_4
+                BookRequestExamples.INVALID_ISBN_1,
+                BookRequestExamples.INVALID_ISBN_2,
+                BookRequestExamples.INVALID_ISBN_3,
+                BookRequestExamples.INVALID_ISBN_4
         );
     }
 
@@ -156,8 +156,8 @@ class BookControllerTest {
 
     private static List<BookRequest> invalidTitleSizeProvider() {
         return List.of(
-                RequestBookExamples.INVALID_TITLE_SIZE_MIN,
-                RequestBookExamples.INVALID_TITLE_SIZE_MAX
+                BookRequestExamples.INVALID_TITLE_SIZE_MIN,
+                BookRequestExamples.INVALID_TITLE_SIZE_MAX
         );
     }
 
@@ -182,8 +182,8 @@ class BookControllerTest {
 
     private static List<BookRequest> invalidDescriptionSizeProvider() {
         return List.of(
-                RequestBookExamples.INVALID_DESCRIPTION_SIZE_MIN,
-                RequestBookExamples.INVALID_DESCRIPTION_SIZE_MAX
+                BookRequestExamples.INVALID_DESCRIPTION_SIZE_MIN,
+                BookRequestExamples.INVALID_DESCRIPTION_SIZE_MAX
         );
     }
 
@@ -208,12 +208,64 @@ class BookControllerTest {
 
     private static List<BookRequest> invalidPublishDateFormatProvider() {
         return List.of(
-                RequestBookExamples.INVALID_LOCAL_DATE_FORMAT_1,
-                RequestBookExamples.INVALID_LOCAL_DATE_FORMAT_2,
-                RequestBookExamples.INVALID_LOCAL_DATE_FORMAT_3,
-                RequestBookExamples.INVALID_LOCAL_DATE_FORMAT_4,
-                RequestBookExamples.INVALID_LOCAL_DATE_FORMAT_5,
-                RequestBookExamples.INVALID_LOCAL_DATE_FORMAT_6
+                BookRequestExamples.INVALID_LOCAL_DATE_FORMAT_1,
+                BookRequestExamples.INVALID_LOCAL_DATE_FORMAT_2,
+                BookRequestExamples.INVALID_LOCAL_DATE_FORMAT_3,
+                BookRequestExamples.INVALID_LOCAL_DATE_FORMAT_4,
+                BookRequestExamples.INVALID_LOCAL_DATE_FORMAT_5,
+                BookRequestExamples.INVALID_LOCAL_DATE_FORMAT_6
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidPageCountMinProvider")
+    void saveBook_shouldValidatePageCountMin(BookRequest request) throws Exception {
+        //given
+        //when
+        //then
+        String result = mockMvc.perform(post(API.BOOK_SAVE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertTrue(result.contains(ValidationErrors.PAGE_COUNT_MIN));
+
+    }
+
+    private static List<BookRequest> invalidPageCountMinProvider() {
+        return List.of(
+                BookRequestExamples.INVALID_PAGE_COUNT_MIN_1,
+                BookRequestExamples.INVALID_PAGE_COUNT_MIN_2
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidPageCountMaxProvider")
+    void saveBook_shouldValidatePageCountMax(BookRequest request) throws Exception {
+        //given
+        //when
+        //then
+        String result = mockMvc.perform(post(API.BOOK_SAVE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertTrue(result.contains(ValidationErrors.PAGE_COUNT_MAX));
+
+    }
+
+    private static List<BookRequest> invalidPageCountMaxProvider() {
+        return List.of(
+                BookRequestExamples.INVALID_PAGE_COUNT_MAX_1,
+                BookRequestExamples.INVALID_PAGE_COUNT_MAX_2
         );
     }
 

@@ -3,7 +3,7 @@ package com.productservice.api.controller;
 import com.productservice.Book;
 import com.productservice.api.repository.BookExamples;
 import com.productservice.api.repository.BookRepository;
-import com.productservice.api.repository.RequestBookExamples;
+import com.productservice.api.repository.BookRequestExamples;
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.BookResponse;
 import com.productservice.api.response.BookResponseList;
@@ -46,7 +46,7 @@ class BookServiceTest {
     @Test
     void saveBook_shouldBuildCorrectBook() {
         //given
-        BookRequest request = RequestBookExamples.SAVE_BOOK_1;
+        BookRequest request = BookRequestExamples.SAVE_BOOK_1;
         Book expectedBook = BookExamples.SAVE_BOOK_1;
 
         //when

@@ -43,7 +43,7 @@ public class BookService {
 
         Publisher publisher = new Publisher(request.getPublisher().getPublisherName(), request.getPublisher().getDescription());
 
-        int pageCount = Integer.parseInt(request.getPageCount());
+        int pageCount = request.getPageCount();
 
         Book book = new Book.BookBuilder()
                 .createdDate(LocalDateTime.now())

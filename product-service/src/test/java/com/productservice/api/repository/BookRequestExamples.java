@@ -7,14 +7,14 @@ import com.productservice.api.request.PublisherRequest;
 
 import java.util.List;
 
-public interface RequestBookExamples {
+public interface BookRequestExamples {
 
     BookRequest SAVE_BOOK_1 = BookRequest.builder()
             .ISBN("9780316769488")
             .title("The Catcher in the Rye")
             .description("The story of Holden Caulfield, a teenage boy who has been expelled from prep school and is wandering around New York City.")
             .publishDate("1951-07-16")
-            .pageCount("224")
+            .pageCount(224)
             .language("English")
             .authors(List.of(new AuthorRequest("J.D.", "Salinger")))
             .categories(List.of(Category.FICTION.getName()))
@@ -99,6 +99,26 @@ public interface RequestBookExamples {
     BookRequest INVALID_LOCAL_DATE_FORMAT_6 = BookRequest.builder()
             .bookRequest(SAVE_BOOK_1)
             .publishDate("abc")
+            .build();
+
+    BookRequest INVALID_PAGE_COUNT_MIN_1 = BookRequest.builder()
+            .bookRequest(SAVE_BOOK_1)
+            .pageCount(0)
+            .build();
+
+    BookRequest INVALID_PAGE_COUNT_MIN_2 = BookRequest.builder()
+            .bookRequest(SAVE_BOOK_1)
+            .pageCount(-100)
+            .build();
+
+    BookRequest INVALID_PAGE_COUNT_MAX_1 = BookRequest.builder()
+            .bookRequest(SAVE_BOOK_1)
+            .pageCount(10001)
+            .build();
+
+    BookRequest INVALID_PAGE_COUNT_MAX_2 = BookRequest.builder()
+            .bookRequest(SAVE_BOOK_1)
+            .pageCount(2147483647)
             .build();
 
 }

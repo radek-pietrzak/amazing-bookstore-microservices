@@ -17,6 +17,8 @@ public interface ValidationErrors {
     String TITLE_LENGTH = "Title length must be between 1 and 255";
     String DESCRIPTION_LENGTH = "Title length must be between 1 and 1000";
     String PUBLISH_DATE_FORMAT = "Invalid Publish Date format, expected format is yyyy-MM-dd";
+    String PAGE_COUNT_MIN = "Page Count must be greater than or equal to 1";
+    String PAGE_COUNT_MAX = "Page Count must be less than or equal to 10000";
 
 
 }

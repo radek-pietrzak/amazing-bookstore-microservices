@@ -3,8 +3,7 @@ package com.productservice.api.request;
 import com.productservice.LocalDatePattern;
 import com.productservice.ValidationErrors;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.ISBN;
 
 import java.util.List;
@@ -23,7 +22,9 @@ public class BookRequest {
     @LocalDatePattern(message = ValidationErrors.PUBLISH_DATE_FORMAT)
     private String publishDate;
     @NotNull(message = ValidationErrors.PAGE_COUNT_NULL)
-    private String pageCount;
+    @Min(value = 1, message = ValidationErrors.PAGE_COUNT_MIN)
+    @Max(value = 10000, message = ValidationErrors.PAGE_COUNT_MAX)
+    private Integer pageCount;
     @NotNull(message = ValidationErrors.LANGUAGE_NULL)
     private String language;
     @NotNull(message = ValidationErrors.AUTHORS_NULL)
@@ -70,7 +71,7 @@ public class BookRequest {
         return publishDate;
     }
 
-    public String getPageCount() {
+    public Integer getPageCount() {
         return pageCount;
     }
 
@@ -99,7 +100,7 @@ public class BookRequest {
         private String title;
         private String description;
         private String publishDate;
-        private String pageCount;
+        private Integer pageCount;
         private String language;
         private List<AuthorRequest> authors;
         private List<String> categories;
@@ -125,7 +126,7 @@ public class BookRequest {
             return this;
         }
 
-        public BookRequestBuilder pageCount(String pageCount) {
+        public BookRequestBuilder pageCount(Integer pageCount) {
             this.pageCount = pageCount;
             return this;
         }
