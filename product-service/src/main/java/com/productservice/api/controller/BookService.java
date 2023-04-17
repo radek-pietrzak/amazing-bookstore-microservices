@@ -11,6 +11,7 @@ import com.productservice.api.response.BookResponse;
 import com.productservice.api.response.BookResponseList;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,7 +53,7 @@ public class BookService {
                 .description(request.getDescription())
                 .categories(categories)
                 .publisher(publisher)
-                .publishDate(request.getPublishDate())
+                .publishDate(LocalDate.parse(request.getPublishDate()))
                 .pageCount(pageCount)
                 .language(request.getLanguage())
                 .build();

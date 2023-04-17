@@ -187,4 +187,34 @@ class BookControllerTest {
         );
     }
 
+    @ParameterizedTest
+    @MethodSource("invalidPublishDateFormatProvider")
+    void saveBook_shouldValidatePublishDateFormat(BookRequest request) throws Exception {
+        //given
+        //when
+        //then
+        String result = mockMvc.perform(post(API.BOOK_SAVE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertTrue(result.contains(ValidationErrors.PUBLISH_DATE_FORMAT));
+
+    }
+
+    private static List<BookRequest> invalidPublishDateFormatProvider() {
+        return List.of(
+                RequestBookExamples.INVALID_LOCAL_DATE_FORMAT_1,
+                RequestBookExamples.INVALID_LOCAL_DATE_FORMAT_2,
+                RequestBookExamples.INVALID_LOCAL_DATE_FORMAT_3,
+                RequestBookExamples.INVALID_LOCAL_DATE_FORMAT_4,
+                RequestBookExamples.INVALID_LOCAL_DATE_FORMAT_5,
+                RequestBookExamples.INVALID_LOCAL_DATE_FORMAT_6
+        );
+    }
+
 }

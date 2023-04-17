@@ -16,6 +16,7 @@ public interface ValidationErrors {
     String ISBN_INVALID = "Invalid ISBN";
     String TITLE_LENGTH = "Title length must be between 1 and 255";
     String DESCRIPTION_LENGTH = "Title length must be between 1 and 1000";
+    String PUBLISH_DATE_FORMAT = "Invalid Publish Date format, expected format is yyyy-MM-dd";
 
 
 }
