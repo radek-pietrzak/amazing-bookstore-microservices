@@ -63,4 +63,14 @@ public interface RequestBookExamples {
             .title(new String(new char[256]).replace('\0', 'a'))
             .build();
 
+    BookRequest INVALID_DESCRIPTION_SIZE_MIN = BookRequest.builder()
+            .bookRequest(SAVE_BOOK_1)
+            .description("")
+            .build();
+
+    BookRequest INVALID_DESCRIPTION_SIZE_MAX = BookRequest.builder()
+            .bookRequest(SAVE_BOOK_1)
+            .description(new String(new char[1001]).replace('\0', 'a'))
+            .build();
+
 }

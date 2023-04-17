@@ -161,4 +161,30 @@ class BookControllerTest {
         );
     }
 
+    @ParameterizedTest
+    @MethodSource("invalidDescriptionSizeProvider")
+    void saveBook_shouldValidateDescriptionSize(BookRequest request) throws Exception {
+        //given
+        //when
+        //then
+        String result = mockMvc.perform(post(API.BOOK_SAVE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertTrue(result.contains(ValidationErrors.DESCRIPTION_LENGTH));
+
+    }
+
+    private static List<BookRequest> invalidDescriptionSizeProvider() {
+        return List.of(
+                RequestBookExamples.INVALID_DESCRIPTION_SIZE_MIN,
+                RequestBookExamples.INVALID_DESCRIPTION_SIZE_MAX
+        );
+    }
+
 }

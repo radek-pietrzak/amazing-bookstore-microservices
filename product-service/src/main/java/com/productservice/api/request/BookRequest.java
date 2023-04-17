@@ -17,6 +17,7 @@ public class BookRequest {
     @Size(min = 1, max = 255, message = ValidationErrors.TITLE_LENGTH)
     private String title;
     @NotNull(message = ValidationErrors.DESCRIPTION_NULL)
+    @Size(min = 1, max = 1000, message = ValidationErrors.DESCRIPTION_LENGTH)
     private String description;
     @NotNull(message = ValidationErrors.PUBLISH_DATE_NULL)
     private LocalDate publishDate;
