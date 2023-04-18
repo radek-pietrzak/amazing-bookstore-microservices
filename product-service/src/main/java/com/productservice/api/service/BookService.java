@@ -1,10 +1,10 @@
-package com.productservice.api.controller;
+package com.productservice.api.service;
 
-import com.productservice.Author;
-import com.productservice.Book;
-import com.productservice.Category;
-import com.productservice.Publisher;
-import com.productservice.api.repository.BookRepository;
+import com.productservice.entity.Author;
+import com.productservice.entity.Book;
+import com.productservice.entity.Category;
+import com.productservice.entity.Publisher;
+import com.productservice.repository.BookRepository;
 import com.productservice.api.request.AuthorRequest;
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.BookResponse;
@@ -55,7 +55,7 @@ public class BookService {
                 .publisher(publisher)
                 .publishDate(LocalDate.parse(request.getPublishDate()))
                 .pageCount(pageCount)
-                .language(request.getLanguage())
+                .languageCode(request.getLanguageCode())
                 .build();
 
         repository.save(book);

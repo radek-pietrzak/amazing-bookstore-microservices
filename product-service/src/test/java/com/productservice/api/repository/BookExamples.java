@@ -1,9 +1,9 @@
 package com.productservice.api.repository;
 
-import com.productservice.Author;
-import com.productservice.Book;
-import com.productservice.Category;
-import com.productservice.Publisher;
+import com.productservice.entity.Author;
+import com.productservice.entity.Book;
+import com.productservice.entity.Category;
+import com.productservice.entity.Publisher;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,7 +19,7 @@ public interface BookExamples {
             .description("The story of Holden Caulfield, a teenage boy who has been expelled from prep school and is wandering around New York City.")
             .publishDate(LocalDate.of(1951, Month.JULY, 16))
             .pageCount(224)
-            .language("English")
+            .languageCode("English")
             .authors(List.of(new Author("J.D.", "Salinger")))
             .categories(List.of(Category.FICTION))
             .publisher(new Publisher("Little, Brown and Company", "Boston"))

@@ -1,6 +1,6 @@
 package com.productservice.api.request;
 
-import com.productservice.ValidationErrors;
+import com.productservice.validation.ValidationErrors;
 import jakarta.validation.constraints.NotNull;
 
 public class AuthorRequest {

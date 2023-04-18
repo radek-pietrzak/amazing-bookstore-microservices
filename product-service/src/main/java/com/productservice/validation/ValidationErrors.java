@@ -1,4 +1,4 @@
-package com.productservice;
+package com.productservice.validation;
 
 public interface ValidationErrors {
 
@@ -19,6 +19,7 @@ public interface ValidationErrors {
     String PUBLISH_DATE_FORMAT = "Invalid Publish Date format, expected format is yyyy-MM-dd";
     String PAGE_COUNT_MIN = "Page Count must be greater than or equal to 1";
     String PAGE_COUNT_MAX = "Page Count must be less than or equal to 10000";
+    String LANG_CODE = "Invalid language code";
 
 
 }

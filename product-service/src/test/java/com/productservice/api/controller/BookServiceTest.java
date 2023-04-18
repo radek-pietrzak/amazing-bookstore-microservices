@@ -1,8 +1,9 @@
 package com.productservice.api.controller;
 
-import com.productservice.Book;
+import com.productservice.api.service.BookService;
+import com.productservice.entity.Book;
 import com.productservice.api.repository.BookExamples;
-import com.productservice.api.repository.BookRepository;
+import com.productservice.repository.BookRepository;
 import com.productservice.api.repository.BookRequestExamples;
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.BookResponse;
@@ -64,7 +65,7 @@ class BookServiceTest {
         assertEquals(expectedBook.getDescription(), actualBook.getDescription());
         assertEquals(expectedBook.getPublishDate(), actualBook.getPublishDate());
         assertEquals(expectedBook.getPageCount(), actualBook.getPageCount());
-        assertEquals(expectedBook.getLanguage(), actualBook.getLanguage());
+        assertEquals(expectedBook.getLanguageCode(), actualBook.getLanguageCode());
         assertNotNull(actualBook.getAuthors());
         assertEquals(expectedBook.getAuthors().size(), actualBook.getAuthors().size());
         assertEquals(expectedBook.getAuthors(), actualBook.getAuthors());

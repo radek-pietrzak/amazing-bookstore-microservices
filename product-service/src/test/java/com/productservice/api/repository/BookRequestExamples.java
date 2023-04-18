@@ -1,6 +1,6 @@
 package com.productservice.api.repository;
 
-import com.productservice.Category;
+import com.productservice.entity.Category;
 import com.productservice.api.request.AuthorRequest;
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.request.PublisherRequest;
@@ -15,7 +15,7 @@ public interface BookRequestExamples {
             .description("The story of Holden Caulfield, a teenage boy who has been expelled from prep school and is wandering around New York City.")
             .publishDate("1951-07-16")
             .pageCount(224)
-            .language("English")
+            .languageCode("English")
             .authors(List.of(new AuthorRequest("J.D.", "Salinger")))
             .categories(List.of(Category.FICTION.getName()))
             .publisher(new PublisherRequest("Little, Brown and Company", "Boston"))
@@ -119,6 +119,21 @@ public interface BookRequestExamples {
     BookRequest INVALID_PAGE_COUNT_MAX_2 = BookRequest.builder()
             .bookRequest(SAVE_BOOK_1)
             .pageCount(2147483647)
+            .build();
+
+    BookRequest INVALID_LANG_CODE_1 = BookRequest.builder()
+            .bookRequest(SAVE_BOOK_1)
+            .languageCode("xx")
+            .build();
+
+    BookRequest INVALID_LANG_CODE_2 = BookRequest.builder()
+            .bookRequest(SAVE_BOOK_1)
+            .languageCode("eng")
+            .build();
+
+    BookRequest INVALID_LANG_CODE_3 = BookRequest.builder()
+            .bookRequest(SAVE_BOOK_1)
+            .languageCode("")
             .build();
 
 }

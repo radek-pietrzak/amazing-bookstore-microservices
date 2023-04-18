@@ -1,4 +1,4 @@
-package com.productservice;
+package com.productservice.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -24,7 +24,7 @@ public class Book {
     private Publisher publisher;
     private LocalDate publishDate;
     private int pageCount;
-    private String language;
+    private String languageCode;
 
     public Book() {
     }
@@ -54,7 +54,7 @@ public class Book {
         this.publisher = publisher;
         this.publishDate = publishDate;
         this.pageCount = pageCount;
-        this.language = language;
+        this.languageCode = language;
     }
 
     private Book(BookBuilder bookBuilder) {
@@ -69,7 +69,7 @@ public class Book {
         this.publisher = bookBuilder.publisher;
         this.publishDate = bookBuilder.publishDate;
         this.pageCount = bookBuilder.pageCount;
-        this.language = bookBuilder.language;
+        this.languageCode = bookBuilder.language;
     }
 
     public String getId() {
@@ -120,20 +120,20 @@ public class Book {
         return pageCount;
     }
 
-    public String getLanguage() {
-        return language;
+    public String getLanguageCode() {
+        return languageCode;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Book book)) return false;
-        return getPageCount() == book.getPageCount() && Objects.equals(getISBN(), book.getISBN()) && Objects.equals(getTitle(), book.getTitle()) && Objects.equals(getAuthors(), book.getAuthors()) && Objects.equals(getDescription(), book.getDescription()) && Objects.equals(getCategories(), book.getCategories()) && Objects.equals(getPublisher(), book.getPublisher()) && Objects.equals(getPublishDate(), book.getPublishDate()) && Objects.equals(getLanguage(), book.getLanguage());
+        return getPageCount() == book.getPageCount() && Objects.equals(getISBN(), book.getISBN()) && Objects.equals(getTitle(), book.getTitle()) && Objects.equals(getAuthors(), book.getAuthors()) && Objects.equals(getDescription(), book.getDescription()) && Objects.equals(getCategories(), book.getCategories()) && Objects.equals(getPublisher(), book.getPublisher()) && Objects.equals(getPublishDate(), book.getPublishDate()) && Objects.equals(getLanguageCode(), book.getLanguageCode());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getISBN(), getTitle(), getAuthors(), getDescription(), getCategories(), getPublisher(), getPublishDate(), getPageCount(), getLanguage());
+        return Objects.hash(getISBN(), getTitle(), getAuthors(), getDescription(), getCategories(), getPublisher(), getPublishDate(), getPageCount(), getLanguageCode());
     }
 
     public static class BookBuilder {
@@ -235,7 +235,7 @@ public class Book {
             return this;
         }
 
-        public BookBuilder language(String language) {
+        public BookBuilder languageCode(String language) {
             this.language = language;
             return this;
         }

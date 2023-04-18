@@ -1,7 +1,8 @@
 package com.productservice.api.request;
 
-import com.productservice.LocalDatePattern;
-import com.productservice.ValidationErrors;
+import com.productservice.validation.annotation.LanguageCode;
+import com.productservice.validation.annotation.LocalDatePattern;
+import com.productservice.validation.ValidationErrors;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.ISBN;
@@ -26,7 +27,8 @@ public class BookRequest {
     @Max(value = 10000, message = ValidationErrors.PAGE_COUNT_MAX)
     private Integer pageCount;
     @NotNull(message = ValidationErrors.LANGUAGE_NULL)
-    private String language;
+    @LanguageCode(message = ValidationErrors.LANG_CODE)
+    private String languageCode;
     @NotNull(message = ValidationErrors.AUTHORS_NULL)
     @Valid
     private List<AuthorRequest> authors;
@@ -45,7 +47,7 @@ public class BookRequest {
         this.description = builder.description;
         this.publishDate = builder.publishDate;
         this.pageCount = builder.pageCount;
-        this.language = builder.language;
+        this.languageCode = builder.language;
         this.authors = builder.authors;
         this.categories = builder.categories;
         this.publisher = builder.publisher;
@@ -75,8 +77,8 @@ public class BookRequest {
         return pageCount;
     }
 
-    public String getLanguage() {
-        return language;
+    public String getLanguageCode() {
+        return languageCode;
     }
 
     public List<AuthorRequest> getAuthors() {
@@ -131,7 +133,7 @@ public class BookRequest {
             return this;
         }
 
-        public BookRequestBuilder language(String language) {
+        public BookRequestBuilder languageCode(String language) {
             this.language = language;
             return this;
         }
@@ -157,7 +159,7 @@ public class BookRequest {
             this.description = bookRequest.description;
             this.publishDate = bookRequest.publishDate;
             this.pageCount = bookRequest.pageCount;
-            this.language = bookRequest.language;
+            this.language = bookRequest.languageCode;
             this.authors = bookRequest.authors;
             this.categories = bookRequest.categories;
             this.publisher = bookRequest.publisher;
