@@ -306,4 +306,31 @@ class BookControllerTest {
         );
     }
 
+    @ParameterizedTest
+    @MethodSource("invalidAuthorNameProvider")
+    void saveBook_shouldValidateAuthorNameLength(BookRequest request) throws Exception {
+        //given
+        doNothing().when(bookService).saveBook(request);
+        //when
+        //then
+        String result = mockMvc.perform(post(API.BOOK_SAVE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertTrue(result.contains(ValidationErrors.AUTHOR_NAME_LENGTH));
+
+    }
+
+    private static List<BookRequest> invalidAuthorNameProvider() {
+        return List.of(
+                BookRequestExamples.INVALID_AUTHOR_NAME_1,
+                BookRequestExamples.INVALID_AUTHOR_NAME_2
+        );
+    }
+
 }

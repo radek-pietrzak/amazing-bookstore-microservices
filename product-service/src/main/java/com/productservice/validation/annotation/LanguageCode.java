@@ -14,8 +14,10 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = {LanguageCodeValidator.class})
 public @interface LanguageCode {
 
-    String message() default "Invalid language code";
+    String message();
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 
 }

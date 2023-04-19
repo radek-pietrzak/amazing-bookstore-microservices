@@ -2,10 +2,12 @@ package com.productservice.api.request;
 
 import com.productservice.validation.ValidationErrors;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public class AuthorRequest {
 
     @NotNull(message = ValidationErrors.AUTHOR_NAME_NULL)
+    @Size(min = 1, max = 255, message = ValidationErrors.AUTHOR_NAME_LENGTH)
     private String name;
     private String description;
 

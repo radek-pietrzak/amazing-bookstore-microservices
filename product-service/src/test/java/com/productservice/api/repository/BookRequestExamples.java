@@ -136,4 +136,14 @@ public interface BookRequestExamples {
             .languageCode("")
             .build();
 
+    BookRequest INVALID_AUTHOR_NAME_1 = BookRequest.builder()
+            .bookRequest(SAVE_BOOK_1)
+            .authors(List.of(new AuthorRequest("", "description")))
+            .build();
+
+    BookRequest INVALID_AUTHOR_NAME_2 = BookRequest.builder()
+            .bookRequest(SAVE_BOOK_1)
+            .authors(List.of(new AuthorRequest(new String(new char[256]).replace('\0', 'a'), "description")))
+            .build();
+
 }
