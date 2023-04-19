@@ -360,4 +360,32 @@ class BookControllerTest {
         );
     }
 
+    @ParameterizedTest
+    @MethodSource("invalidCategoryProvider")
+    void saveBook_shouldValidateCategory(BookRequest request) throws Exception {
+        //given
+        doNothing().when(bookService).saveBook(request);
+        //when
+        //then
+        String result = mockMvc.perform(post(API.BOOK_SAVE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertTrue(result.contains(ValidationErrors.CATEGORY_INVALID));
+
+    }
+
+    private static List<BookRequest> invalidCategoryProvider() {
+        return List.of(
+                BookRequestExamples.INVALID_CATEGORY_1,
+                BookRequestExamples.INVALID_CATEGORY_2,
+                BookRequestExamples.INVALID_CATEGORY_3
+        );
+    }
+
 }

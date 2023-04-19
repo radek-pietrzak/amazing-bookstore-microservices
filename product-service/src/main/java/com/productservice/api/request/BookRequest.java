@@ -1,5 +1,6 @@
 package com.productservice.api.request;
 
+import com.productservice.validation.annotation.BookCategory;
 import com.productservice.validation.annotation.LanguageCode;
 import com.productservice.validation.annotation.LocalDatePattern;
 import com.productservice.validation.ValidationErrors;
@@ -33,6 +34,7 @@ public class BookRequest {
     @Valid
     private List<AuthorRequest> authors;
     @NotNull(message = ValidationErrors.CATEGORIES_NULL)
+    @BookCategory(message = ValidationErrors.CATEGORY_INVALID)
     private List<String> categories;
     @NotNull(message = ValidationErrors.PUBLISHER_NULL)
     @Valid

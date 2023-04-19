@@ -156,4 +156,19 @@ public interface BookRequestExamples {
             .authors(List.of(new AuthorRequest("Name", new String(new char[1001]).replace('\0', 'a'))))
             .build();
 
+    BookRequest INVALID_CATEGORY_1 = BookRequest.builder()
+            .bookRequest(SAVE_BOOK_1)
+            .categories(List.of("BAD_CATEGORY"))
+            .build();
+
+    BookRequest INVALID_CATEGORY_2 = BookRequest.builder()
+            .bookRequest(SAVE_BOOK_1)
+            .categories(List.of(""))
+            .build();
+
+    BookRequest INVALID_CATEGORY_3 = BookRequest.builder()
+            .bookRequest(SAVE_BOOK_1)
+            .categories(List.of("", "INVALID_CATEGORY"))
+            .build();
+
 }
