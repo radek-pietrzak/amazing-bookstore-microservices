@@ -146,4 +146,14 @@ public interface BookRequestExamples {
             .authors(List.of(new AuthorRequest(new String(new char[256]).replace('\0', 'a'), "description")))
             .build();
 
+    BookRequest INVALID_AUTHOR_DESCRIPTION_1 = BookRequest.builder()
+            .bookRequest(SAVE_BOOK_1)
+            .authors(List.of(new AuthorRequest("Name", "")))
+            .build();
+
+    BookRequest INVALID_AUTHOR_DESCRIPTION_2 = BookRequest.builder()
+            .bookRequest(SAVE_BOOK_1)
+            .authors(List.of(new AuthorRequest("Name", new String(new char[1001]).replace('\0', 'a'))))
+            .build();
+
 }

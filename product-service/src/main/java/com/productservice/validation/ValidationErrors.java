@@ -21,6 +21,7 @@ public interface ValidationErrors {
     String PAGE_COUNT_MAX = "Page Count must be less than or equal to 10000";
     String LANG_CODE = "Invalid language code";
     String AUTHOR_NAME_LENGTH = "Author Name length must be between 1 and 255";
+    String AUTHOR_DESCRIPTION_LENGTH = "Author Description length must be between 1 and 1000";
 
 
 }
