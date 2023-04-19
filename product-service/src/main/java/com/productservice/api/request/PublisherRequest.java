@@ -8,6 +8,7 @@ public class PublisherRequest {
     @NotNull(message = ValidationErrors.PUBLISHER_NAME_NULL)
     @Size(min = 1, max = 255, message = ValidationErrors.PUBLISHER_NAME_LENGTH)
     private String publisherName;
+    @Size(max = 1000, message = ValidationErrors.PUBLISHER_DESCRIPTION_LENGTH)
     private String description;
 
     public PublisherRequest() {

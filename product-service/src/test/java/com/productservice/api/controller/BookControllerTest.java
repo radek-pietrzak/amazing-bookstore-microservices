@@ -410,9 +410,29 @@ class BookControllerTest {
 
     private static List<BookRequest> invalidPublisherNameProvider() {
         return List.of(
-                BookRequestExamples.INVALID_PUBLISHER_NAME_1,
-                BookRequestExamples.INVALID_PUBLISHER_NAME_2
+                BookRequestExamples.INVALID_PUBLISHER_NAME_LENGTH_1,
+                BookRequestExamples.INVALID_PUBLISHER_NAME_LENGTH_2
         );
+    }
+
+    @Test
+    void saveBook_shouldValidatePublisherName() throws Exception{
+        //given
+        BookRequest request = BookRequestExamples.INVALID_PUBLISHER_DESCRIPTION_LENGTH_1;
+        doNothing().when(bookService).saveBook(request);
+        //when
+        //then
+        String result = mockMvc.perform(post(API.BOOK_SAVE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertTrue(result.contains(ValidationErrors.PUBLISHER_DESCRIPTION_LENGTH));
+
     }
 
 }

@@ -171,14 +171,19 @@ public interface BookRequestExamples {
             .categories(List.of("", "INVALID_CATEGORY"))
             .build();
 
-    BookRequest INVALID_PUBLISHER_NAME_1 = BookRequest.builder()
+    BookRequest INVALID_PUBLISHER_NAME_LENGTH_1 = BookRequest.builder()
             .bookRequest(SAVE_BOOK_1)
             .publisher(new PublisherRequest("", ""))
             .build();
 
-    BookRequest INVALID_PUBLISHER_NAME_2 = BookRequest.builder()
+    BookRequest INVALID_PUBLISHER_NAME_LENGTH_2 = BookRequest.builder()
             .bookRequest(SAVE_BOOK_1)
             .publisher(new PublisherRequest(new String(new char[256]).replace('\0', 'a'), ""))
+            .build();
+
+    BookRequest INVALID_PUBLISHER_DESCRIPTION_LENGTH_1 = BookRequest.builder()
+            .bookRequest(SAVE_BOOK_1)
+            .publisher(new PublisherRequest("Name", new String(new char[1001]).replace('\0', 'a')))
             .build();
 
 }

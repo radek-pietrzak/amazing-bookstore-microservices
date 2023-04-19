@@ -24,6 +24,7 @@ public interface ValidationErrors {
     String AUTHOR_DESCRIPTION_LENGTH = "Author Description length must be between 1 and 1000";
     String CATEGORY_INVALID = "Invalid Category";
     String PUBLISHER_NAME_LENGTH = "Publisher Name length must be between 1 and 255";
+    String PUBLISHER_DESCRIPTION_LENGTH = "Publisher Description length must be less than 1000";
 
 
 }
