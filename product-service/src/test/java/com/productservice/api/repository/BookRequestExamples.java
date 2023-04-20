@@ -171,6 +171,11 @@ public interface BookRequestExamples {
             .categories(List.of("", "INVALID_CATEGORY"))
             .build();
 
+    BookRequest INVALID_CATEGORY_4 = BookRequest.builder()
+            .bookRequest(SAVE_BOOK_1)
+            .categories(List.of("FICTION", "INVALID_CATEGORY"))
+            .build();
+
     BookRequest INVALID_PUBLISHER_NAME_LENGTH_1 = BookRequest.builder()
             .bookRequest(SAVE_BOOK_1)
             .publisher(new PublisherRequest("", ""))

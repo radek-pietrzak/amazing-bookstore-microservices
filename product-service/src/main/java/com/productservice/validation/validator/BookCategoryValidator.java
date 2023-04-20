@@ -10,6 +10,10 @@ import java.util.List;
 public class BookCategoryValidator implements ConstraintValidator<BookCategory, List<String>> {
     @Override
     public boolean isValid(List<String> values, ConstraintValidatorContext context) {
+        if (values == null) {
+            return true;
+        }
+
         try {
             values.forEach(Category::valueOf);
             return true;

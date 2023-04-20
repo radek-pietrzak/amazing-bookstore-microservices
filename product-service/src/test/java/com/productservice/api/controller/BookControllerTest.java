@@ -384,7 +384,8 @@ class BookControllerTest {
         return List.of(
                 BookRequestExamples.INVALID_CATEGORY_1,
                 BookRequestExamples.INVALID_CATEGORY_2,
-                BookRequestExamples.INVALID_CATEGORY_3
+                BookRequestExamples.INVALID_CATEGORY_3,
+                BookRequestExamples.INVALID_CATEGORY_4
         );
     }
 
