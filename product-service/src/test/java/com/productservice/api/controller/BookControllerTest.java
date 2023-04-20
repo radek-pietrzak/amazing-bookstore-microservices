@@ -3,6 +3,7 @@ package com.productservice.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.productservice.api.service.BookService;
+import com.productservice.api.service.ValidationService;
 import com.productservice.validation.ValidationErrors;
 import com.productservice.api.repository.BookRequestExamples;
 import com.productservice.api.request.BookRequest;
@@ -20,7 +21,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,6 +35,8 @@ class BookControllerTest {
     private BookController bookController;
     @Mock
     private BookService bookService;
+    @Mock
+    private ValidationService validationService;
     private ObjectMapper mapper;
 
     @BeforeEach
@@ -40,13 +44,14 @@ class BookControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(bookController).build();
         mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
+        doCallRealMethod().when(bookService).saveBook(any());
+        doCallRealMethod().when(validationService).errorMessages(any());
     }
 
     @Test
     void saveBook_shouldValidateBookIfNulls() throws Exception {
         //given
         BookRequest request = BookRequestExamples.BOOK_ALL_NULLS;
-        doNothing().when(bookService).saveBook(request);
         //when
         //then
         String result = mockMvc.perform(post(API.BOOK_SAVE)
@@ -74,7 +79,6 @@ class BookControllerTest {
     void saveBook_shouldValidateAuthorIfNulls() throws Exception {
         //given
         BookRequest request = BookRequestExamples.BOOK_AUTHOR_NULLS;
-        doNothing().when(bookService).saveBook(request);
         //when
         //then
         String result = mockMvc.perform(post(API.BOOK_SAVE)
@@ -94,7 +98,6 @@ class BookControllerTest {
     void saveBook_shouldValidatePublisherIfNulls() throws Exception {
         //given
         BookRequest request = BookRequestExamples.BOOK_PUBLISHER_NULLS;
-        doNothing().when(bookService).saveBook(request);
         //when
         //then
         String result = mockMvc.perform(post(API.BOOK_SAVE)
@@ -114,7 +117,6 @@ class BookControllerTest {
     @MethodSource("invalidISBNProvider")
     void saveBook_shouldValidateISBN(BookRequest request) throws Exception {
         //given
-        doNothing().when(bookService).saveBook(request);
         //when
         //then
         String result = mockMvc.perform(post(API.BOOK_SAVE)
@@ -143,7 +145,6 @@ class BookControllerTest {
     @MethodSource("invalidTitleSizeProvider")
     void saveBook_shouldValidateTitleSize(BookRequest request) throws Exception {
         //given
-        doNothing().when(bookService).saveBook(request);
         //when
         //then
         String result = mockMvc.perform(post(API.BOOK_SAVE)
@@ -170,7 +171,6 @@ class BookControllerTest {
     @MethodSource("invalidDescriptionSizeProvider")
     void saveBook_shouldValidateDescriptionSize(BookRequest request) throws Exception {
         //given
-        doNothing().when(bookService).saveBook(request);
         //when
         //then
         String result = mockMvc.perform(post(API.BOOK_SAVE)
@@ -197,7 +197,6 @@ class BookControllerTest {
     @MethodSource("invalidPublishDateFormatProvider")
     void saveBook_shouldValidatePublishDateFormat(BookRequest request) throws Exception {
         //given
-        doNothing().when(bookService).saveBook(request);
         //when
         //then
         String result = mockMvc.perform(post(API.BOOK_SAVE)
@@ -228,7 +227,6 @@ class BookControllerTest {
     @MethodSource("invalidPageCountMinProvider")
     void saveBook_shouldValidatePageCountMin(BookRequest request) throws Exception {
         //given
-        doNothing().when(bookService).saveBook(request);
         //when
         //then
         String result = mockMvc.perform(post(API.BOOK_SAVE)
@@ -255,7 +253,6 @@ class BookControllerTest {
     @MethodSource("invalidPageCountMaxProvider")
     void saveBook_shouldValidatePageCountMax(BookRequest request) throws Exception {
         //given
-        doNothing().when(bookService).saveBook(request);
         //when
         //then
         String result = mockMvc.perform(post(API.BOOK_SAVE)
@@ -282,7 +279,6 @@ class BookControllerTest {
     @MethodSource("invalidLanguageCodeProvider")
     void saveBook_shouldValidateLanguageCode(BookRequest request) throws Exception {
         //given
-        doNothing().when(bookService).saveBook(request);
         //when
         //then
         String result = mockMvc.perform(post(API.BOOK_SAVE)
@@ -310,7 +306,6 @@ class BookControllerTest {
     @MethodSource("invalidAuthorNameProvider")
     void saveBook_shouldValidateAuthorNameLength(BookRequest request) throws Exception {
         //given
-        doNothing().when(bookService).saveBook(request);
         //when
         //then
         String result = mockMvc.perform(post(API.BOOK_SAVE)
@@ -337,7 +332,6 @@ class BookControllerTest {
     @MethodSource("invalidAuthorDescriptionProvider")
     void saveBook_shouldValidateAuthorDescriptionLength(BookRequest request) throws Exception {
         //given
-        doNothing().when(bookService).saveBook(request);
         //when
         //then
         String result = mockMvc.perform(post(API.BOOK_SAVE)
@@ -364,7 +358,6 @@ class BookControllerTest {
     @MethodSource("invalidCategoryProvider")
     void saveBook_shouldValidateCategory(BookRequest request) throws Exception {
         //given
-        doNothing().when(bookService).saveBook(request);
         //when
         //then
         String result = mockMvc.perform(post(API.BOOK_SAVE)
@@ -393,7 +386,6 @@ class BookControllerTest {
     @MethodSource("invalidPublisherNameProvider")
     void saveBook_shouldValidatePublisherName(BookRequest request) throws Exception {
         //given
-        doNothing().when(bookService).saveBook(request);
         //when
         //then
         String result = mockMvc.perform(post(API.BOOK_SAVE)
@@ -420,7 +412,6 @@ class BookControllerTest {
     void saveBook_shouldValidatePublisherName() throws Exception{
         //given
         BookRequest request = BookRequestExamples.INVALID_PUBLISHER_DESCRIPTION_LENGTH_1;
-        doNothing().when(bookService).saveBook(request);
         //when
         //then
         String result = mockMvc.perform(post(API.BOOK_SAVE)
