@@ -1,5 +1,6 @@
 package com.productservice.api.controller;
 
+import com.productservice.TagGroup;
 import com.productservice.api.service.BookService;
 import com.productservice.entity.Book;
 import com.productservice.api.repository.BookExamples;
@@ -9,8 +10,11 @@ import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.BookResponse;
 import com.productservice.api.response.BookResponseList;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
@@ -18,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
@@ -44,11 +49,13 @@ class BookServiceTest {
         assertNotNull(actual);
     }
 
-    @Test
-    void saveBook_shouldBuildCorrectBook() {
+    @ParameterizedTest
+    @MethodSource("validBooksProvider")
+    @Tag(TagGroup.SAVE_BOOK)
+    void saveBook_shouldBuildCorrectBook(BookPair bookPair) {
         //given
-        BookRequest request = BookRequestExamples.VALID_BOOK_1;
-        Book expectedBook = BookExamples.VALID_BOOK_1;
+        BookRequest request = bookPair.bookRequest;
+        Book expectedBook = bookPair.book;
 
         //when
         bookService.saveBook(request);
@@ -72,6 +79,16 @@ class BookServiceTest {
         assertEquals(expectedBook.getCategories(), actualBook.getCategories());
         assertEquals(expectedBook.getPublisher(), actualBook.getPublisher());
         assertEquals(expectedBook, actualBook);
+    }
+
+    private static List<BookPair> validBooksProvider() {
+        return List.of(
+                new BookPair(BookRequestExamples.VALID_BOOK_1, BookExamples.VALID_BOOK_1),
+                new BookPair(BookRequestExamples.VALID_BOOK_2, BookExamples.VALID_BOOK_2)
+        );
+    }
+
+    private record BookPair(BookRequest bookRequest, Book book) {
     }
 
     @Test
