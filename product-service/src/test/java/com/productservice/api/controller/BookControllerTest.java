@@ -24,7 +24,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,7 +46,7 @@ class BookControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(bookController).build();
         mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
-        doCallRealMethod().when(bookService).saveBook(any());
+        doNothing().when(bookService).saveBook(any());
         doCallRealMethod().when(validationService).errorMessages(any());
     }
 
@@ -426,7 +426,7 @@ class BookControllerTest {
 
     @Test
     @Tag(TagGroup.ERRORS)
-    void shouldReturnBadRequestIfInvalidPublisherName() throws Exception{
+    void shouldReturnBadRequestIfInvalidPublisherName() throws Exception {
         //given
         BookRequest request = BookRequestExamples.INVALID_PUBLISHER_DESCRIPTION_LENGTH_1;
         //when
@@ -442,6 +442,31 @@ class BookControllerTest {
 
         assertTrue(result.contains(ValidationErrors.PUBLISHER_DESCRIPTION_LENGTH));
 
+    }
+
+    @ParameterizedTest
+    @MethodSource("validBooksProvider")
+    @Tag(TagGroup.SAVE_BOOK)
+    void shouldAcceptedIfValidBook(BookRequest request) throws Exception {
+        //given
+        //when
+        //then
+        mockMvc.perform(post(API.BOOK_SAVE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request)))
+                .andDo(print())
+                .andExpect(status().isAccepted())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+    }
+
+    private static List<BookRequest> validBooksProvider() {
+        return List.of(
+                BookRequestExamples.VALID_BOOK_1,
+                BookRequestExamples.VALID_BOOK_2
+        );
     }
 
 }

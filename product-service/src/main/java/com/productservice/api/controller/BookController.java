@@ -36,7 +36,7 @@ public class BookController implements BookApi{
             return ResponseEntity.badRequest().body(validationService.errorMessages(bindingResult));
         }
         bookService.saveBook(bookRequest);
-        return ResponseEntity.ok(HttpStatus.ACCEPTED);
+        return ResponseEntity.accepted().build();
     }
 
     @Override

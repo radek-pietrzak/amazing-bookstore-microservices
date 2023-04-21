@@ -47,8 +47,8 @@ class BookServiceTest {
     @Test
     void saveBook_shouldBuildCorrectBook() {
         //given
-        BookRequest request = BookRequestExamples.SAVE_BOOK_1;
-        Book expectedBook = BookExamples.SAVE_BOOK_1;
+        BookRequest request = BookRequestExamples.VALID_BOOK_1;
+        Book expectedBook = BookExamples.VALID_BOOK_1;
 
         //when
         bookService.saveBook(request);
