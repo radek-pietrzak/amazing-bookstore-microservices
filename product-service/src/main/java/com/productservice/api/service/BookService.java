@@ -38,7 +38,7 @@ public class BookService {
 
         List<String> requestCategories = request.getCategories();
         List<Category> categories = requestCategories.stream()
-                .map(Category::getCategoryByName)
+                .map(Category::valueOf)
                 .toList();
 
         Publisher publisher = new Publisher(request.getPublisher().getPublisherName(), request.getPublisher().getDescription());
