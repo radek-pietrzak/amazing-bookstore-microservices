@@ -1,5 +1,7 @@
 package com.productservice.api.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.productservice.validation.annotation.BookCategory;
 import com.productservice.validation.annotation.LanguageCode;
 import com.productservice.validation.annotation.LocalDatePattern;
@@ -10,32 +12,42 @@ import org.hibernate.validator.constraints.ISBN;
 
 import java.util.List;
 
+@JsonPropertyOrder({"isbn", "title", "description", "title", "description", "publishDate", "pageCount", "languageCode", "authors", "categories", "publisher"})
 public class BookRequest {
+    @JsonProperty("isbn")
     @NotNull(message = ValidationErrors.ISBN_NULL)
     @ISBN(message = ValidationErrors.ISBN_INVALID)
     private String ISBN;
+    @JsonProperty("title")
     @NotNull(message = ValidationErrors.TITLE_NULL)
     @Size(min = 1, max = 255, message = ValidationErrors.TITLE_LENGTH)
     private String title;
+    @JsonProperty("description")
     @NotNull(message = ValidationErrors.DESCRIPTION_NULL)
     @Size(min = 1, max = 1000, message = ValidationErrors.DESCRIPTION_LENGTH)
     private String description;
+    @JsonProperty("publishDate")
     @NotNull(message = ValidationErrors.PUBLISH_DATE_NULL)
     @LocalDatePattern(message = ValidationErrors.PUBLISH_DATE_FORMAT)
     private String publishDate;
+    @JsonProperty("pageCount")
     @NotNull(message = ValidationErrors.PAGE_COUNT_NULL)
     @Min(value = 1, message = ValidationErrors.PAGE_COUNT_MIN)
     @Max(value = 10000, message = ValidationErrors.PAGE_COUNT_MAX)
     private Integer pageCount;
+    @JsonProperty("languageCode")
     @NotNull(message = ValidationErrors.LANGUAGE_NULL)
     @LanguageCode(message = ValidationErrors.LANG_CODE)
     private String languageCode;
+    @JsonProperty("authors")
     @NotNull(message = ValidationErrors.AUTHORS_NULL)
     @Valid
     private List<AuthorRequest> authors;
+    @JsonProperty("categories")
     @NotNull(message = ValidationErrors.CATEGORIES_NULL)
     @BookCategory(message = ValidationErrors.CATEGORY_INVALID)
     private List<String> categories;
+    @JsonProperty("publisher")
     @NotNull(message = ValidationErrors.PUBLISHER_NULL)
     @Valid
     private PublisherRequest publisher;
