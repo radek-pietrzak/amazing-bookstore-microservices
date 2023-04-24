@@ -5,6 +5,7 @@ import com.productservice.api.response.BookResponse;
 import com.productservice.api.response.BookResponseList;
 import com.productservice.api.service.BookService;
 import com.productservice.api.service.ValidationService;
+import com.productservice.api.util.JsonFileToJsonObject;
 import com.productservice.examples.BookRequestJsonExample;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -17,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping
@@ -56,7 +59,16 @@ public class BookController implements BookApi {
             return ResponseEntity.badRequest().body(validationService.errorMessages(bindingResult));
         }
         bookService.saveBook(bookRequest);
-        return ResponseEntity.accepted().build();
+        String response;
+
+        try {
+            JsonFileToJsonObject jsonFileToJsonObject = new JsonFileToJsonObject();
+            response = jsonFileToJsonObject.read("response").get("successfullySavedBook").toString();
+        } catch (IOException e) {
+            response = "ACCEPTED";
+        }
+
+        return ResponseEntity.accepted().body(response);
     }
 
     @Override

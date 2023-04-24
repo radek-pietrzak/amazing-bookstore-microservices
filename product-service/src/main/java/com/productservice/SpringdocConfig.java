@@ -31,7 +31,7 @@ public class SpringdocConfig {
         return new OpenAPI()
                 .components(components)
                 .info(new Info()
-                        .title("Spring doc")
+                        .title("Product Service")
                         .version("1.0.0")
                         .description("Spring doc"));
     }
