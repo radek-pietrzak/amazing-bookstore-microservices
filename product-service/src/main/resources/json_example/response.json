@@ -1,15 +1,15 @@
 {
-  "badRequestResponse": {
+  "badRequest": {
     "code": 400,
     "status": "Bad Request",
     "message": "Bad Request!"
   },
-  "internalServerErrorResponse": {
+  "internalServerError": {
     "code": 500,
     "status": "Internal Server Error",
     "message": "Internal Server Error!"
   },
-  "successfullySavedBookResponse": {
+  "successfullySavedBook": {
     "code": 202,
     "status": "Successfully saved book",
     "message": "Successfully saved book!"

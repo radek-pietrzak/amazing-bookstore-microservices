@@ -1,6 +1,6 @@
 package com.productservice;
 
-import com.productservice.api.util.ReadJsonFileToJsonObject;
+import com.productservice.api.util.JsonFileToJsonObject;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.responses.ApiResponse;
@@ -18,39 +18,15 @@ import java.io.IOException;
 @Configuration
 public class SpringdocConfig {
 
-    ReadJsonFileToJsonObject readJsonFileToJsonObject = new ReadJsonFileToJsonObject();
+    JsonFileToJsonObject jsonFileToJsonObject = new JsonFileToJsonObject();
 
     @Bean
     public OpenAPI baseOpenAPI() throws IOException {
 
-        ApiResponse badBookRequestApi = new ApiResponse().content(
-                new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE,
-                        new io.swagger.v3.oas.models.media.MediaType().addExamples("default",
-                                new Example().value(readJsonFileToJsonObject.read().get("badRequestResponse").toString())
-                                        .description("Bad request")))
-
-        );
-
-        ApiResponse internalErrorServerApi = new ApiResponse().content(
-                new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE,
-                        new io.swagger.v3.oas.models.media.MediaType().addExamples("default",
-                                new Example().value(readJsonFileToJsonObject.read().get("internalServerErrorResponse").toString())
-                                        .description("Internal server error")))
-
-        );
-
-        ApiResponse successfullySavedBook = new ApiResponse().content(
-                new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE,
-                        new io.swagger.v3.oas.models.media.MediaType().addExamples("default",
-                                new Example().value(readJsonFileToJsonObject.read().get("successfullySavedBookResponse").toString())
-                                        .description("Successfully saved book")))
-
-        );
-
         Components components = new Components();
-        components.addResponses("badBookRequestApi", badBookRequestApi);
-        components.addResponses("internalErrorServerApi", internalErrorServerApi);
-        components.addResponses("successfullySavedBook", successfullySavedBook);
+        addResponseToComponents(components, "badRequest", "Bad request", "badBookRequestApi");
+        addResponseToComponents(components, "internalServerError", "Internal server error", "internalErrorServerApi");
+        addResponseToComponents(components, "successfullySavedBook", "Successfully saved book", "successfullySavedBook");
 
         return new OpenAPI()
                 .components(components)
@@ -58,5 +34,20 @@ public class SpringdocConfig {
                         .title("Spring doc")
                         .version("1.0.0")
                         .description("Spring doc"));
+    }
+
+    private void addResponseToComponents(
+            Components components,
+            String jsonKey,
+            String description,
+            String responseKey
+    ) throws IOException {
+        ApiResponse apiResponse = new ApiResponse().content(
+                new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE,
+                        new io.swagger.v3.oas.models.media.MediaType().addExamples("default",
+                                new Example().value(jsonFileToJsonObject.read("response").get(jsonKey).toString())
+                                        .description(description)))
+        );
+        components.addResponses(responseKey, apiResponse);
     }
 }
