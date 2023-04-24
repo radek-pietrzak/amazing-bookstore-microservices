@@ -6,9 +6,11 @@ import com.productservice.api.response.BookResponseList;
 import com.productservice.api.service.BookService;
 import com.productservice.api.service.ValidationService;
 import com.productservice.examples.BookRequestJsonExample;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,13 +36,19 @@ public class BookController implements BookApi {
     }
 
     @Override
+    @Operation(
+            description = "Save book",
+            responses = {
+                    @ApiResponse(responseCode = "400", ref = "badBookRequestApi"),
+                    @ApiResponse(responseCode = "500", ref = "internalErrorServerApi"),
+                    @ApiResponse(responseCode = "202", ref = "successfullySavedBook")
+            }
+    )
     public ResponseEntity<?> saveBook(@RequestBody(
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     examples = {
-                            @ExampleObject(
-                                    value = BookRequestJsonExample.VALID_BOOK_1
-                            )
+                            @ExampleObject(value = BookRequestJsonExample.VALID_BOOK_1)
                     }
             )
     ) BookRequest bookRequest, BindingResult bindingResult) {
