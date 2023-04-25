@@ -2,7 +2,6 @@ package com.productservice.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.productservice.SpringdocConfig;
 import com.productservice.TagGroup;
 import com.productservice.api.service.BookService;
 import com.productservice.api.service.ValidationService;
@@ -21,7 +20,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,17 +40,14 @@ class BookControllerTest {
     @Mock
     private ValidationService validationService;
     private ObjectMapper mapper;
-    @Mock
-    private SpringdocConfig springdocConfig;
 
     @BeforeEach
-    public void setUp() throws IOException {
+    public void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(bookController).build();
         mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         doNothing().when(bookService).saveBook(any());
         doCallRealMethod().when(validationService).errorMessages(any());
-        when(springdocConfig.baseOpenAPI()).thenReturn(null);
     }
 
     @Test

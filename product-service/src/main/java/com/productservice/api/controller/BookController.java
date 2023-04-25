@@ -63,7 +63,7 @@ public class BookController implements BookApi {
 
         try {
             JsonFileToJsonObject jsonFileToJsonObject = new JsonFileToJsonObject();
-            response = jsonFileToJsonObject.read("response").get("successfullySavedBook").toString();
+            response = jsonFileToJsonObject.readByFileName("response").get("successfullySavedBook").toString();
         } catch (IOException e) {
             response = "ACCEPTED";
         }

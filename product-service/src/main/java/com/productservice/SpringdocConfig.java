@@ -21,7 +21,7 @@ public class SpringdocConfig {
     JsonFileToJsonObject jsonFileToJsonObject = new JsonFileToJsonObject();
 
     @Bean
-    public OpenAPI baseOpenAPI() throws IOException {
+    public OpenAPI baseOpenAPI() {
 
         Components components = new Components();
         addResponseToComponents(components, "badRequest", "Bad request", "badBookRequestApi");
@@ -41,13 +41,19 @@ public class SpringdocConfig {
             String jsonKey,
             String description,
             String responseKey
-    ) throws IOException {
-        ApiResponse apiResponse = new ApiResponse().content(
-                new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE,
-                        new io.swagger.v3.oas.models.media.MediaType().addExamples("default",
-                                new Example().value(jsonFileToJsonObject.read("response").get(jsonKey).toString())
-                                        .description(description)))
-        );
+    ) {
+
+        ApiResponse apiResponse;
+        try {
+            apiResponse = new ApiResponse().content(
+                    new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE,
+                            new io.swagger.v3.oas.models.media.MediaType().addExamples("default",
+                                    new Example().value(jsonFileToJsonObject.readByFileName("response").get(jsonKey).toString())
+                                            .description(description)))
+            );
+        } catch (IOException e) {
+            apiResponse = null;
+        }
         components.addResponses(responseKey, apiResponse);
     }
 }
