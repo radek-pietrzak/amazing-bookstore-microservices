@@ -20,6 +20,7 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import jakarta.validation.Validator;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,10 +38,12 @@ class BookServiceTest {
     private BookRepository bookRepositoryMock;
     @Captor
     private ArgumentCaptor<Book> bookArgumentCaptor;
+    @Mock
+    private Validator validator;
 
     @BeforeEach
     public void setUp() {
-        bookService = new BookService(bookRepositoryMock);
+        bookService = new BookService(bookRepositoryMock, validator);
     }
 
     @Test
