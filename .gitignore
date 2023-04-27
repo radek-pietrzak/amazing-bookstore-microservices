@@ -35,3 +35,6 @@ build/
 /inventory-service/mvnw.cmd
 /order-service/mvnw.cmd
 /product-service/mvnw.cmd
+
+### ENV ###
+env.properties
