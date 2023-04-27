@@ -1,5 +1,7 @@
 package com.productservice.api.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.productservice.api.util.JsonFileToJsonObject;
 import com.productservice.entity.Author;
 import com.productservice.entity.Book;
 import com.productservice.entity.Category;
@@ -9,8 +11,10 @@ import com.productservice.api.request.AuthorRequest;
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.BookResponse;
 import com.productservice.api.response.BookResponseList;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -59,6 +63,16 @@ public class BookService {
                 .build();
 
         repository.save(book);
+    }
+
+    @Scheduled(fixedRate = 60000)
+    public void saveBookChatGPT() throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonFileToJsonObject jsonFileToJsonObject = new JsonFileToJsonObject();
+        String jsonRequest = jsonFileToJsonObject.readByFileName("request").get("validBook").toString();
+        BookRequest request = objectMapper.readValue(jsonRequest, BookRequest.class);
+        saveBook(request);
+        System.out.println("Book saved successfully" + jsonRequest);
     }
 
     public void editBook(String id, BookRequest request) {
