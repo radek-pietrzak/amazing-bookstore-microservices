@@ -1,29 +1,26 @@
 # Amazing Bookstore
-## Założeniem projektu jest zastosowanie w praktyce:
-* architektury mikroserwisów
-* różnych baz danych SQL i noSQL
-* TDD w tworzeniu nowych funkcjonalności
-* testów jednostkowych i integracyjnych
-* clean code
-* jak największej ilości różnych wzorców projektowych
-* wykorzystanie i tworzenie adnotacji
-* walidacji danych
-* Spring Security i API Gateway
-
+## The project aims to apply in practice:
+* Microservices architecture
+* Different SQL and NoSQL databases
+* TDD in creating new features
+* Unit and integration testing
+* Clean code
+* A wide variety of design patterns
+* Annotations usage and creation
+* Data validation
+* Spring Security and API Gateway
 ## Technology stack:
 * Java 17
 * Spring Boot 3.0.6
 * MongoDB, MySQL, PostgreSQL
-
-## Zastosowane do tej pory elementy:
-* zapoczątkowanie 
-* testów jednostkowych metodą TDD
-* testów integracyjnych metodą TDD
-* repozytorium dla MongoDB
-* walidacja dla danych wejściowych
-* własne adnotacje do walidacji `product-service/src/main/java/com/productservice/validation`
-* zastosowanie chatGPT do tworzenia nowych pozycji książek
-
-## Zastosowane do tej pory wzorce projektowe
+## Elements applied so far:
+* Initialization
+* TDD unit testing
+* TDD integration testing
+* MongoDB repository
+* Input data validation
+* Custom validation `annotations product-service/src/main/java/com/productservice/validation`
+* Using chatGPT to create new book entries
+## Design patterns applied so far
 * Builder `product-service/src/main/java/com/productservice/api/request/BookRequest.java`
 
