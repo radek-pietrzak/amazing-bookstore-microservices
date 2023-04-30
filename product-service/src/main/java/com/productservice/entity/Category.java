@@ -23,22 +23,14 @@ public enum Category {
     SCIENCE_FICTION_AND_FANTASY("Science fiction and fantasy"),
     COMICS_AND_GRAPHIC_NOVELS("Comics and graphic novels");
 
-    private final String name;
+    private final String description;
 
-    Category(String name) {
-        this.name = name;
+    Category(String description) {
+        this.description = description;
     }
 
-    public String getName() {
-        return name;
+    public String getDescription() {
+        return description;
     }
 
-    public static Category getCategoryByName(String categoryName) {
-        for (Category category : Category.values()) {
-            if (category.getName().equals(categoryName)) {
-                return category;
-            }
-        }
-        throw new IllegalArgumentException("No category found with name: " + categoryName);
-    }
 }

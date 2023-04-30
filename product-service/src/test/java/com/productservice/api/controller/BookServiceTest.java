@@ -1,6 +1,7 @@
 package com.productservice.api.controller;
 
 import com.productservice.TagGroup;
+import com.productservice.api.repository.BookResponseExamples;
 import com.productservice.api.service.BookService;
 import com.productservice.entity.Book;
 import com.productservice.api.repository.BookExamples;
@@ -26,7 +27,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -55,7 +56,7 @@ class BookServiceTest {
     @ParameterizedTest
     @MethodSource("validBooksProvider")
     @Tag(TagGroup.SAVE_BOOK)
-    void saveBook_shouldBuildCorrectBook(BookPair bookPair) {
+    void shouldBuildCorrectBookToSave(BookPair bookPair) {
         //given
         BookRequest request = bookPair.bookRequest;
         Book expectedBook = bookPair.book;
@@ -105,8 +106,31 @@ class BookServiceTest {
     }
 
     @Test
-    void getBookList_shouldReturnCorrectBookList() {
+    @Tag(TagGroup.GET_BOOK_LIST)
+    void shouldReturnCorrectBookList() {
+        //given
+        List<Book> books = List.of(BookExamples.VALID_BOOK_1);
+        when(bookRepositoryMock.findAll()).thenReturn(books);
+        BookResponseList expected = new BookResponseList(List.of(BookResponseExamples.VALID_BOOK_1));
+        //when
         BookResponseList actual = bookService.getBookList("");
+        //then
         assertNotNull(actual);
+        assertEquals(1, actual.getBookResponseList().size());
+        BookResponse expectedFirst = expected.getBookResponseList().get(0);
+        BookResponse actualFirst = actual.getBookResponseList().get(0);
+        assertEquals(expectedFirst.getId(), actualFirst.getId());
+        assertEquals(expectedFirst.getCreatedDate(), actualFirst.getCreatedDate());
+        assertEquals(expectedFirst.getLastEditDate(), actualFirst.getLastEditDate());
+        assertEquals(expectedFirst.getDeletedDate(), actualFirst.getDeletedDate());
+        assertEquals(expectedFirst.getISBN(), actualFirst.getISBN());
+        assertEquals(expectedFirst.getTitle(), actualFirst.getTitle());
+        assertEquals(expectedFirst.getAuthors(), actualFirst.getAuthors());
+        assertEquals(expectedFirst.getDescription(), actualFirst.getDescription());
+        assertEquals(expectedFirst.getCategories(), actualFirst.getCategories());
+        assertEquals(expectedFirst.getPublisher(), actualFirst.getPublisher());
+        assertEquals(expectedFirst.getPublishDate(), actualFirst.getPublishDate());
+        assertEquals(expectedFirst.getPageCount(), actualFirst.getPageCount());
+        assertEquals(expectedFirst.getLanguageCode(), actualFirst.getLanguageCode());
     }
 }

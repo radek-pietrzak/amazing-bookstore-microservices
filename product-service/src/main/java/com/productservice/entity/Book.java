@@ -29,35 +29,8 @@ public class Book {
     public Book() {
     }
 
-    private Book(
-            LocalDateTime createdDate,
-            LocalDateTime lastEditDate,
-            LocalDateTime deletedDate,
-            String ISBN,
-            String title,
-            List<Author> authors,
-            String description,
-            List<Category> categories,
-            Publisher publisher,
-            LocalDate publishDate,
-            int pageCount,
-            String language
-    ) {
-        this.createdDate = createdDate;
-        this.lastEditDate = lastEditDate;
-        this.deletedDate = deletedDate;
-        this.ISBN = ISBN;
-        this.title = title;
-        this.authors = authors;
-        this.description = description;
-        this.categories = categories;
-        this.publisher = publisher;
-        this.publishDate = publishDate;
-        this.pageCount = pageCount;
-        this.languageCode = language;
-    }
-
     private Book(BookBuilder bookBuilder) {
+        this.id = bookBuilder.id;
         this.createdDate = bookBuilder.createdDate;
         this.lastEditDate = bookBuilder.lastEditDate;
         this.deletedDate = bookBuilder.deletedDate;
@@ -124,6 +97,7 @@ public class Book {
         return languageCode;
     }
 
+    //TODO check equals and hashcode conditions field correctness
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -137,6 +111,7 @@ public class Book {
     }
 
     public static class BookBuilder {
+        private String id;
         private LocalDateTime createdDate;
         private LocalDateTime lastEditDate;
         private LocalDateTime deletedDate;
@@ -154,6 +129,7 @@ public class Book {
         }
 
         public BookBuilder(Book book) {
+            this.id = book.getId();
             this.createdDate = book.createdDate;
             this.lastEditDate = book.lastEditDate;
             this.deletedDate = book.deletedDate;
@@ -166,6 +142,11 @@ public class Book {
             this.publishDate = book.publishDate;
             this.pageCount = book.pageCount;
             this.languageCode = book.languageCode;
+        }
+
+        public BookBuilder id(String id) {
+            this.id = id;
+            return this;
         }
 
         public BookBuilder createdDate(LocalDateTime createdDate) {

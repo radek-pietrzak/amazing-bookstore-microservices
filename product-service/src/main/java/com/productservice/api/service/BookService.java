@@ -2,6 +2,8 @@ package com.productservice.api.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.productservice.ChatGPTHelper;
+import com.productservice.api.response.AuthorResponse;
+import com.productservice.api.response.PublisherResponse;
 import com.productservice.entity.Author;
 import com.productservice.entity.Book;
 import com.productservice.entity.Category;
@@ -96,6 +98,34 @@ public class BookService {
     }
 
     public BookResponseList getBookList(String search) {
-        return null;
+        // TODO implement serach
+        List<Book> books = repository.findAll();
+
+        List<BookResponse> list = books.stream()
+                .map(b -> BookResponse.builder()
+                        .id(b.getId())
+                        .createdDate(b.getCreatedDate())
+                        .lastEditDate(b.getLastEditDate())
+                        .deletedDate(b.getDeletedDate())
+                        .ISBN(b.getISBN())
+                        .title(b.getTitle())
+                        .authors(b.getAuthors().stream()
+                                .map(a -> AuthorResponse.builder()
+                                        .name(a.getName())
+                                        .description(a.getDescription())
+                                        .build())
+                                .collect(Collectors.toList()))
+                        .description(b.getDescription())
+                        .categories(b.getCategories().stream()
+                                .map(Enum::name)
+                                .collect(Collectors.toList()))
+                        .publisher(new PublisherResponse(b.getPublisher().getPublisherName(), b.getPublisher().getDescription()))
+                        .publishDate(b.getPublishDate())
+                        .pageCount(b.getPageCount())
+                        .languageCode(b.getLanguageCode())
+                        .build())
+                .toList();
+
+        return new BookResponseList(list);
     }
 }

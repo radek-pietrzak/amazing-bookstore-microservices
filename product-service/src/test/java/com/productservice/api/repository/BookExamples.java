@@ -15,7 +15,9 @@ import static com.productservice.entity.Category.*;
 public interface BookExamples {
 
     Book VALID_BOOK_1 = new Book.BookBuilder()
+            .id("1")
             .createdDate(LocalDateTime.of(2014, Month.JULY, 16, 10, 55, 22))
+            .lastEditDate(LocalDateTime.of(2023, 4, 16, 9, 59))
             .ISBN("9780316769488")
             .title("The Catcher in the Rye")
             .description("The story of Holden Caulfield, a teenage boy who has been expelled from prep school and is wandering around New York City.")
