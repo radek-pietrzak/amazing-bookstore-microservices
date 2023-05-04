@@ -1,4 +1,4 @@
-package com.productservice.api.repository;
+package com.productservice.api.examples;
 
 import com.productservice.entity.Author;
 import com.productservice.entity.Book;
@@ -44,6 +44,7 @@ public interface BookExamples {
     );
 
     Book VALID_BOOK_2 = new Book.BookBuilder(VALID_BOOK_1)
+            .id("2")
             .languageCode("pl")
             .authors(VALID_AUTHOR_LIST)
             .categories(VALID_CATEGORY_LIST)

@@ -99,7 +99,7 @@ public class BookService {
 
     public BookResponseList getBookList(String search) {
         // TODO implement serach
-        List<Book> books = repository.findAll();
+        List<Book> books = repository.findAllByDeletedDateIsNull();
 
         List<BookResponse> list = books.stream()
                 .map(b -> BookResponse.builder()

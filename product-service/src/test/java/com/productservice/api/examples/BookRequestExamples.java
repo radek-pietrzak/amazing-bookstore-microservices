@@ -1,4 +1,4 @@
-package com.productservice.api.repository;
+package com.productservice.api.examples;
 
 import com.productservice.api.request.AuthorRequest;
 import com.productservice.api.request.BookRequest;
