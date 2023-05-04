@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.productservice.validation.annotation.BookCategory;
 import com.productservice.validation.annotation.LanguageCode;
-import com.productservice.validation.annotation.LocalDatePattern;
 import com.productservice.validation.ValidationErrors;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -26,10 +25,9 @@ public class BookRequest {
     @NotNull(message = ValidationErrors.DESCRIPTION_NULL)
     @Size(min = 1, max = 1000, message = ValidationErrors.DESCRIPTION_LENGTH)
     private String description;
-    @JsonProperty("publishDate")
-    @NotNull(message = ValidationErrors.PUBLISH_DATE_NULL)
-    @LocalDatePattern(message = ValidationErrors.PUBLISH_DATE_FORMAT)
-    private String publishDate;
+    @JsonProperty("publishYear")
+    @NotNull(message = ValidationErrors.PUBLISH_YEAR_NULL)
+    private Integer publishYear;
     @JsonProperty("pageCount")
     @NotNull(message = ValidationErrors.PAGE_COUNT_NULL)
     @Min(value = 1, message = ValidationErrors.PAGE_COUNT_MIN)
@@ -59,7 +57,7 @@ public class BookRequest {
         this.ISBN = builder.ISBN;
         this.title = builder.title;
         this.description = builder.description;
-        this.publishDate = builder.publishDate;
+        this.publishYear = builder.publishYear;
         this.pageCount = builder.pageCount;
         this.languageCode = builder.language;
         this.authors = builder.authors;
@@ -83,8 +81,8 @@ public class BookRequest {
         return description;
     }
 
-    public String getPublishDate() {
-        return publishDate;
+    public Integer getPublishYear() {
+        return publishYear;
     }
 
     public Integer getPageCount() {
@@ -115,7 +113,7 @@ public class BookRequest {
         private String ISBN;
         private String title;
         private String description;
-        private String publishDate;
+        private Integer publishYear;
         private Integer pageCount;
         private String language;
         private List<AuthorRequest> authors;
@@ -137,8 +135,8 @@ public class BookRequest {
             return this;
         }
 
-        public BookRequestBuilder publishDate(String publishDate) {
-            this.publishDate = publishDate;
+        public BookRequestBuilder publishYear(Integer publishYear) {
+            this.publishYear = publishYear;
             return this;
         }
 
@@ -171,7 +169,7 @@ public class BookRequest {
             this.ISBN = bookRequest.ISBN;
             this.title = bookRequest.title;
             this.description = bookRequest.description;
-            this.publishDate = bookRequest.publishDate;
+            this.publishYear = bookRequest.publishYear;
             this.pageCount = bookRequest.pageCount;
             this.language = bookRequest.languageCode;
             this.authors = bookRequest.authors;

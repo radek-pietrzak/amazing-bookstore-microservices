@@ -19,7 +19,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -64,7 +63,7 @@ public class BookService {
                 .description(request.getDescription())
                 .categories(categories)
                 .publisher(publisher)
-                .publishDate(LocalDate.parse(request.getPublishDate()))
+                .publishYear(request.getPublishYear())
                 .pageCount(pageCount)
                 .languageCode(request.getLanguageCode())
                 .build();
@@ -120,7 +119,7 @@ public class BookService {
                                 .map(Enum::name)
                                 .collect(Collectors.toList()))
                         .publisher(new PublisherResponse(b.getPublisher().getPublisherName(), b.getPublisher().getDescription()))
-                        .publishDate(b.getPublishDate())
+                        .publishYear(b.getPublishYear())
                         .pageCount(b.getPageCount())
                         .languageCode(b.getLanguageCode())
                         .build())

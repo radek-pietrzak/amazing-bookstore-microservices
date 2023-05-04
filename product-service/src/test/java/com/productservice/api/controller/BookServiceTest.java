@@ -74,7 +74,7 @@ class BookServiceTest {
         assertEquals(expectedBook.getISBN(), actualBook.getISBN());
         assertEquals(expectedBook.getTitle(), actualBook.getTitle());
         assertEquals(expectedBook.getDescription(), actualBook.getDescription());
-        assertEquals(expectedBook.getPublishDate(), actualBook.getPublishDate());
+        assertEquals(expectedBook.getPublishYear(), actualBook.getPublishYear());
         assertEquals(expectedBook.getPageCount(), actualBook.getPageCount());
         assertEquals(expectedBook.getLanguageCode(), actualBook.getLanguageCode());
         assertNotNull(actualBook.getAuthors());
@@ -131,7 +131,7 @@ class BookServiceTest {
             assertEquals(expectedIteration.getDescription(), actualIteration.getDescription());
             assertEquals(expectedIteration.getCategories(), actualIteration.getCategories());
             assertEquals(expectedIteration.getPublisher(), actualIteration.getPublisher());
-            assertEquals(expectedIteration.getPublishDate(), actualIteration.getPublishDate());
+            assertEquals(expectedIteration.getPublishYear(), actualIteration.getPublishYear());
             assertEquals(expectedIteration.getPageCount(), actualIteration.getPageCount());
             assertEquals(expectedIteration.getLanguageCode(), actualIteration.getLanguageCode());
         }

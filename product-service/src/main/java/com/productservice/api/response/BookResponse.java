@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,6 +25,6 @@ public class BookResponse {
     private List<AuthorResponse> authors;
     private List<String> categories;
     private PublisherResponse publisher;
-    private LocalDate publishDate;
+    private Integer publishYear;
 
 }

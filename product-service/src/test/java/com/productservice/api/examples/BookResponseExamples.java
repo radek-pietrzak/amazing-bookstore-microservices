@@ -4,7 +4,6 @@ import com.productservice.api.response.AuthorResponse;
 import com.productservice.api.response.BookResponse;
 import com.productservice.api.response.PublisherResponse;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,7 +16,7 @@ public interface BookResponseExamples {
             .ISBN("9780316769488")
             .title("The Catcher in the Rye")
             .description("The story of Holden Caulfield, a teenage boy who has been expelled from prep school and is wandering around New York City.")
-            .publishDate(LocalDate.of(1951, 7, 16))
+            .publishYear(1951)
             .pageCount(224)
             .languageCode("en")
             .authors(List.of(new AuthorResponse("J.D.", "Salinger")))
@@ -46,7 +45,7 @@ public interface BookResponseExamples {
             .ISBN("9780316769488")
             .title("The Catcher in the Rye")
             .description("The story of Holden Caulfield, a teenage boy who has been expelled from prep school and is wandering around New York City.")
-            .publishDate(LocalDate.of(1951, 7, 16))
+            .publishYear(1951)
             .pageCount(224)
             .languageCode("pl")
             .authors(VALID_AUTHOR_LIST)
