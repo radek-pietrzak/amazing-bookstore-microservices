@@ -29,5 +29,8 @@ public interface BookApi {
     @GetMapping(path = API.BOOK_LIST)
     ResponseEntity<BookResponseList> getBookList(@Nullable @QueryParam(value = "search") String search);
 
+    @GetMapping(path = API.REPAIR_PUBLISH_YEAR)
+    ResponseEntity<BookResponseList> repairPublishYear();
+
 
 }

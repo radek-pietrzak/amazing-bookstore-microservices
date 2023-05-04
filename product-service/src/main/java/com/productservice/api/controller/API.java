@@ -8,4 +8,5 @@ public interface API {
     String BOOK_DELETE = "/product-service/book/delete/{id}";
     String BOOK_LIST = "/product-service/book-list";
 
+    String REPAIR_PUBLISH_YEAR = "/product-service/repair-publish-year";
 }

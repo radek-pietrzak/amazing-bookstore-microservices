@@ -88,4 +88,10 @@ public class BookController implements BookApi {
         // TODO search from parameter
         return ResponseEntity.ok(bookService.getBookList(search));
     }
+
+    @Override
+    public ResponseEntity<BookResponseList> repairPublishYear() {
+        bookService.repairPublishYear();
+        return ResponseEntity.ok().build();
+    }
 }

@@ -1,13 +1,17 @@
 package com.productservice.entity;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
 @Document("books")
+@Setter
 public class Book {
 
     @Id
@@ -22,6 +26,9 @@ public class Book {
     private List<Category> categories;
     private Publisher publisher;
     private Integer publishYear;
+    @Getter
+    @Setter
+    private LocalDate publishDate;
     private Integer pageCount;
     private String languageCode;
 
