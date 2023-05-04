@@ -15,7 +15,6 @@ import com.productservice.api.response.BookResponse;
 import com.productservice.api.response.BookResponseList;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +25,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@Slf4j
 public class BookService {
 
     private final BookRepository repository;
@@ -128,19 +126,5 @@ public class BookService {
                 .toList();
 
         return new BookResponseList(list);
-    }
-
-    public void repairPublishYear() {
-        List<Book> list = repository.findAll();
-        list.forEach(b -> {
-            try {
-                b.setPublishYear(b.getPublishDate().getYear());
-                b.setPublishDate(null);
-            } catch (Exception e) {
-                log.info("Unable to change publishDate to publishYear");
-            }
-        });
-
-        repository.saveAll(list);
     }
 }
