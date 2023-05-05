@@ -27,7 +27,10 @@ public interface BookApi {
     ResponseEntity<HttpStatus> deleteBook(@NotNull @PathVariable String id);
 
     @GetMapping(path = API.BOOK_LIST)
-    ResponseEntity<BookResponseList> getBookList(@Nullable @QueryParam(value = "search") String search);
+    ResponseEntity<BookResponseList> getBookList(
+            @Nullable @QueryParam(value = "search") String search,
+            @Nullable @QueryParam(value = "page") Integer page,
+            @Nullable @QueryParam(value = "pageSize") Integer pageSize);
 
 
 }

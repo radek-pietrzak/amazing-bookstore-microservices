@@ -110,10 +110,10 @@ class BookServiceTest {
     void shouldReturnCorrectBookList() {
         //given
         List<Book> books = List.of(BookExamples.VALID_BOOK_1, BookExamples.VALID_BOOK_2);
-        when(bookRepositoryMock.findAllByDeletedDateIsNull()).thenReturn(books);
+        when(bookRepositoryMock.findAllByDeletedDateIsNull(any())).thenReturn(books);
         BookResponseList expected = new BookResponseList(List.of(BookResponseExamples.VALID_BOOK_1, BookResponseExamples.VALID_BOOK_2));
         //when
-        BookResponseList actual = bookService.getBookList(null);
+        BookResponseList actual = bookService.getBookList(null, null, null);
         //then
         assertNotNull(actual);
         assertEquals(2, actual.getBookResponseList().size());

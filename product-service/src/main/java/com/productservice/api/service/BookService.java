@@ -15,6 +15,7 @@ import com.productservice.api.response.BookResponse;
 import com.productservice.api.response.BookResponseList;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -96,9 +97,16 @@ public class BookService {
     public void deleteBook(String id) {
     }
 
-    public BookResponseList getBookList(String search) {
+    public BookResponseList getBookList(String search, Integer page, Integer pageSize) {
         // TODO implement serach
-        List<Book> books = repository.findAllByDeletedDateIsNull();
+        if (page == null) {
+            page = 0;
+        }
+        if (pageSize == null) {
+            pageSize = 10;
+        }
+        PageRequest pageRequest = PageRequest.of(page, pageSize);
+        List<Book> books = repository.findAllByDeletedDateIsNull(pageRequest);
 
         List<BookResponse> list = books.stream()
                 .map(b -> BookResponse.builder()

@@ -84,8 +84,8 @@ public class BookController implements BookApi {
     }
 
     @Override
-    public ResponseEntity<BookResponseList> getBookList(String search) {
+    public ResponseEntity<BookResponseList> getBookList(String search, Integer page, Integer pageSize) {
         // TODO search from parameter
-        return ResponseEntity.ok(bookService.getBookList(search));
+        return ResponseEntity.ok(bookService.getBookList(search, page, pageSize));
     }
 }
