@@ -8,5 +8,6 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public class BookResponseList {
+    private Integer bookQuantity;
     private List<BookResponse> bookResponseList;
 }

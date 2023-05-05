@@ -98,7 +98,6 @@ public class BookService {
     }
 
     public BookResponseList getBookList(String search, Integer page, Integer pageSize) {
-        // TODO implement serach
         if (page == null) {
             page = 0;
         }
@@ -106,7 +105,8 @@ public class BookService {
             pageSize = 10;
         }
         PageRequest pageRequest = PageRequest.of(page, pageSize);
-        List<Book> books = repository.findAllByDeletedDateIsNull(pageRequest);
+
+        List<Book> books = repository.findWithSearch(search, pageRequest);
 
         List<BookResponse> list = books.stream()
                 .map(b -> BookResponse.builder()
@@ -133,6 +133,6 @@ public class BookService {
                         .build())
                 .toList();
 
-        return new BookResponseList(list);
+        return new BookResponseList(list.size(), list);
     }
 }
