@@ -12,11 +12,44 @@ import java.util.List;
 
 @Repository
 public interface BookRepository extends MongoRepository<Book, String> {
-    List<Book> findAllByDeletedDateIsNull(PageRequest pageRequest);
+
+    String DEFAULT_QUERY = """
+            {
+                $and: [
+                    {
+                        deletedDate: null
+                    },
+                    { $or: [
+                        {
+                            title: {$regex:?0, $options:'i'}
+                        },
+                        {
+                            ISBN: {$regex:?0, $options:'i'}
+                        },
+                        {
+                            'authors.name': {$regex:?0, $options:'i'}
+                        },
+                        {
+                            description: {$regex:?0, $options:'i'}
+                        },
+                        {
+                            'categories.name': {$regex:?0, $options:'i'}
+                        },
+                        {
+                            'publisher.name': {$regex:?0, $options:'i'}
+                        }
+                        ]
+                    }
+                ]
+            }""";
+
+    @org.springframework.data.mongodb.repository.Query(DEFAULT_QUERY)
+    List<Book> findBySearchTermAndPageRequest(String search, PageRequest pageRequest);
+
 
     // TODO move this method to separate class
     default List<Book> findWithSearch(String search, PageRequest pageRequest) {
-        if(search == null){
+        if (search == null) {
             search = "";
         }
         Query query = new Query();

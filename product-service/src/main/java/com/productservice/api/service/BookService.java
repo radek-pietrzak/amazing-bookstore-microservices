@@ -104,9 +104,13 @@ public class BookService {
         if (pageSize == null) {
             pageSize = 10;
         }
+        if (search == null) {
+            search = "";
+        }
+
         PageRequest pageRequest = PageRequest.of(page, pageSize);
 
-        List<Book> books = repository.findWithSearch(search, pageRequest);
+        List<Book> books = repository.findBySearchTermAndPageRequest(search, pageRequest);
 
         List<BookResponse> list = books.stream()
                 .map(b -> BookResponse.builder()
