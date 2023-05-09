@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 public interface BookApi {
 
-    @GetMapping(path = API.BOOK)
+    @GetMapping(path = API.GET_BOOK)
     ResponseEntity<BookResponse> getBook(@NotNull @PathVariable String id);
 
     @PostMapping(path = API.BOOK_SAVE)
