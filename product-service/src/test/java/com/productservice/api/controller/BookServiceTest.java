@@ -26,6 +26,7 @@ import jakarta.validation.Validator;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -50,10 +51,42 @@ class BookServiceTest {
         bookService = new BookService(bookRepositoryMock, bookRepositoryTemplateMock, validator);
     }
 
-    @Test
-    void getBook_shouldReturnNotNullBookResponseIfBookIdExists() {
-        BookResponse actual = bookService.getBook("1");
+    @ParameterizedTest
+    @MethodSource("validBookPairResponseProvider")
+    @Tag(TagGroup.GET_BOOK)
+    void shouldReturnCorrectResponse(BookPairResponse bookPairResponse) {
+        //given
+        BookResponse expected = bookPairResponse.bookResponse;
+        when(bookRepositoryMock.findById(any())).thenReturn(Optional.ofNullable(bookPairResponse.book));
+        //when
+        BookResponse actual = bookService.getBook(any());
+        //then
         assertNotNull(actual);
+        assertNotNull(actual.getId());
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getCreatedDate(), actual.getCreatedDate());
+        assertEquals(expected.getLastEditDate(), actual.getLastEditDate());
+        assertEquals(expected.getDeletedDate(), actual.getDeletedDate());
+        assertEquals(expected.getISBN(), actual.getISBN());
+        assertEquals(expected.getTitle(), actual.getTitle());
+        assertEquals(expected.getDescription(), actual.getDescription());
+        assertEquals(expected.getPageCount(), actual.getPageCount());
+        assertEquals(expected.getLanguageCode(), actual.getLanguageCode());
+        assertEquals(expected.getAuthors(), actual.getAuthors());
+        assertEquals(expected.getCategories(), actual.getCategories());
+        assertEquals(expected.getPublisher(), actual.getPublisher());
+        assertEquals(expected.getPublishYear(), actual.getPublishYear());
+        assertEquals(expected, actual);
+    }
+
+    private static List<BookPairResponse> validBookPairResponseProvider() {
+        return List.of(
+                new BookPairResponse(BookResponseExamples.VALID_BOOK_1, BookExamples.VALID_BOOK_1),
+                new BookPairResponse(BookResponseExamples.VALID_BOOK_2, BookExamples.VALID_BOOK_2)
+        );
+    }
+
+    private record BookPairResponse(BookResponse bookResponse, Book book) {
     }
 
     @ParameterizedTest

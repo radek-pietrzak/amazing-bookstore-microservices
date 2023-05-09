@@ -23,7 +23,9 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,7 +42,31 @@ public class BookService {
     }
 
     public BookResponse getBook(String id) {
-        return null;
+        Optional<Book> optionalBook = repository.findById(id);
+        AtomicReference<BookResponse> response = new AtomicReference<>(new BookResponse());
+        optionalBook.ifPresent(b ->
+                response.set(BookResponse.builder()
+                        .id(b.getId())
+                        .createdDate(b.getCreatedDate())
+                                .lastEditDate(b.getLastEditDate())
+                                .deletedDate(b.getDeletedDate())
+                                .ISBN(b.getISBN())
+                                .title(b.getTitle())
+                                .description(b.getDescription())
+                                .pageCount(b.getPageCount())
+                                .languageCode(b.getLanguageCode())
+                                .authors(b.getAuthors().stream()
+                                        .map(a -> new AuthorResponse(a.getName(), a.getDescription()))
+                                        .collect(Collectors.toList()))
+                                .categories(b.getCategories().stream()
+                                        .map(Enum::name)
+                                        .collect(Collectors.toList()))
+                                .publisher(new PublisherResponse(b.getPublisher().getPublisherName(), b.getPublisher().getDescription()))
+                                .publishYear(b.getPublishYear())
+                        .build()
+                ));
+
+        return response.get();
     }
 
     public void saveBook(BookRequest request) {
