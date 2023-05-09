@@ -1,25 +1,26 @@
-package com.productservice.api.repository;
+package com.productservice.api.examples;
 
-import com.productservice.entity.Author;
-import com.productservice.entity.Book;
-import com.productservice.entity.Category;
-import com.productservice.entity.Publisher;
+import com.productservice.document.Author;
+import com.productservice.document.Book;
+import com.productservice.document.Category;
+import com.productservice.document.Publisher;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 
-import static com.productservice.entity.Category.*;
+import static com.productservice.document.Category.*;
 
 public interface BookExamples {
 
     Book VALID_BOOK_1 = new Book.BookBuilder()
+            .id("1")
             .createdDate(LocalDateTime.of(2014, Month.JULY, 16, 10, 55, 22))
+            .lastEditDate(LocalDateTime.of(2023, 4, 16, 9, 59))
             .ISBN("9780316769488")
             .title("The Catcher in the Rye")
             .description("The story of Holden Caulfield, a teenage boy who has been expelled from prep school and is wandering around New York City.")
-            .publishDate(LocalDate.of(1951, Month.JULY, 16))
+            .publishYear(1951)
             .pageCount(224)
             .languageCode("en")
             .authors(List.of(new Author("J.D.", "Salinger")))
@@ -42,6 +43,7 @@ public interface BookExamples {
     );
 
     Book VALID_BOOK_2 = new Book.BookBuilder(VALID_BOOK_1)
+            .id("2")
             .languageCode("pl")
             .authors(VALID_AUTHOR_LIST)
             .categories(VALID_CATEGORY_LIST)

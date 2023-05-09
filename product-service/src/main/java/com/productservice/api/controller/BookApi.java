@@ -3,6 +3,7 @@ package com.productservice.api.controller;
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.BookResponse;
 import com.productservice.api.response.BookResponseList;
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.QueryParam;
@@ -26,7 +27,10 @@ public interface BookApi {
     ResponseEntity<HttpStatus> deleteBook(@NotNull @PathVariable String id);
 
     @GetMapping(path = API.BOOK_LIST)
-    ResponseEntity<BookResponseList> getBookList(@QueryParam(value = "search") String search);
+    ResponseEntity<BookResponseList> getBookList(
+            @Nullable @QueryParam(value = "search") String search,
+            @Nullable @QueryParam(value = "page") Integer page,
+            @Nullable @QueryParam(value = "pageSize") Integer pageSize);
 
 
 }

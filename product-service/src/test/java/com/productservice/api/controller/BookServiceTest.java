@@ -1,14 +1,16 @@
 package com.productservice.api.controller;
 
 import com.productservice.TagGroup;
+import com.productservice.api.examples.BookRequestExamples;
+import com.productservice.api.examples.BookResponseExamples;
 import com.productservice.api.service.BookService;
-import com.productservice.entity.Book;
-import com.productservice.api.repository.BookExamples;
+import com.productservice.document.Book;
+import com.productservice.api.examples.BookExamples;
 import com.productservice.repository.BookRepository;
-import com.productservice.api.repository.BookRequestExamples;
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.BookResponse;
 import com.productservice.api.response.BookResponseList;
+import com.productservice.repository.BookRepositoryTemplate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -26,7 +28,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -36,6 +38,8 @@ class BookServiceTest {
     private BookService bookService;
     @Mock
     private BookRepository bookRepositoryMock;
+    @Mock
+    private BookRepositoryTemplate bookRepositoryTemplateMock;
     @Captor
     private ArgumentCaptor<Book> bookArgumentCaptor;
     @Mock
@@ -43,7 +47,7 @@ class BookServiceTest {
 
     @BeforeEach
     public void setUp() {
-        bookService = new BookService(bookRepositoryMock, validator);
+        bookService = new BookService(bookRepositoryMock, bookRepositoryTemplateMock, validator);
     }
 
     @Test
@@ -53,12 +57,12 @@ class BookServiceTest {
     }
 
     @ParameterizedTest
-    @MethodSource("validBooksProvider")
+    @MethodSource("validBookPairRequestsProvider")
     @Tag(TagGroup.SAVE_BOOK)
-    void saveBook_shouldBuildCorrectBook(BookPair bookPair) {
+    void shouldBuildCorrectBookToSave(BookPairRequest bookPairRequest) {
         //given
-        BookRequest request = bookPair.bookRequest;
-        Book expectedBook = bookPair.book;
+        BookRequest request = bookPairRequest.bookRequest;
+        Book expectedBook = bookPairRequest.book;
 
         //when
         bookService.saveBook(request);
@@ -73,7 +77,7 @@ class BookServiceTest {
         assertEquals(expectedBook.getISBN(), actualBook.getISBN());
         assertEquals(expectedBook.getTitle(), actualBook.getTitle());
         assertEquals(expectedBook.getDescription(), actualBook.getDescription());
-        assertEquals(expectedBook.getPublishDate(), actualBook.getPublishDate());
+        assertEquals(expectedBook.getPublishYear(), actualBook.getPublishYear());
         assertEquals(expectedBook.getPageCount(), actualBook.getPageCount());
         assertEquals(expectedBook.getLanguageCode(), actualBook.getLanguageCode());
         assertNotNull(actualBook.getAuthors());
@@ -84,14 +88,14 @@ class BookServiceTest {
         assertEquals(expectedBook, actualBook);
     }
 
-    private static List<BookPair> validBooksProvider() {
+    private static List<BookPairRequest> validBookPairRequestsProvider() {
         return List.of(
-                new BookPair(BookRequestExamples.VALID_BOOK_1, BookExamples.VALID_BOOK_1),
-                new BookPair(BookRequestExamples.VALID_BOOK_2, BookExamples.VALID_BOOK_2)
+                new BookPairRequest(BookRequestExamples.VALID_BOOK_1, BookExamples.VALID_BOOK_1),
+                new BookPairRequest(BookRequestExamples.VALID_BOOK_2, BookExamples.VALID_BOOK_2)
         );
     }
 
-    private record BookPair(BookRequest bookRequest, Book book) {
+    private record BookPairRequest(BookRequest bookRequest, Book book) {
     }
 
     @Test
@@ -105,8 +109,34 @@ class BookServiceTest {
     }
 
     @Test
-    void getBookList_shouldReturnCorrectBookList() {
-        BookResponseList actual = bookService.getBookList("");
+    @Tag(TagGroup.GET_BOOK_LIST)
+    void shouldReturnCorrectBookList() {
+        //given
+        List<Book> books = List.of(BookExamples.VALID_BOOK_1, BookExamples.VALID_BOOK_2);
+        when(bookRepositoryTemplateMock.findBySearchTermAndPageRequest(any(), any())).thenReturn(books);
+        BookResponseList expected = new BookResponseList(2L, 2L, List.of(BookResponseExamples.VALID_BOOK_1, BookResponseExamples.VALID_BOOK_2));
+        //when
+        BookResponseList actual = bookService.getBookList(null, null, null);
+        //then
         assertNotNull(actual);
+        assertEquals(2, actual.getBookResponseList().size());
+
+        for (int i = 0; i < expected.getBookResponseList().size(); i++) {
+            BookResponse expectedIteration = expected.getBookResponseList().get(i);
+            BookResponse actualIteration = actual.getBookResponseList().get(i);
+            assertEquals(expectedIteration.getId(), actualIteration.getId());
+            assertEquals(expectedIteration.getCreatedDate(), actualIteration.getCreatedDate());
+            assertEquals(expectedIteration.getLastEditDate(), actualIteration.getLastEditDate());
+            assertEquals(expectedIteration.getDeletedDate(), actualIteration.getDeletedDate());
+            assertEquals(expectedIteration.getISBN(), actualIteration.getISBN());
+            assertEquals(expectedIteration.getTitle(), actualIteration.getTitle());
+            assertEquals(expectedIteration.getAuthors(), actualIteration.getAuthors());
+            assertEquals(expectedIteration.getDescription(), actualIteration.getDescription());
+            assertEquals(expectedIteration.getCategories(), actualIteration.getCategories());
+            assertEquals(expectedIteration.getPublisher(), actualIteration.getPublisher());
+            assertEquals(expectedIteration.getPublishYear(), actualIteration.getPublishYear());
+            assertEquals(expectedIteration.getPageCount(), actualIteration.getPageCount());
+            assertEquals(expectedIteration.getLanguageCode(), actualIteration.getLanguageCode());
+        }
     }
 }

@@ -3,10 +3,10 @@ package com.productservice.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.productservice.TagGroup;
+import com.productservice.api.examples.BookRequestExamples;
 import com.productservice.api.service.BookService;
 import com.productservice.api.service.ValidationService;
 import com.productservice.validation.ValidationErrors;
-import com.productservice.api.repository.BookRequestExamples;
 import com.productservice.api.request.BookRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -20,11 +20,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -69,7 +71,7 @@ class BookControllerTest {
         assertTrue(result.contains(ValidationErrors.ISBN_NULL));
         assertTrue(result.contains(ValidationErrors.TITLE_NULL));
         assertTrue(result.contains(ValidationErrors.DESCRIPTION_NULL));
-        assertTrue(result.contains(ValidationErrors.PUBLISH_DATE_NULL));
+        assertTrue(result.contains(ValidationErrors.PUBLISH_YEAR_NULL));
         assertTrue(result.contains(ValidationErrors.PAGE_COUNT_NULL));
         assertTrue(result.contains(ValidationErrors.LANGUAGE_NULL));
         assertTrue(result.contains(ValidationErrors.AUTHORS_NULL));
@@ -198,37 +200,6 @@ class BookControllerTest {
         return List.of(
                 BookRequestExamples.INVALID_DESCRIPTION_SIZE_MIN,
                 BookRequestExamples.INVALID_DESCRIPTION_SIZE_MAX
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("invalidPublishDateFormatProvider")
-    @Tag(TagGroup.ERRORS)
-    void shouldReturnBadRequestIfInvalidPublishDateFormat(BookRequest request) throws Exception {
-        //given
-        //when
-        //then
-        String result = mockMvc.perform(post(API.BOOK_SAVE)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertTrue(result.contains(ValidationErrors.PUBLISH_DATE_FORMAT));
-
-    }
-
-    private static List<BookRequest> invalidPublishDateFormatProvider() {
-        return List.of(
-                BookRequestExamples.INVALID_LOCAL_DATE_FORMAT_1,
-                BookRequestExamples.INVALID_LOCAL_DATE_FORMAT_2,
-                BookRequestExamples.INVALID_LOCAL_DATE_FORMAT_3,
-                BookRequestExamples.INVALID_LOCAL_DATE_FORMAT_4,
-                BookRequestExamples.INVALID_LOCAL_DATE_FORMAT_5,
-                BookRequestExamples.INVALID_LOCAL_DATE_FORMAT_6
         );
     }
 
@@ -447,7 +418,7 @@ class BookControllerTest {
     @ParameterizedTest
     @MethodSource("validBooksProvider")
     @Tag(TagGroup.SAVE_BOOK)
-    void shouldAcceptedIfValidBook(BookRequest request) throws Exception {
+    void shouldAcceptIfValidBook(BookRequest request) throws Exception {
         //given
         //when
         //then
@@ -455,7 +426,7 @@ class BookControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andDo(print())
-                .andExpect(status().isAccepted())
+                .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
@@ -467,6 +438,33 @@ class BookControllerTest {
                 BookRequestExamples.VALID_BOOK_1,
                 BookRequestExamples.VALID_BOOK_2
         );
+    }
+
+    @ParameterizedTest
+    @MethodSource("anySearchProvider")
+    @Tag(TagGroup.GET_BOOK_LIST)
+    void shouldReturnOkResponseIfAnySearch(String search) throws Exception {
+        //given
+        //when
+        //then
+        mockMvc.perform(get(API.BOOK_LIST)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(search)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+    }
+
+    private static List<String> anySearchProvider() {
+        List<String> list = new ArrayList<>();
+        list.add(null);
+        list.add("a");
+        list.add("1");
+        list.add("dklnnlkl");
+        return list;
     }
 
 }

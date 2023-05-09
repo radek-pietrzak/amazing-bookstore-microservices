@@ -1,4 +1,4 @@
-package com.productservice;
+package com.productservice.config;
 
 import com.productservice.api.util.JsonFileToJsonObject;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;

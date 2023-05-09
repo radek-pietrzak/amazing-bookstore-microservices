@@ -44,7 +44,7 @@ public class BookController implements BookApi {
             responses = {
                     @ApiResponse(responseCode = "400", ref = "badBookRequestApi"),
                     @ApiResponse(responseCode = "500", ref = "internalErrorServerApi"),
-                    @ApiResponse(responseCode = "202", ref = "successfullySavedBook")
+                    @ApiResponse(responseCode = "200", ref = "successfullySavedBook")
             }
     )
     public ResponseEntity<?> saveBook(@RequestBody(
@@ -65,10 +65,10 @@ public class BookController implements BookApi {
             JsonFileToJsonObject jsonFileToJsonObject = new JsonFileToJsonObject();
             response = jsonFileToJsonObject.readByFileName("response").get("successfullySavedBook").toString();
         } catch (IOException e) {
-            response = "ACCEPTED";
+            response = "OK";
         }
 
-        return ResponseEntity.accepted().body(response);
+        return ResponseEntity.ok().body(response);
     }
 
     @Override
@@ -84,7 +84,8 @@ public class BookController implements BookApi {
     }
 
     @Override
-    public ResponseEntity<BookResponseList> getBookList(String search) {
-        return ResponseEntity.ok(bookService.getBookList(search));
+    public ResponseEntity<BookResponseList> getBookList(String search, Integer page, Integer pageSize) {
+        // TODO search from parameter
+        return ResponseEntity.ok(bookService.getBookList(search, page, pageSize));
     }
 }

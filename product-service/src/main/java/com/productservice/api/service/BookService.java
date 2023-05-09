@@ -2,22 +2,25 @@ package com.productservice.api.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.productservice.ChatGPTHelper;
-import com.productservice.entity.Author;
-import com.productservice.entity.Book;
-import com.productservice.entity.Category;
-import com.productservice.entity.Publisher;
+import com.productservice.api.response.AuthorResponse;
+import com.productservice.api.response.PublisherResponse;
+import com.productservice.document.Author;
+import com.productservice.document.Book;
+import com.productservice.document.Category;
+import com.productservice.document.Publisher;
 import com.productservice.repository.BookRepository;
 import com.productservice.api.request.AuthorRequest;
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.BookResponse;
 import com.productservice.api.response.BookResponseList;
+import com.productservice.repository.BookRepositoryTemplate;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -27,10 +30,12 @@ import java.util.stream.Collectors;
 public class BookService {
 
     private final BookRepository repository;
+    private final BookRepositoryTemplate repositoryTemplate;
     private final Validator validator;
 
-    public BookService(BookRepository repository, Validator validator) {
+    public BookService(BookRepository repository, BookRepositoryTemplate repositoryTemplate, Validator validator) {
         this.repository = repository;
+        this.repositoryTemplate = repositoryTemplate;
         this.validator = validator;
     }
 
@@ -62,7 +67,7 @@ public class BookService {
                 .description(request.getDescription())
                 .categories(categories)
                 .publisher(publisher)
-                .publishDate(LocalDate.parse(request.getPublishDate()))
+                .publishYear(request.getPublishYear())
                 .pageCount(pageCount)
                 .languageCode(request.getLanguageCode())
                 .build();
@@ -95,7 +100,47 @@ public class BookService {
     public void deleteBook(String id) {
     }
 
-    public BookResponseList getBookList(String search) {
-        return null;
+    public BookResponseList getBookList(String search, Integer page, Integer pageSize) {
+        if (page == null) {
+            page = 0;
+        }
+        if (pageSize == null) {
+            pageSize = 10;
+        }
+        if (search == null) {
+            search = "";
+        }
+
+        PageRequest pageRequest = PageRequest.of(page, pageSize);
+
+        long booksTotal = repositoryTemplate.countBySearchTerm(search);
+        List<Book> books = repositoryTemplate.findBySearchTermAndPageRequest(search, pageRequest);
+
+        List<BookResponse> list = books.stream()
+                .map(b -> BookResponse.builder()
+                        .id(b.getId())
+                        .createdDate(b.getCreatedDate())
+                        .lastEditDate(b.getLastEditDate())
+                        .deletedDate(b.getDeletedDate())
+                        .ISBN(b.getISBN())
+                        .title(b.getTitle())
+                        .authors(b.getAuthors().stream()
+                                .map(a -> AuthorResponse.builder()
+                                        .name(a.getName())
+                                        .description(a.getDescription())
+                                        .build())
+                                .collect(Collectors.toList()))
+                        .description(b.getDescription())
+                        .categories(b.getCategories().stream()
+                                .map(Enum::name)
+                                .collect(Collectors.toList()))
+                        .publisher(new PublisherResponse(b.getPublisher().getPublisherName(), b.getPublisher().getDescription()))
+                        .publishYear(b.getPublishYear())
+                        .pageCount(b.getPageCount())
+                        .languageCode(b.getLanguageCode())
+                        .build())
+                .toList();
+
+        return new BookResponseList(booksTotal, list.size(), list);
     }
 }
