@@ -1,4 +1,4 @@
-package com.productservice.entity;
+package com.productservice.document;
 
 import java.util.Objects;
 

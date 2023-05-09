@@ -8,6 +8,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public class BookResponseList {
-    private Integer bookQuantity;
+    private long bookQuantity;
+    private long bookQuantityOnPage;
     private List<BookResponse> bookResponseList;
 }

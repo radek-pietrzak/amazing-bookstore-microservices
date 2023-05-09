@@ -1,15 +1,15 @@
 package com.productservice.api.examples;
 
-import com.productservice.entity.Author;
-import com.productservice.entity.Book;
-import com.productservice.entity.Category;
-import com.productservice.entity.Publisher;
+import com.productservice.document.Author;
+import com.productservice.document.Book;
+import com.productservice.document.Category;
+import com.productservice.document.Publisher;
 
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 
-import static com.productservice.entity.Category.*;
+import static com.productservice.document.Category.*;
 
 public interface BookExamples {
 

@@ -4,12 +4,13 @@ import com.productservice.TagGroup;
 import com.productservice.api.examples.BookRequestExamples;
 import com.productservice.api.examples.BookResponseExamples;
 import com.productservice.api.service.BookService;
-import com.productservice.entity.Book;
+import com.productservice.document.Book;
 import com.productservice.api.examples.BookExamples;
 import com.productservice.repository.BookRepository;
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.BookResponse;
 import com.productservice.api.response.BookResponseList;
+import com.productservice.repository.BookRepositoryTemplate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,8 @@ class BookServiceTest {
     private BookService bookService;
     @Mock
     private BookRepository bookRepositoryMock;
+    @Mock
+    private BookRepositoryTemplate bookRepositoryTemplateMock;
     @Captor
     private ArgumentCaptor<Book> bookArgumentCaptor;
     @Mock
@@ -44,7 +47,7 @@ class BookServiceTest {
 
     @BeforeEach
     public void setUp() {
-        bookService = new BookService(bookRepositoryMock, validator);
+        bookService = new BookService(bookRepositoryMock, bookRepositoryTemplateMock, validator);
     }
 
     @Test
@@ -110,8 +113,8 @@ class BookServiceTest {
     void shouldReturnCorrectBookList() {
         //given
         List<Book> books = List.of(BookExamples.VALID_BOOK_1, BookExamples.VALID_BOOK_2);
-        when(bookRepositoryMock.findBySearchTermAndPageRequest(any(), any())).thenReturn(books);
-        BookResponseList expected = new BookResponseList(2, List.of(BookResponseExamples.VALID_BOOK_1, BookResponseExamples.VALID_BOOK_2));
+        when(bookRepositoryTemplateMock.findBySearchTermAndPageRequest(any(), any())).thenReturn(books);
+        BookResponseList expected = new BookResponseList(2L, 2L, List.of(BookResponseExamples.VALID_BOOK_1, BookResponseExamples.VALID_BOOK_2));
         //when
         BookResponseList actual = bookService.getBookList(null, null, null);
         //then

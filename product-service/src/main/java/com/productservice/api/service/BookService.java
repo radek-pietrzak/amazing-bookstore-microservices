@@ -4,15 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.productservice.ChatGPTHelper;
 import com.productservice.api.response.AuthorResponse;
 import com.productservice.api.response.PublisherResponse;
-import com.productservice.entity.Author;
-import com.productservice.entity.Book;
-import com.productservice.entity.Category;
-import com.productservice.entity.Publisher;
+import com.productservice.document.Author;
+import com.productservice.document.Book;
+import com.productservice.document.Category;
+import com.productservice.document.Publisher;
 import com.productservice.repository.BookRepository;
 import com.productservice.api.request.AuthorRequest;
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.BookResponse;
 import com.productservice.api.response.BookResponseList;
+import com.productservice.repository.BookRepositoryTemplate;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.springframework.data.domain.PageRequest;
@@ -29,10 +30,12 @@ import java.util.stream.Collectors;
 public class BookService {
 
     private final BookRepository repository;
+    private final BookRepositoryTemplate repositoryTemplate;
     private final Validator validator;
 
-    public BookService(BookRepository repository, Validator validator) {
+    public BookService(BookRepository repository, BookRepositoryTemplate repositoryTemplate, Validator validator) {
         this.repository = repository;
+        this.repositoryTemplate = repositoryTemplate;
         this.validator = validator;
     }
 
@@ -110,7 +113,8 @@ public class BookService {
 
         PageRequest pageRequest = PageRequest.of(page, pageSize);
 
-        List<Book> books = repository.findBySearchTermAndPageRequest(search, pageRequest);
+        long booksTotal = repositoryTemplate.countBySearchTerm(search);
+        List<Book> books = repositoryTemplate.findBySearchTermAndPageRequest(search, pageRequest);
 
         List<BookResponse> list = books.stream()
                 .map(b -> BookResponse.builder()
@@ -137,6 +141,6 @@ public class BookService {
                         .build())
                 .toList();
 
-        return new BookResponseList(list.size(), list);
+        return new BookResponseList(booksTotal, list.size(), list);
     }
 }
