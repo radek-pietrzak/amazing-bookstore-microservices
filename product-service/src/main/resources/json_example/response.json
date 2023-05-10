@@ -13,5 +13,24 @@
     "code": 202,
     "status": "Successfully saved book",
     "message": "Successfully saved book!"
+  },
+  "successfullyGetBook": {
+    "id": "6448f44759850b6631d6a271",
+    "createdDate": "2023-04-26T11:52:07.257",
+    "lastEditDate": null,
+    "deletedDate": null,
+    "title": "The Catcher in the Rye",
+    "description": "The story of Holden Caulfield, a teenage boy who has been expelled from prep school and is wandering around New York City.",
+    "pageCount": 224,
+    "languageCode": "en",
+    "authors": [
+      {}
+    ],
+    "categories": [
+      "FICTION"
+    ],
+    "publisher": {},
+    "publishYear": 1951,
+    "isbn": "9780316769488"
   }
 }

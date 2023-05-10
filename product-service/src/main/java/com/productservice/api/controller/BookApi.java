@@ -1,7 +1,6 @@
 package com.productservice.api.controller;
 
 import com.productservice.api.request.BookRequest;
-import com.productservice.api.response.BookResponse;
 import com.productservice.api.response.BookResponseList;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public interface BookApi {
 
     @GetMapping(path = API.GET_BOOK)
-    ResponseEntity<BookResponse> getBook(@NotNull @PathVariable String id);
+    ResponseEntity<?> getBook(@NotNull @PathVariable String id);
 
     @PostMapping(path = API.BOOK_SAVE)
     ResponseEntity<?> saveBook(@Valid @RequestBody BookRequest request, BindingResult bindingResult);

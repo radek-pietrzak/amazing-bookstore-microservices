@@ -43,7 +43,7 @@ public class BookService {
 
     public BookResponse getBook(String id) {
         Optional<Book> optionalBook = repository.findById(id);
-        AtomicReference<BookResponse> response = new AtomicReference<>(new BookResponse());
+        AtomicReference<BookResponse> response = new AtomicReference<>();
         optionalBook.ifPresent(b ->
                 response.set(BookResponse.builder()
                         .id(b.getId())
