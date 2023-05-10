@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.productservice.TagGroup;
 import com.productservice.api.examples.BookRequestExamples;
+import com.productservice.api.examples.BookResponseExamples;
 import com.productservice.api.service.BookService;
 import com.productservice.api.service.ValidationService;
 import com.productservice.validation.ValidationErrors;
@@ -419,6 +420,7 @@ class BookControllerTest {
     void shouldAcceptIfValidBookId() throws Exception {
         //given
         String bookId = "1";
+        when(bookService.getBook(any())).thenReturn(BookResponseExamples.VALID_BOOK_1);
         //when
         //then
         mockMvc.perform(get(API.GET_BOOK, bookId)

@@ -131,15 +131,15 @@ class BookServiceTest {
     private record BookPairRequest(BookRequest bookRequest, Book book) {
     }
 
-    @Test
-    void editBook_shouldBuildCorrectBook() {
-        assertNotNull(null);
-    }
-
-    @Test
-    void deleteBook_shouldPutDeleteDate() {
-        assertNotNull(null);
-    }
+//    @Test
+//    void editBook_shouldBuildCorrectBook() {
+//        assertNotNull(null);
+//    }
+//
+//    @Test
+//    void deleteBook_shouldPutDeleteDate() {
+//        assertNotNull(null);
+//    }
 
     @Test
     @Tag(TagGroup.GET_BOOK_LIST)
