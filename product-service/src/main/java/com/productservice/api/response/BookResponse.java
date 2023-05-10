@@ -17,12 +17,11 @@ public class BookResponse {
     private LocalDateTime deletedDate;
     private String ISBN;
     private String title;
-    private String description;
-    private Integer pageCount;
-    private String languageCode;
     private List<AuthorResponse> authors;
+    private String description;
     private List<String> categories;
     private PublisherResponse publisher;
     private Integer publishYear;
-
+    private Integer pageCount;
+    private String languageCode;
 }

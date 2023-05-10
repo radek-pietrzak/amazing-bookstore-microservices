@@ -8,6 +8,7 @@ import com.productservice.document.Author;
 import com.productservice.document.Book;
 import com.productservice.document.Category;
 import com.productservice.document.Publisher;
+import com.productservice.mapper.BookMapper;
 import com.productservice.repository.BookRepository;
 import com.productservice.api.request.AuthorRequest;
 import com.productservice.api.request.BookRequest;
@@ -25,7 +26,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,39 +34,18 @@ public class BookService {
     private final BookRepository repository;
     private final BookRepositoryTemplate repositoryTemplate;
     private final Validator validator;
+    private final BookMapper bookMapper;
 
-    public BookService(BookRepository repository, BookRepositoryTemplate repositoryTemplate, Validator validator) {
+    public BookService(BookRepository repository, BookRepositoryTemplate repositoryTemplate, Validator validator, BookMapper bookMapper) {
         this.repository = repository;
         this.repositoryTemplate = repositoryTemplate;
         this.validator = validator;
+        this.bookMapper = bookMapper;
     }
 
     public BookResponse getBook(String id) {
         Optional<Book> optionalBook = repository.findById(id);
-        AtomicReference<BookResponse> response = new AtomicReference<>();
-        optionalBook.ifPresent(b ->
-                response.set(BookResponse.builder()
-                        .id(b.getId())
-                        .createdDate(b.getCreatedDate())
-                                .lastEditDate(b.getLastEditDate())
-                                .deletedDate(b.getDeletedDate())
-                                .ISBN(b.getISBN())
-                                .title(b.getTitle())
-                                .description(b.getDescription())
-                                .pageCount(b.getPageCount())
-                                .languageCode(b.getLanguageCode())
-                                .authors(b.getAuthors().stream()
-                                        .map(a -> new AuthorResponse(a.getName(), a.getDescription()))
-                                        .collect(Collectors.toList()))
-                                .categories(b.getCategories().stream()
-                                        .map(Enum::name)
-                                        .collect(Collectors.toList()))
-                                .publisher(new PublisherResponse(b.getPublisher().getPublisherName(), b.getPublisher().getDescription()))
-                                .publishYear(b.getPublishYear())
-                        .build()
-                ));
-
-        return response.get();
+        return optionalBook.map(bookMapper::bookToBookResponse).orElse(null);
     }
 
     public void saveBook(BookRequest request) {

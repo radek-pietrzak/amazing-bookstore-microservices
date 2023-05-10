@@ -8,5 +8,5 @@ import org.mapstruct.Mapper;
 @Mapper
 public interface BookMapper {
     Book bookRequestToBook(BookRequest bookRequest);
-    BookResponse bookToBookResponse(BookResponse bookResponse);
+    BookResponse bookToBookResponse(Book book);
 }
