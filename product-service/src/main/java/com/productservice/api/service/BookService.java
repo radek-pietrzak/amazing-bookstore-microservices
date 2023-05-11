@@ -4,13 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.productservice.ChatGPTHelper;
 import com.productservice.api.response.AuthorResponse;
 import com.productservice.api.response.PublisherResponse;
-import com.productservice.document.Author;
 import com.productservice.document.Book;
-import com.productservice.document.Category;
-import com.productservice.document.Publisher;
 import com.productservice.mapper.BookMapper;
 import com.productservice.repository.BookRepository;
-import com.productservice.api.request.AuthorRequest;
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.BookResponse;
 import com.productservice.api.response.BookResponseList;
@@ -49,34 +45,8 @@ public class BookService {
     }
 
     public void saveBook(BookRequest request) {
-
-        List<AuthorRequest> requestAuthors = request.getAuthors();
-        List<Author> authors = requestAuthors.stream()
-                .map(a -> new Author(a.getName(), a.getDescription()))
-                .collect(Collectors.toList());
-
-        List<String> requestCategories = request.getCategories();
-        List<Category> categories = requestCategories.stream()
-                .map(Category::valueOf)
-                .toList();
-
-        Publisher publisher = new Publisher(request.getPublisher().getPublisherName(), request.getPublisher().getDescription());
-
-        int pageCount = request.getPageCount();
-
-        Book book = new Book.BookBuilder()
-                .createdDate(LocalDateTime.now())
-                .ISBN(request.getISBN())
-                .title(request.getTitle())
-                .authors(authors)
-                .description(request.getDescription())
-                .categories(categories)
-                .publisher(publisher)
-                .publishYear(request.getPublishYear())
-                .pageCount(pageCount)
-                .languageCode(request.getLanguageCode())
-                .build();
-
+        Book book = bookMapper.bookRequestToBook(request);
+        book.setCreatedDate(LocalDateTime.now());
         repository.save(book);
     }
 
@@ -127,7 +97,7 @@ public class BookService {
                         .createdDate(b.getCreatedDate())
                         .lastEditDate(b.getLastEditDate())
                         .deletedDate(b.getDeletedDate())
-                        .ISBN(b.getISBN())
+                        .isbn(b.getIsbn())
                         .title(b.getTitle())
                         .authors(b.getAuthors().stream()
                                 .map(a -> AuthorResponse.builder()

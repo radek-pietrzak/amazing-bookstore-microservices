@@ -15,7 +15,7 @@ public class BookResponse {
     private LocalDateTime createdDate;
     private LocalDateTime lastEditDate;
     private LocalDateTime deletedDate;
-    private String ISBN;
+    private String isbn;
     private String title;
     private List<AuthorResponse> authors;
     private String description;

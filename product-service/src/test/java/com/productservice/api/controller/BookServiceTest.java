@@ -70,7 +70,7 @@ class BookServiceTest {
         assertEquals(expected.getCreatedDate(), actual.getCreatedDate());
         assertEquals(expected.getLastEditDate(), actual.getLastEditDate());
         assertEquals(expected.getDeletedDate(), actual.getDeletedDate());
-        assertEquals(expected.getISBN(), actual.getISBN());
+        assertEquals(expected.getIsbn(), actual.getIsbn());
         assertEquals(expected.getTitle(), actual.getTitle());
         assertEquals(expected.getDescription(), actual.getDescription());
         assertEquals(expected.getPageCount(), actual.getPageCount());
@@ -110,7 +110,7 @@ class BookServiceTest {
         assertNotNull(actualBook);
         assertNotNull(expectedBook.getCreatedDate());
         assertInstanceOf(LocalDateTime.class, actualBook.getCreatedDate());
-        assertEquals(expectedBook.getISBN(), actualBook.getISBN());
+        assertEquals(expectedBook.getIsbn(), actualBook.getIsbn());
         assertEquals(expectedBook.getTitle(), actualBook.getTitle());
         assertEquals(expectedBook.getDescription(), actualBook.getDescription());
         assertEquals(expectedBook.getPublishYear(), actualBook.getPublishYear());
@@ -164,7 +164,7 @@ class BookServiceTest {
             assertEquals(expectedIteration.getCreatedDate(), actualIteration.getCreatedDate());
             assertEquals(expectedIteration.getLastEditDate(), actualIteration.getLastEditDate());
             assertEquals(expectedIteration.getDeletedDate(), actualIteration.getDeletedDate());
-            assertEquals(expectedIteration.getISBN(), actualIteration.getISBN());
+            assertEquals(expectedIteration.getIsbn(), actualIteration.getIsbn());
             assertEquals(expectedIteration.getTitle(), actualIteration.getTitle());
             assertEquals(expectedIteration.getAuthors(), actualIteration.getAuthors());
             assertEquals(expectedIteration.getDescription(), actualIteration.getDescription());

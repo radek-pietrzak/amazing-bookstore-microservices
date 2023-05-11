@@ -17,7 +17,7 @@ public interface BookExamples {
             .id("1")
             .createdDate(LocalDateTime.of(2014, Month.JULY, 16, 10, 55, 22))
             .lastEditDate(LocalDateTime.of(2023, 4, 16, 9, 59))
-            .ISBN("9780316769488")
+            .isbn("9780316769488")
             .title("The Catcher in the Rye")
             .description("The story of Holden Caulfield, a teenage boy who has been expelled from prep school and is wandering around New York City.")
             .publishYear(1951)

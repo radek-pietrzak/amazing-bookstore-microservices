@@ -9,7 +9,7 @@ import java.util.List;
 public interface BookRequestExamples {
 
     BookRequest VALID_BOOK_1 = BookRequest.builder()
-            .ISBN("9780316769488")
+            .isbn("9780316769488")
             .title("The Catcher in the Rye")
             .description("The story of Holden Caulfield, a teenage boy who has been expelled from prep school and is wandering around New York City.")
             .publishYear(1951)
@@ -54,22 +54,22 @@ public interface BookRequestExamples {
 
     BookRequest INVALID_ISBN_1 = BookRequest.builder()
             .bookRequest(VALID_BOOK_1)
-            .ISBN("9780316769489")
+            .isbn("9780316769489")
             .build();
 
     BookRequest INVALID_ISBN_2 = BookRequest.builder()
             .bookRequest(VALID_BOOK_1)
-            .ISBN("978031676948")
+            .isbn("978031676948")
             .build();
 
     BookRequest INVALID_ISBN_3 = BookRequest.builder()
             .bookRequest(VALID_BOOK_1)
-            .ISBN("978031676948c")
+            .isbn("978031676948c")
             .build();
 
     BookRequest INVALID_ISBN_4 = BookRequest.builder()
             .bookRequest(VALID_BOOK_1)
-            .ISBN("")
+            .isbn("")
             .build();
 
     BookRequest INVALID_TITLE_SIZE_MIN = BookRequest.builder()
