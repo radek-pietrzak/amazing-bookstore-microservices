@@ -1,8 +1,6 @@
 package com.productservice.document;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -10,6 +8,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Document("books")
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @EqualsAndHashCode(exclude = {"id", "createdDate", "lastEditDate", "deletedDate"})
 public class Book {
@@ -29,9 +29,6 @@ public class Book {
     private Integer publishYear;
     private Integer pageCount;
     private String languageCode;
-
-    public Book() {
-    }
 
     private Book(BookBuilder bookBuilder) {
         this.id = bookBuilder.id;

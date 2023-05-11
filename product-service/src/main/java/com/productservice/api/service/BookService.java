@@ -2,8 +2,6 @@ package com.productservice.api.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.productservice.ChatGPTHelper;
-import com.productservice.api.response.AuthorResponse;
-import com.productservice.api.response.PublisherResponse;
 import com.productservice.document.Book;
 import com.productservice.mapper.BookMapper;
 import com.productservice.repository.BookRepository;
@@ -22,7 +20,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class BookService {
@@ -87,33 +84,11 @@ public class BookService {
         }
 
         PageRequest pageRequest = PageRequest.of(page, pageSize);
-
         long booksTotal = repositoryTemplate.countBySearchTerm(search);
         List<Book> books = repositoryTemplate.findBySearchTermAndPageRequest(search, pageRequest);
 
         List<BookResponse> list = books.stream()
-                .map(b -> BookResponse.builder()
-                        .id(b.getId())
-                        .createdDate(b.getCreatedDate())
-                        .lastEditDate(b.getLastEditDate())
-                        .deletedDate(b.getDeletedDate())
-                        .isbn(b.getIsbn())
-                        .title(b.getTitle())
-                        .authors(b.getAuthors().stream()
-                                .map(a -> AuthorResponse.builder()
-                                        .name(a.getName())
-                                        .description(a.getDescription())
-                                        .build())
-                                .collect(Collectors.toList()))
-                        .description(b.getDescription())
-                        .categories(b.getCategories().stream()
-                                .map(Enum::name)
-                                .collect(Collectors.toList()))
-                        .publisher(new PublisherResponse(b.getPublisher().getPublisherName(), b.getPublisher().getDescription()))
-                        .publishYear(b.getPublishYear())
-                        .pageCount(b.getPageCount())
-                        .languageCode(b.getLanguageCode())
-                        .build())
+                .map(bookMapper::bookToBookResponse)
                 .toList();
 
         return new BookResponseList(booksTotal, list.size(), list);
