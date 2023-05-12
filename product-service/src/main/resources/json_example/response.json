@@ -14,6 +14,7 @@
     "status": "Successfully saved book",
     "message": "Successfully saved book!"
   },
+  "bookNotFound": "Unable to find book by id = 1",
   "successfullyGetBook": {
     "id": "6448f44759850b6631d6a271",
     "createdDate": "2023-04-26T11:52:07.257",
@@ -24,12 +25,43 @@
     "pageCount": 224,
     "languageCode": "en",
     "authors": [
-      {}
+      {
+        "name": "J.D.",
+        "description": "Salinger"
+      }
     ],
     "categories": [
       "FICTION"
     ],
-    "publisher": {},
+    "publisher": {
+      "publisherName": "Little, Brown and Company",
+      "description": "Boston"
+    },
+    "publishYear": 1951,
+    "isbn": "9780316769488"
+  },
+  "successfullyDeletedBook": {
+    "id": "6448f44759850b6631d6a271",
+    "createdDate": "2023-04-26T11:52:07.257",
+    "lastEditDate": null,
+    "deletedDate": "2023-04-30T11:52:07.257",
+    "title": "The Catcher in the Rye",
+    "description": "The story of Holden Caulfield, a teenage boy who has been expelled from prep school and is wandering around New York City.",
+    "pageCount": 224,
+    "languageCode": "en",
+    "authors": [
+      {
+        "name": "J.D.",
+        "description": "Salinger"
+      }
+    ],
+    "categories": [
+      "FICTION"
+    ],
+    "publisher": {
+      "publisherName": "Little, Brown and Company",
+      "description": "Boston"
+    },
     "publishYear": 1951,
     "isbn": "9780316769488"
   }

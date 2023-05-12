@@ -92,10 +92,18 @@ public class BookController implements BookApi {
     }
 
     @Override
+    @Operation(
+            description = "Delete book",
+            responses = {
+                    @ApiResponse(responseCode = "200", ref = "successfullyDeletedBook"),
+                    @ApiResponse(responseCode = "400", ref = "bookNotFound"),
+                    @ApiResponse(responseCode = "500", ref = "internalErrorServerApi")
+            }
+    )
     public ResponseEntity<?> deleteBook(String id) {
-        BookResponse bookResponse = bookService.deleteBook(id);
-        if (bookResponse != null){
-            return ResponseEntity.ok(bookResponse);
+        BookResponse response = bookService.deleteBook(id);
+        if (response != null){
+            return ResponseEntity.ok(response);
         }
         return ResponseEntity.badRequest().body(BadRequestResponse.UNABLE_TO_FIND_BOOK + id);
     }
