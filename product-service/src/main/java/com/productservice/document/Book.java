@@ -1,21 +1,26 @@
 package com.productservice.document;
 
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 @Document("books")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@EqualsAndHashCode(exclude = {"id", "createdDate", "lastEditDate", "deletedDate"})
 public class Book {
 
     @Id
     private String id;
+    @Setter
     private LocalDateTime createdDate;
     private LocalDateTime lastEditDate;
     private LocalDateTime deletedDate;
-    private String ISBN;
+    private String isbn;
     private String title;
     private List<Author> authors;
     private String description;
@@ -25,15 +30,12 @@ public class Book {
     private Integer pageCount;
     private String languageCode;
 
-    public Book() {
-    }
-
     private Book(BookBuilder bookBuilder) {
         this.id = bookBuilder.id;
         this.createdDate = bookBuilder.createdDate;
         this.lastEditDate = bookBuilder.lastEditDate;
         this.deletedDate = bookBuilder.deletedDate;
-        this.ISBN = bookBuilder.ISBN;
+        this.isbn = bookBuilder.isbn;
         this.title = bookBuilder.title;
         this.authors = bookBuilder.authors;
         this.description = bookBuilder.description;
@@ -44,69 +46,8 @@ public class Book {
         this.languageCode = bookBuilder.languageCode;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public LocalDateTime getLastEditDate() {
-        return lastEditDate;
-    }
-
-    public LocalDateTime getDeletedDate() {
-        return deletedDate;
-    }
-
-    public String getISBN() {
-        return ISBN;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public List<Author> getAuthors() {
-        return authors;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public List<Category> getCategories() {
-        return categories;
-    }
-
-    public Publisher getPublisher() {
-        return publisher;
-    }
-
-    public Integer getPublishYear() {
-        return publishYear;
-    }
-
-    public int getPageCount() {
-        return pageCount;
-    }
-
-    public String getLanguageCode() {
-        return languageCode;
-    }
-
-    //TODO check equals and hashcode conditions field correctness
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Book book)) return false;
-        return getPageCount() == book.getPageCount() && Objects.equals(getISBN(), book.getISBN()) && Objects.equals(getTitle(), book.getTitle()) && Objects.equals(getAuthors(), book.getAuthors()) && Objects.equals(getDescription(), book.getDescription()) && Objects.equals(getCategories(), book.getCategories()) && Objects.equals(getPublisher(), book.getPublisher()) && Objects.equals(getPublishYear(), book.getPublishYear()) && Objects.equals(getLanguageCode(), book.getLanguageCode());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getISBN(), getTitle(), getAuthors(), getDescription(), getCategories(), getPublisher(), getPublishYear(), getPageCount(), getLanguageCode());
+    public static BookBuilder builder(){
+        return new BookBuilder();
     }
 
     public static class BookBuilder {
@@ -114,7 +55,7 @@ public class Book {
         private LocalDateTime createdDate;
         private LocalDateTime lastEditDate;
         private LocalDateTime deletedDate;
-        private String ISBN;
+        private String isbn;
         private String title;
         private List<Author> authors;
         private String description;
@@ -132,7 +73,7 @@ public class Book {
             this.createdDate = book.createdDate;
             this.lastEditDate = book.lastEditDate;
             this.deletedDate = book.deletedDate;
-            this.ISBN = book.ISBN;
+            this.isbn = book.isbn;
             this.title = book.title;
             this.authors = book.authors;
             this.description = book.description;
@@ -163,8 +104,8 @@ public class Book {
             return this;
         }
 
-        public BookBuilder ISBN(String ISBN) {
-            this.ISBN = ISBN;
+        public BookBuilder isbn(String isbn) {
+            this.isbn = isbn;
             return this;
         }
 

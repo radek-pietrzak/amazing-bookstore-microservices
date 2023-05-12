@@ -6,6 +6,7 @@ import com.productservice.api.examples.BookResponseExamples;
 import com.productservice.api.service.BookService;
 import com.productservice.document.Book;
 import com.productservice.api.examples.BookExamples;
+import com.productservice.mapper.BookMapper;
 import com.productservice.repository.BookRepository;
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.BookResponse;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
@@ -26,6 +28,7 @@ import jakarta.validation.Validator;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -37,23 +40,56 @@ class BookServiceTest {
     @InjectMocks
     private BookService bookService;
     @Mock
-    private BookRepository bookRepositoryMock;
+    private BookRepository bookRepository;
     @Mock
-    private BookRepositoryTemplate bookRepositoryTemplateMock;
+    private BookRepositoryTemplate bookRepositoryTemplate;
     @Captor
     private ArgumentCaptor<Book> bookArgumentCaptor;
     @Mock
     private Validator validator;
+    private final BookMapper bookMapper = Mappers.getMapper(BookMapper.class);
 
     @BeforeEach
     public void setUp() {
-        bookService = new BookService(bookRepositoryMock, bookRepositoryTemplateMock, validator);
+        bookService = new BookService(bookRepository, bookRepositoryTemplate, validator, bookMapper);
     }
 
-    @Test
-    void getBook_shouldReturnNotNullBookResponseIfBookIdExists() {
-        BookResponse actual = bookService.getBook("1");
+    @ParameterizedTest
+    @MethodSource("validBookPairResponseProvider")
+    @Tag(TagGroup.GET_BOOK)
+    void shouldReturnCorrectResponse(BookPairResponse bookPairResponse) {
+        //given
+        BookResponse expected = bookPairResponse.bookResponse;
+        when(bookRepository.findById(any())).thenReturn(Optional.ofNullable(bookPairResponse.book));
+        //when
+        BookResponse actual = bookService.getBook(any());
+        //then
         assertNotNull(actual);
+        assertNotNull(actual.getId());
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getCreatedDate(), actual.getCreatedDate());
+        assertEquals(expected.getLastEditDate(), actual.getLastEditDate());
+        assertEquals(expected.getDeletedDate(), actual.getDeletedDate());
+        assertEquals(expected.getIsbn(), actual.getIsbn());
+        assertEquals(expected.getTitle(), actual.getTitle());
+        assertEquals(expected.getDescription(), actual.getDescription());
+        assertEquals(expected.getPageCount(), actual.getPageCount());
+        assertEquals(expected.getLanguageCode(), actual.getLanguageCode());
+        assertEquals(expected.getAuthors(), actual.getAuthors());
+        assertEquals(expected.getCategories(), actual.getCategories());
+        assertEquals(expected.getPublisher(), actual.getPublisher());
+        assertEquals(expected.getPublishYear(), actual.getPublishYear());
+        assertEquals(expected, actual);
+    }
+
+    private static List<BookPairResponse> validBookPairResponseProvider() {
+        return List.of(
+                new BookPairResponse(BookResponseExamples.VALID_BOOK_1, BookExamples.VALID_BOOK_1),
+                new BookPairResponse(BookResponseExamples.VALID_BOOK_2, BookExamples.VALID_BOOK_2)
+        );
+    }
+
+    private record BookPairResponse(BookResponse bookResponse, Book book) {
     }
 
     @ParameterizedTest
@@ -68,13 +104,13 @@ class BookServiceTest {
         bookService.saveBook(request);
 
         //then
-        verify(bookRepositoryMock).save(bookArgumentCaptor.capture());
+        verify(bookRepository).save(bookArgumentCaptor.capture());
         Book actualBook = bookArgumentCaptor.getValue();
 
         assertNotNull(actualBook);
         assertNotNull(expectedBook.getCreatedDate());
         assertInstanceOf(LocalDateTime.class, actualBook.getCreatedDate());
-        assertEquals(expectedBook.getISBN(), actualBook.getISBN());
+        assertEquals(expectedBook.getIsbn(), actualBook.getIsbn());
         assertEquals(expectedBook.getTitle(), actualBook.getTitle());
         assertEquals(expectedBook.getDescription(), actualBook.getDescription());
         assertEquals(expectedBook.getPublishYear(), actualBook.getPublishYear());
@@ -98,22 +134,22 @@ class BookServiceTest {
     private record BookPairRequest(BookRequest bookRequest, Book book) {
     }
 
-    @Test
-    void editBook_shouldBuildCorrectBook() {
-        assertNotNull(null);
-    }
-
-    @Test
-    void deleteBook_shouldPutDeleteDate() {
-        assertNotNull(null);
-    }
+//    @Test
+//    void editBook_shouldBuildCorrectBook() {
+//        assertNotNull(null);
+//    }
+//
+//    @Test
+//    void deleteBook_shouldPutDeleteDate() {
+//        assertNotNull(null);
+//    }
 
     @Test
     @Tag(TagGroup.GET_BOOK_LIST)
     void shouldReturnCorrectBookList() {
         //given
         List<Book> books = List.of(BookExamples.VALID_BOOK_1, BookExamples.VALID_BOOK_2);
-        when(bookRepositoryTemplateMock.findBySearchTermAndPageRequest(any(), any())).thenReturn(books);
+        when(bookRepositoryTemplate.findBySearchTermAndPageRequest(any(), any())).thenReturn(books);
         BookResponseList expected = new BookResponseList(2L, 2L, List.of(BookResponseExamples.VALID_BOOK_1, BookResponseExamples.VALID_BOOK_2));
         //when
         BookResponseList actual = bookService.getBookList(null, null, null);
@@ -128,7 +164,7 @@ class BookServiceTest {
             assertEquals(expectedIteration.getCreatedDate(), actualIteration.getCreatedDate());
             assertEquals(expectedIteration.getLastEditDate(), actualIteration.getLastEditDate());
             assertEquals(expectedIteration.getDeletedDate(), actualIteration.getDeletedDate());
-            assertEquals(expectedIteration.getISBN(), actualIteration.getISBN());
+            assertEquals(expectedIteration.getIsbn(), actualIteration.getIsbn());
             assertEquals(expectedIteration.getTitle(), actualIteration.getTitle());
             assertEquals(expectedIteration.getAuthors(), actualIteration.getAuthors());
             assertEquals(expectedIteration.getDescription(), actualIteration.getDescription());

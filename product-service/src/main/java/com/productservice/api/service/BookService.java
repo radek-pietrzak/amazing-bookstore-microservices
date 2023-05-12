@@ -2,14 +2,9 @@ package com.productservice.api.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.productservice.ChatGPTHelper;
-import com.productservice.api.response.AuthorResponse;
-import com.productservice.api.response.PublisherResponse;
-import com.productservice.document.Author;
 import com.productservice.document.Book;
-import com.productservice.document.Category;
-import com.productservice.document.Publisher;
+import com.productservice.mapper.BookMapper;
 import com.productservice.repository.BookRepository;
-import com.productservice.api.request.AuthorRequest;
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.BookResponse;
 import com.productservice.api.response.BookResponseList;
@@ -23,8 +18,8 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class BookService {
@@ -32,46 +27,23 @@ public class BookService {
     private final BookRepository repository;
     private final BookRepositoryTemplate repositoryTemplate;
     private final Validator validator;
+    private final BookMapper bookMapper;
 
-    public BookService(BookRepository repository, BookRepositoryTemplate repositoryTemplate, Validator validator) {
+    public BookService(BookRepository repository, BookRepositoryTemplate repositoryTemplate, Validator validator, BookMapper bookMapper) {
         this.repository = repository;
         this.repositoryTemplate = repositoryTemplate;
         this.validator = validator;
+        this.bookMapper = bookMapper;
     }
 
     public BookResponse getBook(String id) {
-        return null;
+        Optional<Book> optionalBook = repository.findById(id);
+        return optionalBook.map(bookMapper::bookToBookResponse).orElse(null);
     }
 
     public void saveBook(BookRequest request) {
-
-        List<AuthorRequest> requestAuthors = request.getAuthors();
-        List<Author> authors = requestAuthors.stream()
-                .map(a -> new Author(a.getName(), a.getDescription()))
-                .collect(Collectors.toList());
-
-        List<String> requestCategories = request.getCategories();
-        List<Category> categories = requestCategories.stream()
-                .map(Category::valueOf)
-                .toList();
-
-        Publisher publisher = new Publisher(request.getPublisher().getPublisherName(), request.getPublisher().getDescription());
-
-        int pageCount = request.getPageCount();
-
-        Book book = new Book.BookBuilder()
-                .createdDate(LocalDateTime.now())
-                .ISBN(request.getISBN())
-                .title(request.getTitle())
-                .authors(authors)
-                .description(request.getDescription())
-                .categories(categories)
-                .publisher(publisher)
-                .publishYear(request.getPublishYear())
-                .pageCount(pageCount)
-                .languageCode(request.getLanguageCode())
-                .build();
-
+        Book book = bookMapper.bookRequestToBook(request);
+        book.setCreatedDate(LocalDateTime.now());
         repository.save(book);
     }
 
@@ -112,33 +84,11 @@ public class BookService {
         }
 
         PageRequest pageRequest = PageRequest.of(page, pageSize);
-
         long booksTotal = repositoryTemplate.countBySearchTerm(search);
         List<Book> books = repositoryTemplate.findBySearchTermAndPageRequest(search, pageRequest);
 
         List<BookResponse> list = books.stream()
-                .map(b -> BookResponse.builder()
-                        .id(b.getId())
-                        .createdDate(b.getCreatedDate())
-                        .lastEditDate(b.getLastEditDate())
-                        .deletedDate(b.getDeletedDate())
-                        .ISBN(b.getISBN())
-                        .title(b.getTitle())
-                        .authors(b.getAuthors().stream()
-                                .map(a -> AuthorResponse.builder()
-                                        .name(a.getName())
-                                        .description(a.getDescription())
-                                        .build())
-                                .collect(Collectors.toList()))
-                        .description(b.getDescription())
-                        .categories(b.getCategories().stream()
-                                .map(Enum::name)
-                                .collect(Collectors.toList()))
-                        .publisher(new PublisherResponse(b.getPublisher().getPublisherName(), b.getPublisher().getDescription()))
-                        .publishYear(b.getPublishYear())
-                        .pageCount(b.getPageCount())
-                        .languageCode(b.getLanguageCode())
-                        .build())
+                .map(bookMapper::bookToBookResponse)
                 .toList();
 
         return new BookResponseList(booksTotal, list.size(), list);

@@ -1,12 +1,14 @@
 package com.productservice.api.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.List;
-
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
+@Setter
+@EqualsAndHashCode
 public class BookResponseList {
     private long bookQuantity;
     private long bookQuantityOnPage;

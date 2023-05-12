@@ -26,6 +26,24 @@ import java.io.IOException;
 public class BookController implements BookApi {
 
     private final BookService bookService;
+    // TODO generator of api responses
+    @Override
+    @Operation(
+            description = "Get book",
+            responses = {
+                    @ApiResponse(responseCode = "200", ref = "successfullyGetBook"),
+                    @ApiResponse(responseCode = "400", ref = "badBookRequestApi"),
+                    @ApiResponse(responseCode = "500", ref = "internalErrorServerApi")
+            }
+    )
+    public ResponseEntity<?> getBook(String id) {
+        BookResponse response = bookService.getBook(id);
+        if (response != null){
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.badRequest().body("Unable to find book by id = " + id);
+    }
+
     private final ValidationService validationService;
 
     public BookController(BookService bookService, ValidationService validationService) {
@@ -34,17 +52,12 @@ public class BookController implements BookApi {
     }
 
     @Override
-    public ResponseEntity<BookResponse> getBook(String id) {
-        return ResponseEntity.ok(bookService.getBook(id));
-    }
-
-    @Override
     @Operation(
             description = "Save book",
             responses = {
+                    @ApiResponse(responseCode = "202", ref = "successfullySavedBook"),
                     @ApiResponse(responseCode = "400", ref = "badBookRequestApi"),
-                    @ApiResponse(responseCode = "500", ref = "internalErrorServerApi"),
-                    @ApiResponse(responseCode = "200", ref = "successfullySavedBook")
+                    @ApiResponse(responseCode = "500", ref = "internalErrorServerApi")
             }
     )
     public ResponseEntity<?> saveBook(@RequestBody(
@@ -85,7 +98,6 @@ public class BookController implements BookApi {
 
     @Override
     public ResponseEntity<BookResponseList> getBookList(String search, Integer page, Integer pageSize) {
-        // TODO search from parameter
         return ResponseEntity.ok(bookService.getBookList(search, page, pageSize));
     }
 }

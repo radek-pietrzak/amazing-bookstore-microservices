@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.productservice.TagGroup;
 import com.productservice.api.examples.BookRequestExamples;
+import com.productservice.api.examples.BookResponseExamples;
 import com.productservice.api.service.BookService;
 import com.productservice.api.service.ValidationService;
 import com.productservice.validation.ValidationErrors;
@@ -414,9 +415,25 @@ class BookControllerTest {
         assertTrue(result.contains(ValidationErrors.PUBLISHER_DESCRIPTION_LENGTH));
 
     }
+    @Test
+    @Tag(TagGroup.GET_BOOK)
+    void shouldAcceptIfValidBookId() throws Exception {
+        //given
+        String bookId = "1";
+        when(bookService.getBook(any())).thenReturn(BookResponseExamples.VALID_BOOK_1);
+        //when
+        //then
+        mockMvc.perform(get(API.GET_BOOK, bookId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+    }
 
     @ParameterizedTest
-    @MethodSource("validBooksProvider")
+    @MethodSource("validBooksRequestProvider")
     @Tag(TagGroup.SAVE_BOOK)
     void shouldAcceptIfValidBook(BookRequest request) throws Exception {
         //given
@@ -433,7 +450,7 @@ class BookControllerTest {
 
     }
 
-    private static List<BookRequest> validBooksProvider() {
+    private static List<BookRequest> validBooksRequestProvider() {
         return List.of(
                 BookRequestExamples.VALID_BOOK_1,
                 BookRequestExamples.VALID_BOOK_2

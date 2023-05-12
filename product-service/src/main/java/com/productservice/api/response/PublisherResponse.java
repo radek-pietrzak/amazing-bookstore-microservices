@@ -1,12 +1,12 @@
 package com.productservice.api.response;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 @AllArgsConstructor
 @EqualsAndHashCode
-@JsonSerialize
+@Getter
 public class PublisherResponse {
     private String publisherName;
     private String description;
