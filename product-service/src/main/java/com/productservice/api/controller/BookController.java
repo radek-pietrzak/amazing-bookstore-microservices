@@ -1,6 +1,7 @@
 package com.productservice.api.controller;
 
 import com.productservice.api.request.BookRequest;
+import com.productservice.api.response.BadRequestResponse;
 import com.productservice.api.response.BookResponse;
 import com.productservice.api.response.BookResponseList;
 import com.productservice.api.service.BookService;
@@ -41,7 +42,7 @@ public class BookController implements BookApi {
         if (response != null){
             return ResponseEntity.ok(response);
         }
-        return ResponseEntity.badRequest().body("Unable to find book by id = " + id);
+        return ResponseEntity.badRequest().body(BadRequestResponse.UNABLE_TO_FIND_BOOK + id);
     }
 
     private final ValidationService validationService;
@@ -91,9 +92,12 @@ public class BookController implements BookApi {
     }
 
     @Override
-    public ResponseEntity<BookResponse> deleteBook(String id) {
+    public ResponseEntity<?> deleteBook(String id) {
         BookResponse bookResponse = bookService.deleteBook(id);
-        return ResponseEntity.ok(bookResponse);
+        if (bookResponse != null){
+            return ResponseEntity.ok(bookResponse);
+        }
+        return ResponseEntity.badRequest().body(BadRequestResponse.UNABLE_TO_FIND_BOOK + id);
     }
 
     //TODO list example in api response

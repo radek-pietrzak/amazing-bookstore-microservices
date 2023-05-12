@@ -12,9 +12,7 @@ import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.BookResponse;
 import com.productservice.api.response.BookResponseList;
 import com.productservice.repository.BookRepositoryTemplate;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -143,10 +141,11 @@ class BookServiceTest {
     @Tag(TagGroup.DELETE_BOOK)
     void shouldPutDeleteDate() {
         //given
-        when(bookRepository.findById(any())).thenReturn(Optional.of(BookExamples.VALID_BOOK_1));
+        Book book = BookExamples.copy(BookExamples.VALID_BOOK_1);
+        when(bookRepository.findById(any())).thenReturn(Optional.of(book));
 
         //when
-        bookService.deleteBook("1");
+        bookService.deleteBook(any());
 
         //then
         verify(bookRepository).save(bookArgumentCaptor.capture());

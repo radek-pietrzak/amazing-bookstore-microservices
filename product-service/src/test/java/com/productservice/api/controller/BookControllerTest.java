@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.productservice.TagGroup;
 import com.productservice.api.examples.BookRequestExamples;
 import com.productservice.api.examples.BookResponseExamples;
+import com.productservice.api.response.BadRequestResponse;
 import com.productservice.api.service.BookService;
 import com.productservice.api.service.ValidationService;
 import com.productservice.validation.ValidationErrors;
@@ -27,8 +28,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -415,9 +415,42 @@ class BookControllerTest {
         assertTrue(result.contains(ValidationErrors.PUBLISHER_DESCRIPTION_LENGTH));
 
     }
+
+    @Test
+    @Tag(TagGroup.DELETE_BOOK)
+    void shouldReturnBadRequestInvalidBookId_deleteBook() throws Exception {
+        //given
+        String bookId = "1";
+        when(bookService.deleteBook(any())).thenReturn(null);
+        //when
+        //then
+        String actual = mockMvc.perform(put(API.BOOK_DELETE, bookId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertTrue(actual.contains(BadRequestResponse.UNABLE_TO_FIND_BOOK));
+    }
+
+    @Test
+    @Tag(TagGroup.DELETE_BOOK)
+    void shouldReturnOKIfValidBookId_deleteBook() throws Exception {
+        //given
+        String bookId = "1";
+        when(bookService.deleteBook(any())).thenReturn(BookResponseExamples.VALID_BOOK_1);
+        //when
+        //then
+        mockMvc.perform(put(API.BOOK_DELETE, bookId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
     @Test
     @Tag(TagGroup.GET_BOOK)
-    void shouldAcceptIfValidBookId() throws Exception {
+    void shouldReturnOKIfValidBookId() throws Exception {
         //given
         String bookId = "1";
         when(bookService.getBook(any())).thenReturn(BookResponseExamples.VALID_BOOK_1);
