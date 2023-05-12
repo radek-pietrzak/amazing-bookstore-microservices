@@ -23,7 +23,7 @@ public interface BookApi {
     ResponseEntity<HttpStatus> editBook(@NotNull @PathVariable String id, @Valid @RequestBody BookRequest request);
 
     @PutMapping(path = API.BOOK_DELETE)
-    ResponseEntity<HttpStatus> deleteBook(@NotNull @PathVariable String id);
+    ResponseEntity<?> deleteBook(@NotNull @PathVariable String id);
 
     @GetMapping(path = API.BOOK_LIST)
     ResponseEntity<BookResponseList> getBookList(

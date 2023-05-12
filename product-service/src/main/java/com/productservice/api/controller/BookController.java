@@ -1,6 +1,7 @@
 package com.productservice.api.controller;
 
 import com.productservice.api.request.BookRequest;
+import com.productservice.api.response.BadRequestResponse;
 import com.productservice.api.response.BookResponse;
 import com.productservice.api.response.BookResponseList;
 import com.productservice.api.service.BookService;
@@ -41,7 +42,7 @@ public class BookController implements BookApi {
         if (response != null){
             return ResponseEntity.ok(response);
         }
-        return ResponseEntity.badRequest().body("Unable to find book by id = " + id);
+        return ResponseEntity.badRequest().body(BadRequestResponse.UNABLE_TO_FIND_BOOK + id);
     }
 
     private final ValidationService validationService;
@@ -91,11 +92,23 @@ public class BookController implements BookApi {
     }
 
     @Override
-    public ResponseEntity<HttpStatus> deleteBook(String id) {
-        bookService.deleteBook(id);
-        return ResponseEntity.ok(HttpStatus.ACCEPTED);
+    @Operation(
+            description = "Delete book",
+            responses = {
+                    @ApiResponse(responseCode = "200", ref = "successfullyDeletedBook"),
+                    @ApiResponse(responseCode = "400", ref = "bookNotFound"),
+                    @ApiResponse(responseCode = "500", ref = "internalErrorServerApi")
+            }
+    )
+    public ResponseEntity<?> deleteBook(String id) {
+        BookResponse response = bookService.deleteBook(id);
+        if (response != null){
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.badRequest().body(BadRequestResponse.UNABLE_TO_FIND_BOOK + id);
     }
 
+    //TODO list example in api response
     @Override
     public ResponseEntity<BookResponseList> getBookList(String search, Integer page, Integer pageSize) {
         return ResponseEntity.ok(bookService.getBookList(search, page, pageSize));

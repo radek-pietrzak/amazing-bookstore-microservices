@@ -49,4 +49,8 @@ public interface BookExamples {
             .categories(VALID_CATEGORY_LIST)
             .publisher(new Publisher("Little, Brown and Company", null))
             .build();
+
+    static Book copy(Book book) {
+        return new Book.BookBuilder(book).build();
+    }
 }

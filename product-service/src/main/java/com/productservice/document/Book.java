@@ -19,6 +19,7 @@ public class Book {
     @Setter
     private LocalDateTime createdDate;
     private LocalDateTime lastEditDate;
+    @Setter
     private LocalDateTime deletedDate;
     private String isbn;
     private String title;

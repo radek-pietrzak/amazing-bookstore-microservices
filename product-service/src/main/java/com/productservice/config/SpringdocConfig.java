@@ -28,6 +28,8 @@ public class SpringdocConfig {
         addResponseToComponents(components, "internalServerError", "Internal server error", "internalErrorServerApi");
         addResponseToComponents(components, "successfullySavedBook", "Successfully saved book", "successfullySavedBook");
         addResponseToComponents(components, "successfullyGetBook", "Successfully get book", "successfullyGetBook");
+        addResponseToComponents(components, "bookNotFound", "Book not found", "bookNotFound");
+        addResponseToComponents(components, "successfullyDeletedBook", "Successfully deleted book", "successfullyDeletedBook");
 
         return new OpenAPI()
                 .components(components)
