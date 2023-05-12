@@ -139,10 +139,22 @@ class BookServiceTest {
 //        assertNotNull(null);
 //    }
 //
-//    @Test
-//    void deleteBook_shouldPutDeleteDate() {
-//        assertNotNull(null);
-//    }
+    @Test
+    @Tag(TagGroup.DELETE_BOOK)
+    void shouldPutDeleteDate() {
+        //given
+        when(bookRepository.findById(any())).thenReturn(Optional.of(BookExamples.VALID_BOOK_1));
+
+        //when
+        bookService.deleteBook("1");
+
+        //then
+        verify(bookRepository).save(bookArgumentCaptor.capture());
+        Book actual = bookArgumentCaptor.getValue();
+
+        assertNotNull(actual);
+        assertNotNull(actual.getDeletedDate());
+    }
 
     @Test
     @Tag(TagGroup.GET_BOOK_LIST)

@@ -91,11 +91,12 @@ public class BookController implements BookApi {
     }
 
     @Override
-    public ResponseEntity<HttpStatus> deleteBook(String id) {
-        bookService.deleteBook(id);
-        return ResponseEntity.ok(HttpStatus.ACCEPTED);
+    public ResponseEntity<BookResponse> deleteBook(String id) {
+        BookResponse bookResponse = bookService.deleteBook(id);
+        return ResponseEntity.ok(bookResponse);
     }
 
+    //TODO list example in api response
     @Override
     public ResponseEntity<BookResponseList> getBookList(String search, Integer page, Integer pageSize) {
         return ResponseEntity.ok(bookService.getBookList(search, page, pageSize));

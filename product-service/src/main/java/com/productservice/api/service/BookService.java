@@ -69,7 +69,15 @@ public class BookService {
     public void editBook(String id, BookRequest request) {
     }
 
-    public void deleteBook(String id) {
+    public BookResponse deleteBook(String id) {
+        Optional<Book> optionalBook = repository.findById(id);
+        if (optionalBook.isPresent()) {
+            Book book = optionalBook.get();
+            book.setDeletedDate(LocalDateTime.now());
+            repository.save(book);
+            return bookMapper.bookToBookResponse(book);
+        }
+        return null;
     }
 
     public BookResponseList getBookList(String search, Integer page, Integer pageSize) {
