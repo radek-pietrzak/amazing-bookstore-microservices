@@ -16,8 +16,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -41,10 +43,51 @@ public class BookService {
         return optionalBook.map(bookMapper::bookToBookResponse).orElse(null);
     }
 
+    //TODO return BookResponse in body
     public void saveBook(BookRequest request) {
         Book book = bookMapper.bookRequestToBook(request);
         book.setCreatedDate(LocalDateTime.now());
         repository.save(book);
+    }
+
+    //TODO return BookResponse in body
+    public void editBook(String id, BookRequest request) {
+        if (id != null) {
+            Optional<Book> optionalBook = repository.findById(id);
+            if (optionalBook.isPresent()) {
+                Book repoBook = optionalBook.get();
+                Book reqeustBook = bookMapper.bookRequestToBook(request);
+                try {
+                    if (isChangedAndSet(repoBook, reqeustBook)) {
+                        repoBook.setLastEditDate(LocalDateTime.now());
+                        repository.save(repoBook);
+                    }
+                } catch (IllegalAccessException ignored) {
+                }
+            }
+        }
+    }
+
+    private boolean isChangedAndSet(Book repoBook, Book requestBook) throws IllegalAccessException {
+        boolean isChange = false;
+        Field[] fields = Book.class.getDeclaredFields();
+        for (Field field : fields) {
+            if (field.getName().equals("id")
+                    || field.getName().equals("createdDate")
+                    || field.getName().equals("lastEditDate")
+                    || field.getName().equals("deletedDate")) {
+                continue;
+            }
+
+            field.setAccessible(true);
+            Object repoValue = field.get(repoBook);
+            Object requestValue = field.get(requestBook);
+            if (!Objects.equals(repoValue, requestValue)) {
+                field.set(repoBook, requestValue);
+                isChange = true;
+            }
+        }
+        return isChange;
     }
 
     @Scheduled(fixedRate = 10000)
@@ -64,9 +107,6 @@ public class BookService {
         }
         long atEnd = System.currentTimeMillis();
         System.out.println("Response from chatGPT in seconds: " + ((atEnd - atStart) / 1000));
-    }
-
-    public void editBook(String id, BookRequest request) {
     }
 
     public BookResponse deleteBook(String id) {

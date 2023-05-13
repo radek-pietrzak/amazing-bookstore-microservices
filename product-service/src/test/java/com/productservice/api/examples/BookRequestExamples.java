@@ -42,6 +42,18 @@ public interface BookRequestExamples {
             .publisher(new PublisherRequest("Little, Brown and Company", null))
             .build();
 
+    BookRequest VALID_BOOK_3 = BookRequest.builder()
+            .isbn("9781612620244")
+            .title("Attack on Titan")
+            .description("After a hundred years of peace, Titans suddenly take over the outermost human settlement, attacking and devouring its inhabitants. Eren Yeager, Mikasa Ackerman, and Armin Arlert join the Scout Regiment with dreams of exterminating Titans once and for all.")
+            .publishYear(2012)
+            .pageCount(208)
+            .languageCode("jp")
+            .authors(List.of(new AuthorRequest("Hajime Isayama", "Japanese manga artist and author, famous for creating the Attack on Titan manga series, which has sold over 100 million copies worldwide. Isayama's early inspirations include Tetsuo Hara's Fist of the North Star and the video game series Final Fantasy.")))
+            .categories(List.of("COMICS_AND_GRAPHIC_NOVELS", "SCIENCE_FICTION_AND_FANTASY"))
+            .publisher(new PublisherRequest("Kodansha Comics", "American subsidiary of Japanese publishing company Kodansha, specializing in manga publishing. With over 1000 titles in its catalog, it has become one of the largest English-language manga publishers in the United States"))
+            .build();
+
     BookRequest BOOK_ALL_NULLS = new BookRequest();
 
     BookRequest BOOK_AUTHOR_NULLS = BookRequest.builder()

@@ -132,11 +132,31 @@ class BookServiceTest {
     private record BookPairRequest(BookRequest bookRequest, Book book) {
     }
 
-//    @Test
-//    void editBook_shouldBuildCorrectBook() {
-//        assertNotNull(null);
-//    }
-//
+    @Test
+    @Tag(TagGroup.EDIT_BOOK)
+    void shouldBuildCorrectBook() {
+        //given
+        Book bookToEdit = BookExamples.copy(BookExamples.VALID_BOOK_1);
+        Book expected = BookExamples.VALID_BOOK_3;
+        when(bookRepository.findById(any())).thenReturn(Optional.of(bookToEdit));
+        BookRequest bookRequest = BookRequestExamples.VALID_BOOK_3;
+        String id = "1";
+
+        //when
+        bookService.editBook(id, bookRequest);
+
+        //then
+        verify(bookRepository).save(bookArgumentCaptor.capture());
+        Book actual = bookArgumentCaptor.getValue();
+
+        assertNotNull(actual);
+        assertTrue(expected.getLastEditDate().isBefore(actual.getLastEditDate()));
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getCreatedDate(), actual.getCreatedDate());
+        assertEquals(expected.getDeletedDate(), actual.getDeletedDate());
+        assertEquals(expected, actual);
+    }
+
     @Test
     @Tag(TagGroup.DELETE_BOOK)
     void shouldPutDeleteDate() {
