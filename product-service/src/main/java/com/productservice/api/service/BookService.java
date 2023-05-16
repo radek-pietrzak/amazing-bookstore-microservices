@@ -50,8 +50,8 @@ public class BookService {
         repository.save(book);
     }
 
-    //TODO return BookResponse in body
-    public void editBook(String id, BookRequest request) {
+    //TODO return other Response where null
+    public BookResponse editBook(String id, BookRequest request) {
         if (id != null) {
             Optional<Book> optionalBook = repository.findById(id);
             if (optionalBook.isPresent()) {
@@ -61,11 +61,14 @@ public class BookService {
                     if (isChangedAndSet(repoBook, reqeustBook)) {
                         repoBook.setLastEditDate(LocalDateTime.now());
                         repository.save(repoBook);
+                        return bookMapper.bookToBookResponse(repoBook);
                     }
-                } catch (IllegalAccessException ignored) {
+                } catch (IllegalAccessException e) {
+                    return null;
                 }
             }
         }
+        return null;
     }
 
     private boolean isChangedAndSet(Book repoBook, Book requestBook) throws IllegalAccessException {

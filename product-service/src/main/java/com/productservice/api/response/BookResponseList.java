@@ -10,6 +10,7 @@ import java.util.List;
 @Setter
 @EqualsAndHashCode
 public class BookResponseList {
+    //TODO add pageable instead
     private long bookQuantity;
     private long bookQuantityOnPage;
     private List<BookResponse> bookResponseList;

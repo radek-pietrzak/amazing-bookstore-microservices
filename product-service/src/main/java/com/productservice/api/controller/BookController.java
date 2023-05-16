@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -86,9 +85,9 @@ public class BookController implements BookApi {
     }
 
     @Override
-    public ResponseEntity<HttpStatus> editBook(String id, BookRequest request) {
-        bookService.editBook(id, request);
-        return ResponseEntity.ok(HttpStatus.ACCEPTED);
+    public ResponseEntity<?> editBook(String id, BookRequest request) {
+        BookResponse response = bookService.editBook(id, request);
+        return ResponseEntity.ok(response);
     }
 
     @Override
