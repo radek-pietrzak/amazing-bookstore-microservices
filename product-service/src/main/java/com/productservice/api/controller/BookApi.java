@@ -2,6 +2,7 @@ package com.productservice.api.controller;
 
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.BookResponseList;
+import com.productservice.api.response.Response;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +20,7 @@ public interface BookApi {
     ResponseEntity<?> saveBook(@Valid @RequestBody BookRequest request, BindingResult bindingResult);
 
     @PostMapping(path = API.BOOK_EDIT)
-    ResponseEntity<?> editBook(@NotNull @PathVariable String id, @Valid @RequestBody BookRequest request);
+    ResponseEntity<Response> editBook(@NotNull @PathVariable String id, @Valid @RequestBody BookRequest request);
 
     @PutMapping(path = API.BOOK_DELETE)
     ResponseEntity<?> deleteBook(@NotNull @PathVariable String id);

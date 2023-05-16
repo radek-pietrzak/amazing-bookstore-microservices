@@ -2,6 +2,7 @@ package com.productservice.api.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.productservice.ChatGPTHelper;
+import com.productservice.api.response.Response;
 import com.productservice.document.Book;
 import com.productservice.mapper.BookMapper;
 import com.productservice.repository.BookRepository;
@@ -51,8 +52,9 @@ public class BookService {
     }
 
     //TODO return other Response where null
-    public BookResponse editBook(String id, BookRequest request) {
-        if (id != null) {
+    //TODO is it worth to check StringUtils.isNotEmpty(id) if @NotNull?
+    public Response editBook(String id, BookRequest request) {
+//        if (StringUtils.isNotEmpty(id)) {
             Optional<Book> optionalBook = repository.findById(id);
             if (optionalBook.isPresent()) {
                 Book repoBook = optionalBook.get();
@@ -61,12 +63,13 @@ public class BookService {
                     if (isChangedAndSet(repoBook, reqeustBook)) {
                         repoBook.setLastEditDate(LocalDateTime.now());
                         repository.save(repoBook);
-                        return bookMapper.bookToBookResponse(repoBook);
+                        return bookMapper.bookToEditBookResponse(true, repoBook);
                     }
+                    return bookMapper.bookToEditBookResponse(false, repoBook);
                 } catch (IllegalAccessException e) {
                     return null;
                 }
-            }
+//            }
         }
         return null;
     }

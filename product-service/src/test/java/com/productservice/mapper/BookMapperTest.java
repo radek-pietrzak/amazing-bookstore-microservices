@@ -5,7 +5,9 @@ import com.productservice.api.examples.BookRequestExamples;
 import com.productservice.api.examples.BookResponseExamples;
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.BookResponse;
+import com.productservice.api.response.EditBookResponse;
 import com.productservice.document.Book;
+import com.productservice.example.EditBookResponseExamples;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
@@ -33,6 +35,18 @@ class BookMapperTest {
         Book expected = BookExamples.VALID_BOOK_1;
         //when
         Book actual = mapper.bookRequestToBook(bookRequest);
+        //then
+        assertNotNull(actual);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void shouldMapCorrectBookToEditBookResponse() {
+        //given
+        Book book = BookExamples.VALID_BOOK_1;
+        EditBookResponse expected = EditBookResponseExamples.getEditBookResponse(true, BookResponseExamples.VALID_BOOK_1);
+        //when
+        EditBookResponse actual = mapper.bookToEditBookResponse(true, book);
         //then
         assertNotNull(actual);
         assertEquals(expected, actual);

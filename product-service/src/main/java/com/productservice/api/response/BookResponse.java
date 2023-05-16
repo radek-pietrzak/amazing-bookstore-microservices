@@ -1,17 +1,18 @@
 package com.productservice.api.response;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 @EqualsAndHashCode
-public class BookResponse {
+public class BookResponse implements Response{
     private String id;
     private LocalDateTime createdDate;
     private LocalDateTime lastEditDate;

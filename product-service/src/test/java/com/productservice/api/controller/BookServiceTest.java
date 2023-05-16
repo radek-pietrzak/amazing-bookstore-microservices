@@ -3,9 +3,12 @@ package com.productservice.api.controller;
 import com.productservice.TagGroup;
 import com.productservice.api.examples.BookRequestExamples;
 import com.productservice.api.examples.BookResponseExamples;
+import com.productservice.api.response.EditBookResponse;
 import com.productservice.api.service.BookService;
+import com.productservice.api.service.ValidationService;
 import com.productservice.document.Book;
 import com.productservice.api.examples.BookExamples;
+import com.productservice.example.EditBookResponseExamples;
 import com.productservice.mapper.BookMapper;
 import com.productservice.repository.BookRepository;
 import com.productservice.api.request.BookRequest;
@@ -134,20 +137,17 @@ class BookServiceTest {
 
     @Test
     @Tag(TagGroup.EDIT_BOOK)
-    void shouldBuildCorrectBook() {
+    void shouldReturnModifiedBook() {
         //given
         Book bookToEdit = BookExamples.copy(BookExamples.VALID_BOOK_1);
-        Book expected = BookExamples.VALID_BOOK_3;
+        EditBookResponse expected = EditBookResponseExamples.getEditBookResponse(true, BookResponseExamples.VALID_BOOK_3);
         when(bookRepository.findById(any())).thenReturn(Optional.of(bookToEdit));
         BookRequest bookRequest = BookRequestExamples.VALID_BOOK_3;
         String id = "1";
 
         //when
-        bookService.editBook(id, bookRequest);
-
         //then
-        verify(bookRepository).save(bookArgumentCaptor.capture());
-        Book actual = bookArgumentCaptor.getValue();
+        EditBookResponse actual = (EditBookResponse) bookService.editBook(id, bookRequest);
 
         assertNotNull(actual);
         assertTrue(expected.getLastEditDate().isBefore(actual.getLastEditDate()));

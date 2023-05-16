@@ -1,9 +1,7 @@
 package com.productservice.api.controller;
 
 import com.productservice.api.request.BookRequest;
-import com.productservice.api.response.BadRequestResponse;
-import com.productservice.api.response.BookResponse;
-import com.productservice.api.response.BookResponseList;
+import com.productservice.api.response.*;
 import com.productservice.api.service.BookService;
 import com.productservice.api.service.ValidationService;
 import com.productservice.api.util.JsonFileToJsonObject;
@@ -13,19 +11,33 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping
 public class BookController implements BookApi {
 
     private final BookService bookService;
+    private final ValidationService validationService;
+
+    public BookController(BookService bookService, ValidationService validationService) {
+        this.bookService = bookService;
+        this.validationService = validationService;
+    }
+
     // TODO generator of api responses
     @Override
     @Operation(
@@ -38,17 +50,10 @@ public class BookController implements BookApi {
     )
     public ResponseEntity<?> getBook(String id) {
         BookResponse response = bookService.getBook(id);
-        if (response != null){
+        if (response != null) {
             return ResponseEntity.ok(response);
         }
         return ResponseEntity.badRequest().body(BadRequestResponse.UNABLE_TO_FIND_BOOK + id);
-    }
-
-    private final ValidationService validationService;
-
-    public BookController(BookService bookService, ValidationService validationService) {
-        this.bookService = bookService;
-        this.validationService = validationService;
     }
 
     @Override
@@ -85,8 +90,8 @@ public class BookController implements BookApi {
     }
 
     @Override
-    public ResponseEntity<?> editBook(String id, BookRequest request) {
-        BookResponse response = bookService.editBook(id, request);
+    public ResponseEntity<Response> editBook(String id, @Validated BookRequest request) {
+        Response response = bookService.editBook(id, request);
         return ResponseEntity.ok(response);
     }
 
@@ -101,7 +106,7 @@ public class BookController implements BookApi {
     )
     public ResponseEntity<?> deleteBook(String id) {
         BookResponse response = bookService.deleteBook(id);
-        if (response != null){
+        if (response != null) {
             return ResponseEntity.ok(response);
         }
         return ResponseEntity.badRequest().body(BadRequestResponse.UNABLE_TO_FIND_BOOK + id);
@@ -112,5 +117,22 @@ public class BookController implements BookApi {
     @Override
     public ResponseEntity<BookResponseList> getBookList(String search, Integer page, Integer pageSize) {
         return ResponseEntity.ok(bookService.getBookList(search, page, pageSize));
+    }
+
+    //TODO move to other class @ControllerAdvice public class GlobalExceptionHandler
+    //TODO make tests
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Response> handleValidationException(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        Response response = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(ex.getStatusCode().value())
+                .error(ex.getStatusCode())
+                .path(request.getRequestURI())
+                .validationMessages(ex.getBindingResult()
+                        .getAllErrors().stream()
+                        .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                        .collect(Collectors.toList()))
+                .build();
+        return ResponseEntity.badRequest().body(response);
     }
 }
