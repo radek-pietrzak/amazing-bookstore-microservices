@@ -12,6 +12,7 @@ import com.productservice.api.response.BookResponseList;
 import com.productservice.repository.BookRepositoryTemplate;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -19,10 +20,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class BookService {
@@ -51,27 +49,26 @@ public class BookService {
         repository.save(book);
     }
 
-    //TODO return other Response where null
-    //TODO is it worth to check StringUtils.isNotEmpty(id) if @NotNull?
-    public Response editBook(String id, BookRequest request) {
-//        if (StringUtils.isNotEmpty(id)) {
-            Optional<Book> optionalBook = repository.findById(id);
-            if (optionalBook.isPresent()) {
-                Book repoBook = optionalBook.get();
-                Book reqeustBook = bookMapper.bookRequestToBook(request);
-                try {
-                    if (isChangedAndSet(repoBook, reqeustBook)) {
-                        repoBook.setLastEditDate(LocalDateTime.now());
-                        repository.save(repoBook);
-                        return bookMapper.bookToEditBookResponse(true, repoBook);
-                    }
-                    return bookMapper.bookToEditBookResponse(false, repoBook);
-                } catch (IllegalAccessException e) {
-                    return null;
-                }
-//            }
+    //TODO make tests
+    public Response editBook(String id, BookRequest request) throws IllegalAccessException {
+        if (StringUtils.isBlank(id)) {
+            throw new IllegalArgumentException();
         }
-        return null;
+
+        Optional<Book> optionalBook = repository.findById(id);
+        if (optionalBook.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+
+        Book repoBook = optionalBook.get();
+        Book reqeustBook = bookMapper.bookRequestToBook(request);
+        if (isChangedAndSet(repoBook, reqeustBook)) {
+            repoBook.setLastEditDate(LocalDateTime.now());
+            repository.save(repoBook);
+            return bookMapper.bookToEditBookResponse(true, repoBook);
+        } else {
+            return bookMapper.bookToEditBookResponse(false, repoBook);
+        }
     }
 
     private boolean isChangedAndSet(Book repoBook, Book requestBook) throws IllegalAccessException {

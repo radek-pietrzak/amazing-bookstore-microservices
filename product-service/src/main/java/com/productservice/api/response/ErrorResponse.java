@@ -18,5 +18,6 @@ public class ErrorResponse implements Response {
     Integer status;
     HttpStatusCode error;
     String path;
+    String exception;
     List<String> validationMessages;
 }

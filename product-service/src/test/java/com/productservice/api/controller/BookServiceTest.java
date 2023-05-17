@@ -5,7 +5,6 @@ import com.productservice.api.examples.BookRequestExamples;
 import com.productservice.api.examples.BookResponseExamples;
 import com.productservice.api.response.EditBookResponse;
 import com.productservice.api.service.BookService;
-import com.productservice.api.service.ValidationService;
 import com.productservice.document.Book;
 import com.productservice.api.examples.BookExamples;
 import com.productservice.example.EditBookResponseExamples;
@@ -137,7 +136,7 @@ class BookServiceTest {
 
     @Test
     @Tag(TagGroup.EDIT_BOOK)
-    void shouldReturnModifiedBook() {
+    void shouldReturnModifiedBook() throws IllegalAccessException {
         //given
         Book bookToEdit = BookExamples.copy(BookExamples.VALID_BOOK_1);
         EditBookResponse expected = EditBookResponseExamples.getEditBookResponse(true, BookResponseExamples.VALID_BOOK_3);

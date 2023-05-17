@@ -8,7 +8,6 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-@EqualsAndHashCode
 public class EditBookResponse extends BookResponse {
     private boolean modified;
 }

@@ -12,19 +12,13 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping
@@ -90,7 +84,7 @@ public class BookController implements BookApi {
     }
 
     @Override
-    public ResponseEntity<Response> editBook(String id, @Validated BookRequest request) {
+    public ResponseEntity<Response> editBook(String id, BookRequest request, HttpServletRequest servletRequest) throws IllegalAccessException {
         Response response = bookService.editBook(id, request);
         return ResponseEntity.ok(response);
     }
@@ -119,20 +113,4 @@ public class BookController implements BookApi {
         return ResponseEntity.ok(bookService.getBookList(search, page, pageSize));
     }
 
-    //TODO move to other class @ControllerAdvice public class GlobalExceptionHandler
-    //TODO make tests
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Response> handleValidationException(MethodArgumentNotValidException ex, HttpServletRequest request) {
-        Response response = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(ex.getStatusCode().value())
-                .error(ex.getStatusCode())
-                .path(request.getRequestURI())
-                .validationMessages(ex.getBindingResult()
-                        .getAllErrors().stream()
-                        .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                        .collect(Collectors.toList()))
-                .build();
-        return ResponseEntity.badRequest().body(response);
-    }
 }
