@@ -83,6 +83,7 @@ public class BookController implements BookApi {
         return ResponseEntity.ok().body(response);
     }
 
+    //TODO make integration tests
     @Override
     public ResponseEntity<Response> editBook(String id, BookRequest request, HttpServletRequest servletRequest) throws IllegalAccessException {
         Response response = bookService.editBook(id, request);

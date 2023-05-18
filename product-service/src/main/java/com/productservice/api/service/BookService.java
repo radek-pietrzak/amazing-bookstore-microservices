@@ -49,7 +49,6 @@ public class BookService {
         repository.save(book);
     }
 
-    //TODO make tests
     public Response editBook(String id, BookRequest request) throws IllegalAccessException {
         if (StringUtils.isBlank(id)) {
             throw new IllegalArgumentException();

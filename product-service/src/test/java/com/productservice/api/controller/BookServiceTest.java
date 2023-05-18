@@ -28,6 +28,7 @@ import jakarta.validation.Validator;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -150,10 +151,51 @@ class BookServiceTest {
 
         assertNotNull(actual);
         assertTrue(expected.getLastEditDate().isBefore(actual.getLastEditDate()));
-        assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getCreatedDate(), actual.getCreatedDate());
-        assertEquals(expected.getDeletedDate(), actual.getDeletedDate());
         assertEquals(expected, actual);
+    }
+
+    @Test
+    @Tag(TagGroup.EDIT_BOOK)
+    void shouldNotModifyBook() throws IllegalAccessException {
+        //given
+        Book bookToEdit = BookExamples.copy(BookExamples.VALID_BOOK_1);
+        EditBookResponse expected = EditBookResponseExamples.getEditBookResponse(false, BookResponseExamples.VALID_BOOK_1);
+        when(bookRepository.findById(any())).thenReturn(Optional.of(bookToEdit));
+        BookRequest bookRequest = BookRequestExamples.VALID_BOOK_1;
+        String id = "1";
+
+        //when
+        //then
+        EditBookResponse actual = (EditBookResponse) bookService.editBook(id, bookRequest);
+
+        assertNotNull(actual);
+        assertEquals(expected.getLastEditDate(), actual.getLastEditDate());
+        assertEquals(expected.isModified(), actual.isModified());
+    }
+
+    @Test
+    @Tag(TagGroup.EDIT_BOOK)
+    void shouldThrowIllegalArgumentException() {
+        //given
+        BookRequest bookRequest = BookRequestExamples.VALID_BOOK_3;
+
+        //when
+        //then
+        assertThrows(IllegalArgumentException.class, () -> bookService.editBook(null, bookRequest));
+        assertThrows(IllegalArgumentException.class, () -> bookService.editBook("", bookRequest));
+        assertThrows(IllegalArgumentException.class, () -> bookService.editBook(" ", bookRequest));
+    }
+
+    @Test
+    @Tag(TagGroup.EDIT_BOOK)
+    void shouldThrowNoSuchElementException() {
+        //given
+        BookRequest bookRequest = BookRequestExamples.VALID_BOOK_3;
+        when(bookRepository.findById(any())).thenReturn(Optional.empty());
+
+        //when
+        //then
+        assertThrows(NoSuchElementException.class, () -> bookService.editBook("1", bookRequest));
     }
 
     @Test

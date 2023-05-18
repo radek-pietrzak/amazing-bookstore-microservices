@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"lastEditDate"})
 public class BookResponse implements Response{
     private String id;
     private LocalDateTime createdDate;

@@ -24,7 +24,6 @@ public class RestExceptionHandler {
                 .status(ex.getStatusCode().value())
                 .error(ex.getStatusCode())
                 .path(request.getRequestURI())
-                .exception(ex.toString())
                 .validationMessages(ex.getBindingResult()
                         .getAllErrors().stream()
                         .map(DefaultMessageSourceResolvable::getDefaultMessage)
