@@ -1,4 +1,4 @@
-package com.productservice.api.examples;
+package com.productservice.example;
 
 import com.productservice.api.response.AuthorResponse;
 import com.productservice.api.response.BookResponse;
@@ -7,7 +7,7 @@ import com.productservice.api.response.PublisherResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface BookResponseExamples {
+public interface BookResponseExample {
 
     BookResponse VALID_BOOK_1 = BookResponse.builder()
             .id("1")

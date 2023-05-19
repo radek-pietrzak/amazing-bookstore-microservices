@@ -1,4 +1,4 @@
-package com.productservice.api.examples;
+package com.productservice.api.example;
 
 import com.productservice.api.request.AuthorRequest;
 import com.productservice.api.request.BookRequest;
@@ -6,7 +6,7 @@ import com.productservice.api.request.PublisherRequest;
 
 import java.util.List;
 
-public interface BookRequestExamples {
+public interface BookRequestExamplesTest {
 
     BookRequest VALID_BOOK_1 = BookRequest.builder()
             .isbn("9780316769488")

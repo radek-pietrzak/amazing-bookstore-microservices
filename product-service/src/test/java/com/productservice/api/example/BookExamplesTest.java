@@ -1,4 +1,4 @@
-package com.productservice.api.examples;
+package com.productservice.api.example;
 
 import com.productservice.document.Author;
 import com.productservice.document.Book;
@@ -11,7 +11,7 @@ import java.util.List;
 
 import static com.productservice.document.Category.*;
 
-public interface BookExamples {
+public interface BookExamplesTest {
 
     Book VALID_BOOK_1 = new Book.BookBuilder()
             .id("1")

@@ -1,4 +1,4 @@
-package com.productservice.examples;
+package com.productservice.example;
 
 public interface BookRequestJsonExample {
     String VALID_BOOK_1 = """

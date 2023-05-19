@@ -3,8 +3,8 @@ package com.productservice.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.productservice.TagGroup;
-import com.productservice.api.examples.BookRequestExamples;
-import com.productservice.api.examples.BookResponseExamples;
+import com.productservice.api.example.BookRequestExamplesTest;
+import com.productservice.api.example.BookResponseExamplesTest;
 import com.productservice.api.response.BadRequestResponse;
 import com.productservice.api.service.BookService;
 import com.productservice.api.service.ValidationService;
@@ -57,7 +57,7 @@ class BookControllerTest {
     @Tag(TagGroup.ERRORS)
     void shouldReturnBadRequestIfBookAllNulls() throws Exception {
         //given
-        BookRequest request = BookRequestExamples.BOOK_ALL_NULLS;
+        BookRequest request = BookRequestExamplesTest.BOOK_ALL_NULLS;
         //when
         //then
         String result = mockMvc.perform(post(API.BOOK_SAVE)
@@ -85,7 +85,7 @@ class BookControllerTest {
     @Tag(TagGroup.ERRORS)
     void shouldReturnBadRequestIfAuthorAllNulls() throws Exception {
         //given
-        BookRequest request = BookRequestExamples.BOOK_AUTHOR_NULLS;
+        BookRequest request = BookRequestExamplesTest.BOOK_AUTHOR_NULLS;
         //when
         //then
         String result = mockMvc.perform(post(API.BOOK_SAVE)
@@ -105,7 +105,7 @@ class BookControllerTest {
     @Tag(TagGroup.ERRORS)
     void shouldReturnBadRequestIfPublisherAllNulls() throws Exception {
         //given
-        BookRequest request = BookRequestExamples.BOOK_PUBLISHER_NULLS;
+        BookRequest request = BookRequestExamplesTest.BOOK_PUBLISHER_NULLS;
         //when
         //then
         String result = mockMvc.perform(post(API.BOOK_SAVE)
@@ -143,10 +143,10 @@ class BookControllerTest {
 
     private static List<BookRequest> invalidISBNProvider() {
         return List.of(
-                BookRequestExamples.INVALID_ISBN_1,
-                BookRequestExamples.INVALID_ISBN_2,
-                BookRequestExamples.INVALID_ISBN_3,
-                BookRequestExamples.INVALID_ISBN_4
+                BookRequestExamplesTest.INVALID_ISBN_1,
+                BookRequestExamplesTest.INVALID_ISBN_2,
+                BookRequestExamplesTest.INVALID_ISBN_3,
+                BookRequestExamplesTest.INVALID_ISBN_4
         );
     }
 
@@ -172,8 +172,8 @@ class BookControllerTest {
 
     private static List<BookRequest> invalidTitleSizeProvider() {
         return List.of(
-                BookRequestExamples.INVALID_TITLE_SIZE_MIN,
-                BookRequestExamples.INVALID_TITLE_SIZE_MAX
+                BookRequestExamplesTest.INVALID_TITLE_SIZE_MIN,
+                BookRequestExamplesTest.INVALID_TITLE_SIZE_MAX
         );
     }
 
@@ -199,8 +199,8 @@ class BookControllerTest {
 
     private static List<BookRequest> invalidDescriptionSizeProvider() {
         return List.of(
-                BookRequestExamples.INVALID_DESCRIPTION_SIZE_MIN,
-                BookRequestExamples.INVALID_DESCRIPTION_SIZE_MAX
+                BookRequestExamplesTest.INVALID_DESCRIPTION_SIZE_MIN,
+                BookRequestExamplesTest.INVALID_DESCRIPTION_SIZE_MAX
         );
     }
 
@@ -226,8 +226,8 @@ class BookControllerTest {
 
     private static List<BookRequest> invalidPageCountMinProvider() {
         return List.of(
-                BookRequestExamples.INVALID_PAGE_COUNT_MIN_1,
-                BookRequestExamples.INVALID_PAGE_COUNT_MIN_2
+                BookRequestExamplesTest.INVALID_PAGE_COUNT_MIN_1,
+                BookRequestExamplesTest.INVALID_PAGE_COUNT_MIN_2
         );
     }
 
@@ -253,8 +253,8 @@ class BookControllerTest {
 
     private static List<BookRequest> invalidPageCountMaxProvider() {
         return List.of(
-                BookRequestExamples.INVALID_PAGE_COUNT_MAX_1,
-                BookRequestExamples.INVALID_PAGE_COUNT_MAX_2
+                BookRequestExamplesTest.INVALID_PAGE_COUNT_MAX_1,
+                BookRequestExamplesTest.INVALID_PAGE_COUNT_MAX_2
         );
     }
 
@@ -280,9 +280,9 @@ class BookControllerTest {
 
     private static List<BookRequest> invalidLanguageCodeProvider() {
         return List.of(
-                BookRequestExamples.INVALID_LANG_CODE_1,
-                BookRequestExamples.INVALID_LANG_CODE_2,
-                BookRequestExamples.INVALID_LANG_CODE_3
+                BookRequestExamplesTest.INVALID_LANG_CODE_1,
+                BookRequestExamplesTest.INVALID_LANG_CODE_2,
+                BookRequestExamplesTest.INVALID_LANG_CODE_3
         );
     }
 
@@ -308,8 +308,8 @@ class BookControllerTest {
 
     private static List<BookRequest> invalidAuthorNameProvider() {
         return List.of(
-                BookRequestExamples.INVALID_AUTHOR_NAME_1,
-                BookRequestExamples.INVALID_AUTHOR_NAME_2
+                BookRequestExamplesTest.INVALID_AUTHOR_NAME_1,
+                BookRequestExamplesTest.INVALID_AUTHOR_NAME_2
         );
     }
 
@@ -335,8 +335,8 @@ class BookControllerTest {
 
     private static List<BookRequest> invalidAuthorDescriptionProvider() {
         return List.of(
-                BookRequestExamples.INVALID_AUTHOR_DESCRIPTION_1,
-                BookRequestExamples.INVALID_AUTHOR_DESCRIPTION_2
+                BookRequestExamplesTest.INVALID_AUTHOR_DESCRIPTION_1,
+                BookRequestExamplesTest.INVALID_AUTHOR_DESCRIPTION_2
         );
     }
 
@@ -362,10 +362,10 @@ class BookControllerTest {
 
     private static List<BookRequest> invalidCategoryProvider() {
         return List.of(
-                BookRequestExamples.INVALID_CATEGORY_1,
-                BookRequestExamples.INVALID_CATEGORY_2,
-                BookRequestExamples.INVALID_CATEGORY_3,
-                BookRequestExamples.INVALID_CATEGORY_4
+                BookRequestExamplesTest.INVALID_CATEGORY_1,
+                BookRequestExamplesTest.INVALID_CATEGORY_2,
+                BookRequestExamplesTest.INVALID_CATEGORY_3,
+                BookRequestExamplesTest.INVALID_CATEGORY_4
         );
     }
 
@@ -391,8 +391,8 @@ class BookControllerTest {
 
     private static List<BookRequest> invalidPublisherNameProvider() {
         return List.of(
-                BookRequestExamples.INVALID_PUBLISHER_NAME_LENGTH_1,
-                BookRequestExamples.INVALID_PUBLISHER_NAME_LENGTH_2
+                BookRequestExamplesTest.INVALID_PUBLISHER_NAME_LENGTH_1,
+                BookRequestExamplesTest.INVALID_PUBLISHER_NAME_LENGTH_2
         );
     }
 
@@ -400,7 +400,7 @@ class BookControllerTest {
     @Tag(TagGroup.ERRORS)
     void shouldReturnBadRequestIfInvalidPublisherName() throws Exception {
         //given
-        BookRequest request = BookRequestExamples.INVALID_PUBLISHER_DESCRIPTION_LENGTH_1;
+        BookRequest request = BookRequestExamplesTest.INVALID_PUBLISHER_DESCRIPTION_LENGTH_1;
         //when
         //then
         String result = mockMvc.perform(post(API.BOOK_SAVE)
@@ -420,9 +420,9 @@ class BookControllerTest {
     @Tag(TagGroup.EDIT_BOOK)
     void shouldReturnModifiedBook() throws Exception {
         //given
-        BookRequest request = BookRequestExamples.VALID_BOOK_1;
+        BookRequest request = BookRequestExamplesTest.VALID_BOOK_1;
         String id = "1";
-        when(bookService.editBook(any(), any())).thenReturn(BookResponseExamples.VALID_BOOK_1);
+        when(bookService.editBook(any(), any())).thenReturn(BookResponseExamplesTest.VALID_BOOK_1);
         //when
         //then
         mockMvc.perform(post(API.BOOK_EDIT, id)
@@ -456,7 +456,7 @@ class BookControllerTest {
     void shouldReturnOKIfValidBookId_deleteBook() throws Exception {
         //given
         String bookId = "1";
-        when(bookService.deleteBook(any())).thenReturn(BookResponseExamples.VALID_BOOK_1);
+        when(bookService.deleteBook(any())).thenReturn(BookResponseExamplesTest.VALID_BOOK_1);
         //when
         //then
         mockMvc.perform(put(API.BOOK_DELETE, bookId)
@@ -469,7 +469,7 @@ class BookControllerTest {
     void shouldReturnOKIfValidBookId() throws Exception {
         //given
         String bookId = "1";
-        when(bookService.getBook(any())).thenReturn(BookResponseExamples.VALID_BOOK_1);
+        when(bookService.getBook(any())).thenReturn(BookResponseExamplesTest.VALID_BOOK_1);
         //when
         //then
         mockMvc.perform(get(API.GET_BOOK, bookId)
@@ -501,8 +501,8 @@ class BookControllerTest {
 
     private static List<BookRequest> validBooksRequestProvider() {
         return List.of(
-                BookRequestExamples.VALID_BOOK_1,
-                BookRequestExamples.VALID_BOOK_2
+                BookRequestExamplesTest.VALID_BOOK_1,
+                BookRequestExamplesTest.VALID_BOOK_2
         );
     }
 

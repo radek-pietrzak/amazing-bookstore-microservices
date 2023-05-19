@@ -5,7 +5,7 @@ import com.productservice.api.response.*;
 import com.productservice.api.service.BookService;
 import com.productservice.api.service.ValidationService;
 import com.productservice.api.util.JsonFileToJsonObject;
-import com.productservice.examples.BookRequestJsonExample;
+import com.productservice.example.BookRequestJsonExample;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -83,7 +83,14 @@ public class BookController implements BookApi {
     }
 
     //TODO make integration tests
-    //TODO api response add
+    @Operation(
+            description = "Edit book",
+            responses = {
+                    @ApiResponse(responseCode = "200", ref = "successfullyEditedBook"),
+                    @ApiResponse(responseCode = "400", ref = "400"),
+                    @ApiResponse(responseCode = "404", ref = "404"),
+            }
+    )
     @Override
     public ResponseEntity<Response> editBook(String id, BookRequest request) throws IllegalAccessException {
         Response response = bookService.editBook(id, request);

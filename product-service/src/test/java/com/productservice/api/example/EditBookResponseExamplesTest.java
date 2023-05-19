@@ -1,9 +1,9 @@
-package com.productservice.example;
+package com.productservice.api.example;
 
 import com.productservice.api.response.BookResponse;
 import com.productservice.api.response.EditBookResponse;
 
-public class EditBookResponseExamples {
+public class EditBookResponseExamplesTest {
 
     public static EditBookResponse getEditBookResponse(boolean modified, BookResponse bookResponse) {
         return EditBookResponse.builder()

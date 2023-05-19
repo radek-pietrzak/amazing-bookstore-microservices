@@ -1,13 +1,13 @@
 package com.productservice.api.controller;
 
 import com.productservice.TagGroup;
-import com.productservice.api.examples.BookRequestExamples;
-import com.productservice.api.examples.BookResponseExamples;
+import com.productservice.api.example.BookRequestExamplesTest;
+import com.productservice.api.example.BookResponseExamplesTest;
 import com.productservice.api.response.EditBookResponse;
 import com.productservice.api.service.BookService;
 import com.productservice.document.Book;
-import com.productservice.api.examples.BookExamples;
-import com.productservice.example.EditBookResponseExamples;
+import com.productservice.api.example.BookExamplesTest;
+import com.productservice.api.example.EditBookResponseExamplesTest;
 import com.productservice.mapper.BookMapper;
 import com.productservice.repository.BookRepository;
 import com.productservice.api.request.BookRequest;
@@ -85,8 +85,8 @@ class BookServiceTest {
 
     private static List<BookPairResponse> validBookPairResponseProvider() {
         return List.of(
-                new BookPairResponse(BookResponseExamples.VALID_BOOK_1, BookExamples.VALID_BOOK_1),
-                new BookPairResponse(BookResponseExamples.VALID_BOOK_2, BookExamples.VALID_BOOK_2)
+                new BookPairResponse(BookResponseExamplesTest.VALID_BOOK_1, BookExamplesTest.VALID_BOOK_1),
+                new BookPairResponse(BookResponseExamplesTest.VALID_BOOK_2, BookExamplesTest.VALID_BOOK_2)
         );
     }
 
@@ -127,8 +127,8 @@ class BookServiceTest {
 
     private static List<BookPairRequest> validBookPairRequestsProvider() {
         return List.of(
-                new BookPairRequest(BookRequestExamples.VALID_BOOK_1, BookExamples.VALID_BOOK_1),
-                new BookPairRequest(BookRequestExamples.VALID_BOOK_2, BookExamples.VALID_BOOK_2)
+                new BookPairRequest(BookRequestExamplesTest.VALID_BOOK_1, BookExamplesTest.VALID_BOOK_1),
+                new BookPairRequest(BookRequestExamplesTest.VALID_BOOK_2, BookExamplesTest.VALID_BOOK_2)
         );
     }
 
@@ -139,10 +139,10 @@ class BookServiceTest {
     @Tag(TagGroup.EDIT_BOOK)
     void shouldReturnModifiedBook() throws IllegalAccessException {
         //given
-        Book bookToEdit = BookExamples.copy(BookExamples.VALID_BOOK_1);
-        EditBookResponse expected = EditBookResponseExamples.getEditBookResponse(true, BookResponseExamples.VALID_BOOK_3);
+        Book bookToEdit = BookExamplesTest.copy(BookExamplesTest.VALID_BOOK_1);
+        EditBookResponse expected = EditBookResponseExamplesTest.getEditBookResponse(true, BookResponseExamplesTest.VALID_BOOK_3);
         when(bookRepository.findById(any())).thenReturn(Optional.of(bookToEdit));
-        BookRequest bookRequest = BookRequestExamples.VALID_BOOK_3;
+        BookRequest bookRequest = BookRequestExamplesTest.VALID_BOOK_3;
         String id = "1";
 
         //when
@@ -158,10 +158,10 @@ class BookServiceTest {
     @Tag(TagGroup.EDIT_BOOK)
     void shouldNotModifyBook() throws IllegalAccessException {
         //given
-        Book bookToEdit = BookExamples.copy(BookExamples.VALID_BOOK_1);
-        EditBookResponse expected = EditBookResponseExamples.getEditBookResponse(false, BookResponseExamples.VALID_BOOK_1);
+        Book bookToEdit = BookExamplesTest.copy(BookExamplesTest.VALID_BOOK_1);
+        EditBookResponse expected = EditBookResponseExamplesTest.getEditBookResponse(false, BookResponseExamplesTest.VALID_BOOK_1);
         when(bookRepository.findById(any())).thenReturn(Optional.of(bookToEdit));
-        BookRequest bookRequest = BookRequestExamples.VALID_BOOK_1;
+        BookRequest bookRequest = BookRequestExamplesTest.VALID_BOOK_1;
         String id = "1";
 
         //when
@@ -177,7 +177,7 @@ class BookServiceTest {
     @Tag(TagGroup.EDIT_BOOK)
     void shouldThrowIllegalArgumentException() {
         //given
-        BookRequest bookRequest = BookRequestExamples.VALID_BOOK_3;
+        BookRequest bookRequest = BookRequestExamplesTest.VALID_BOOK_3;
 
         //when
         //then
@@ -190,7 +190,7 @@ class BookServiceTest {
     @Tag(TagGroup.EDIT_BOOK)
     void shouldThrowNoSuchElementException() {
         //given
-        BookRequest bookRequest = BookRequestExamples.VALID_BOOK_3;
+        BookRequest bookRequest = BookRequestExamplesTest.VALID_BOOK_3;
         when(bookRepository.findById(any())).thenReturn(Optional.empty());
 
         //when
@@ -202,7 +202,7 @@ class BookServiceTest {
     @Tag(TagGroup.DELETE_BOOK)
     void shouldPutDeleteDate() {
         //given
-        Book book = BookExamples.copy(BookExamples.VALID_BOOK_1);
+        Book book = BookExamplesTest.copy(BookExamplesTest.VALID_BOOK_1);
         when(bookRepository.findById(any())).thenReturn(Optional.of(book));
 
         //when
@@ -220,9 +220,9 @@ class BookServiceTest {
     @Tag(TagGroup.GET_BOOK_LIST)
     void shouldReturnCorrectBookList() {
         //given
-        List<Book> books = List.of(BookExamples.VALID_BOOK_1, BookExamples.VALID_BOOK_2);
+        List<Book> books = List.of(BookExamplesTest.VALID_BOOK_1, BookExamplesTest.VALID_BOOK_2);
         when(bookRepositoryTemplate.findBySearchTermAndPageRequest(any(), any())).thenReturn(books);
-        BookResponseList expected = new BookResponseList(2L, 2L, List.of(BookResponseExamples.VALID_BOOK_1, BookResponseExamples.VALID_BOOK_2));
+        BookResponseList expected = new BookResponseList(2L, 2L, List.of(BookResponseExamplesTest.VALID_BOOK_1, BookResponseExamplesTest.VALID_BOOK_2));
         //when
         BookResponseList actual = bookService.getBookList(null, null, null);
         //then
