@@ -4,7 +4,6 @@ import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.BookResponseList;
 import com.productservice.api.response.Response;
 import jakarta.annotation.Nullable;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.QueryParam;
@@ -17,14 +16,14 @@ public interface BookApi {
     @GetMapping(path = API.GET_BOOK)
     ResponseEntity<?> getBook(@NotNull @PathVariable String id);
 
+    //TODO remove biding result
     @PostMapping(path = API.BOOK_SAVE)
     ResponseEntity<?> saveBook(@Valid @RequestBody BookRequest request, BindingResult bindingResult);
 
     @PostMapping(path = API.BOOK_EDIT)
     ResponseEntity<Response> editBook(
             @PathVariable String id,
-            @Valid @RequestBody BookRequest request,
-            HttpServletRequest servletRequest
+            @Valid @RequestBody BookRequest request
     ) throws IllegalAccessException;
 
     @PutMapping(path = API.BOOK_DELETE)

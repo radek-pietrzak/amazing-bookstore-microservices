@@ -417,6 +417,22 @@ class BookControllerTest {
     }
 
     @Test
+    @Tag(TagGroup.EDIT_BOOK)
+    void shouldReturnModifiedBook() throws Exception {
+        //given
+        BookRequest request = BookRequestExamples.VALID_BOOK_1;
+        String id = "1";
+        when(bookService.editBook(any(), any())).thenReturn(BookResponseExamples.VALID_BOOK_1);
+        //when
+        //then
+        mockMvc.perform(post(API.BOOK_EDIT, id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request)))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
     @Tag(TagGroup.DELETE_BOOK)
     void shouldReturnBadRequestInvalidBookId_deleteBook() throws Exception {
         //given

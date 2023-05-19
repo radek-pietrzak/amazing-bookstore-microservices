@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -84,8 +83,9 @@ public class BookController implements BookApi {
     }
 
     //TODO make integration tests
+    //TODO api response add
     @Override
-    public ResponseEntity<Response> editBook(String id, BookRequest request, HttpServletRequest servletRequest) throws IllegalAccessException {
+    public ResponseEntity<Response> editBook(String id, BookRequest request) throws IllegalAccessException {
         Response response = bookService.editBook(id, request);
         return ResponseEntity.ok(response);
     }
