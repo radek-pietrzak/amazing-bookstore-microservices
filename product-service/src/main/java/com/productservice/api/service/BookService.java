@@ -37,9 +37,18 @@ public class BookService {
         this.bookMapper = bookMapper;
     }
 
-    public BookResponse getBook(String id) {
+    public Response getBook(String id) {
+        if (StringUtils.isBlank(id)) {
+            throw new IllegalArgumentException();
+        }
+
         Optional<Book> optionalBook = repository.findById(id);
-        return optionalBook.map(bookMapper::bookToBookResponse).orElse(null);
+
+        if (optionalBook.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+
+        return bookMapper.bookToBookResponse(optionalBook.get());
     }
 
     //TODO return BookResponse in body

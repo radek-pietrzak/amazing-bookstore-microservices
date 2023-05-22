@@ -31,22 +31,17 @@ public class BookController implements BookApi {
         this.validationService = validationService;
     }
 
-    // TODO generator of api responses
     @Override
     @Operation(
             description = "Get book",
             responses = {
                     @ApiResponse(responseCode = "200", ref = "successfullyGetBook"),
-                    @ApiResponse(responseCode = "400", ref = "badBookRequestApi"),
-                    @ApiResponse(responseCode = "500", ref = "internalErrorServerApi")
+                    @ApiResponse(responseCode = "404", ref = "404")
             }
     )
-    public ResponseEntity<?> getBook(String id) {
-        BookResponse response = bookService.getBook(id);
-        if (response != null) {
-            return ResponseEntity.ok(response);
-        }
-        return ResponseEntity.badRequest().body(BadRequestResponse.UNABLE_TO_FIND_BOOK + id);
+    public ResponseEntity<Response> getBook(String id) {
+        Response response = bookService.getBook(id);
+        return ResponseEntity.ok(response);
     }
 
     @Override
@@ -87,7 +82,7 @@ public class BookController implements BookApi {
             responses = {
                     @ApiResponse(responseCode = "200", ref = "successfullyEditedBook"),
                     @ApiResponse(responseCode = "400", ref = "400"),
-                    @ApiResponse(responseCode = "404", ref = "404"),
+                    @ApiResponse(responseCode = "404", ref = "404")
             }
     )
     @Override

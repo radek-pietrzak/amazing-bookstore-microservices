@@ -28,9 +28,12 @@ public class SpringdocConfig {
     @Bean
     public OpenAPI baseOpenAPI() {
 
+        Example successfullyGetBook = new Example().value(EditBookResponseExample.getEditBookResponse(true, BookResponseExample.VALID_BOOK_1));
+        addResponseToComponents(components, "successfullyGetBook", successfullyGetBook);
 
-        Example successfullyEditedBook = new Example().value(EditBookResponseExample.getEditBookResponse(true, BookResponseExample.VALID_BOOK_1));
+        Example successfullyEditedBook = new Example().value(BookResponseExample.VALID_BOOK_1);
         addResponseToComponents(components, "successfullyEditedBook", successfullyEditedBook);
+
 
         Example validationException = new Example().value(ErrorResponseExample.VALIDATION_EXCEPTION);
         addResponseToComponents(components, "400", validationException);
@@ -41,7 +44,6 @@ public class SpringdocConfig {
         addResponseToComponents(components, "badRequest", "Bad request", "badBookRequestApi");
         addResponseToComponents(components, "internalServerError", "Internal server error", "internalErrorServerApi");
         addResponseToComponents(components, "successfullySavedBook", "Successfully saved book", "successfullySavedBook");
-        addResponseToComponents(components, "successfullyGetBook", "Successfully get book", "successfullyGetBook");
         addResponseToComponents(components, "bookNotFound", "Book not found", "bookNotFound");
         addResponseToComponents(components, "successfullyDeletedBook", "Successfully deleted book", "successfullyDeletedBook");
         addResponseToComponents(components, "successfullyDeletedBook", "Successfully deleted book", "successfullyDeletedBook");

@@ -4,6 +4,7 @@ import com.productservice.TagGroup;
 import com.productservice.api.example.BookRequestExamplesTest;
 import com.productservice.api.example.BookResponseExamplesTest;
 import com.productservice.api.response.EditBookResponse;
+import com.productservice.api.response.Response;
 import com.productservice.api.service.BookService;
 import com.productservice.document.Book;
 import com.productservice.api.example.BookExamplesTest;
@@ -60,26 +61,12 @@ class BookServiceTest {
     @Tag(TagGroup.GET_BOOK)
     void shouldReturnCorrectResponse(BookPairResponse bookPairResponse) {
         //given
-        BookResponse expected = bookPairResponse.bookResponse;
+        Response expected = bookPairResponse.bookResponse;
         when(bookRepository.findById(any())).thenReturn(Optional.ofNullable(bookPairResponse.book));
         //when
-        BookResponse actual = bookService.getBook(any());
+        Response actual = bookService.getBook("1");
         //then
         assertNotNull(actual);
-        assertNotNull(actual.getId());
-        assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getCreatedDate(), actual.getCreatedDate());
-        assertEquals(expected.getLastEditDate(), actual.getLastEditDate());
-        assertEquals(expected.getDeletedDate(), actual.getDeletedDate());
-        assertEquals(expected.getIsbn(), actual.getIsbn());
-        assertEquals(expected.getTitle(), actual.getTitle());
-        assertEquals(expected.getDescription(), actual.getDescription());
-        assertEquals(expected.getPageCount(), actual.getPageCount());
-        assertEquals(expected.getLanguageCode(), actual.getLanguageCode());
-        assertEquals(expected.getAuthors(), actual.getAuthors());
-        assertEquals(expected.getCategories(), actual.getCategories());
-        assertEquals(expected.getPublisher(), actual.getPublisher());
-        assertEquals(expected.getPublishYear(), actual.getPublishYear());
         assertEquals(expected, actual);
     }
 
