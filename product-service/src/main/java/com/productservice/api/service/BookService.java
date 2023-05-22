@@ -38,17 +38,7 @@ public class BookService {
     }
 
     public Response getBook(String id) {
-        if (StringUtils.isBlank(id)) {
-            throw new IllegalArgumentException();
-        }
-
-        Optional<Book> optionalBook = repository.findById(id);
-
-        if (optionalBook.isEmpty()) {
-            throw new NoSuchElementException();
-        }
-
-        return bookMapper.bookToBookResponse(optionalBook.get());
+        return bookMapper.bookToBookResponse(getBookIfPresent(id));
     }
 
     //TODO return BookResponse in body
@@ -59,16 +49,7 @@ public class BookService {
     }
 
     public Response editBook(String id, BookRequest request) throws IllegalAccessException {
-        if (StringUtils.isBlank(id)) {
-            throw new IllegalArgumentException();
-        }
-
-        Optional<Book> optionalBook = repository.findById(id);
-        if (optionalBook.isEmpty()) {
-            throw new NoSuchElementException();
-        }
-
-        Book repoBook = optionalBook.get();
+        Book repoBook = getBookIfPresent(id);
         Book reqeustBook = bookMapper.bookRequestToBook(request);
         if (isChangedAndSet(repoBook, reqeustBook)) {
             repoBook.setLastEditDate(LocalDateTime.now());
@@ -151,5 +132,18 @@ public class BookService {
                 .toList();
 
         return new BookResponseList(booksTotal, list.size(), list);
+    }
+
+    private Book getBookIfPresent(String id) {
+        if (StringUtils.isBlank(id)) {
+            throw new IllegalArgumentException();
+        }
+
+        Optional<Book> optionalBook = repository.findById(id);
+
+        if (optionalBook.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        return optionalBook.get();
     }
 }

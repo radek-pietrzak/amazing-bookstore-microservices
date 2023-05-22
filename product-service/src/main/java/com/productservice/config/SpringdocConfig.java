@@ -28,22 +28,27 @@ public class SpringdocConfig {
     @Bean
     public OpenAPI baseOpenAPI() {
 
-        Example successfullyGetBook = new Example().value(EditBookResponseExample.getEditBookResponse(true, BookResponseExample.VALID_BOOK_1));
+        Example successfullyGetBook = new Example().value(BookResponseExample.VALID_BOOK_1);
         addResponseToComponents(components, "successfullyGetBook", successfullyGetBook);
 
-        Example successfullyEditedBook = new Example().value(BookResponseExample.VALID_BOOK_1);
+        Example notFoundExceptionGet = new Example().value(ErrorResponseExample.NOT_FOUND_EXCEPTION_GET);
+        addResponseToComponents(components, "notFoundExceptionGet", notFoundExceptionGet);
+
+        Example successfullySavedBook = new Example().value(BookResponseExample.VALID_BOOK_1);
+        addResponseToComponents(components, "successfullySavedBook", successfullySavedBook);
+
+        Example validationExceptionSave = new Example().value(ErrorResponseExample.VALIDATION_EXCEPTION_SAVE);
+        addResponseToComponents(components, "validationExceptionSave", validationExceptionSave);
+
+        Example successfullyEditedBook = new Example().value(EditBookResponseExample.getEditBookResponse(true, BookResponseExample.VALID_BOOK_1));
         addResponseToComponents(components, "successfullyEditedBook", successfullyEditedBook);
 
+        Example validationExceptionEdit = new Example().value(ErrorResponseExample.VALIDATION_EXCEPTION_EDIT);
+        addResponseToComponents(components, "validationExceptionEdit", validationExceptionEdit);
 
-        Example validationException = new Example().value(ErrorResponseExample.VALIDATION_EXCEPTION);
-        addResponseToComponents(components, "400", validationException);
+        Example notFoundExceptionEdit = new Example().value(ErrorResponseExample.NOT_FOUND_EXCEPTION_EDIT);
+        addResponseToComponents(components, "notFoundExceptionEdit", notFoundExceptionEdit);
 
-        Example notFoundException = new Example().value(ErrorResponseExample.NOT_FOUND_EXCEPTION);
-        addResponseToComponents(components, "404", notFoundException);
-
-        addResponseToComponents(components, "badRequest", "Bad request", "badBookRequestApi");
-        addResponseToComponents(components, "internalServerError", "Internal server error", "internalErrorServerApi");
-        addResponseToComponents(components, "successfullySavedBook", "Successfully saved book", "successfullySavedBook");
         addResponseToComponents(components, "bookNotFound", "Book not found", "bookNotFound");
         addResponseToComponents(components, "successfullyDeletedBook", "Successfully deleted book", "successfullyDeletedBook");
         addResponseToComponents(components, "successfullyDeletedBook", "Successfully deleted book", "successfullyDeletedBook");

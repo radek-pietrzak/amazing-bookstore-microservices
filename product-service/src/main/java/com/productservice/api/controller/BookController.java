@@ -36,7 +36,7 @@ public class BookController implements BookApi {
             description = "Get book",
             responses = {
                     @ApiResponse(responseCode = "200", ref = "successfullyGetBook"),
-                    @ApiResponse(responseCode = "404", ref = "404")
+                    @ApiResponse(responseCode = "404", ref = "notFoundExceptionGet")
             }
     )
     public ResponseEntity<Response> getBook(String id) {
@@ -49,8 +49,7 @@ public class BookController implements BookApi {
             description = "Save book",
             responses = {
                     @ApiResponse(responseCode = "202", ref = "successfullySavedBook"),
-                    @ApiResponse(responseCode = "400", ref = "badBookRequestApi"),
-                    @ApiResponse(responseCode = "500", ref = "internalErrorServerApi")
+                    @ApiResponse(responseCode = "400", ref = "validationExceptionSave")
             }
     )
     public ResponseEntity<?> saveBook(@RequestBody(
@@ -81,8 +80,8 @@ public class BookController implements BookApi {
             description = "Edit book",
             responses = {
                     @ApiResponse(responseCode = "200", ref = "successfullyEditedBook"),
-                    @ApiResponse(responseCode = "400", ref = "400"),
-                    @ApiResponse(responseCode = "404", ref = "404")
+                    @ApiResponse(responseCode = "400", ref = "validationExceptionEdit"),
+                    @ApiResponse(responseCode = "404", ref = "notFoundExceptionEdit")
             }
     )
     @Override

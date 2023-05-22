@@ -426,7 +426,7 @@ class BookControllerTest {
         when(bookService.editBook(any(), any())).thenReturn(BookResponseExamplesTest.VALID_BOOK_1);
         //when
         //then
-        mockMvc.perform(post(API.BOOK_EDIT, id)
+        mockMvc.perform(post(API.BOOK_EDIT_ID, id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andDo(print())
@@ -441,7 +441,7 @@ class BookControllerTest {
         when(bookService.deleteBook(any())).thenReturn(null);
         //when
         //then
-        String actual = mockMvc.perform(put(API.BOOK_DELETE, bookId)
+        String actual = mockMvc.perform(put(API.BOOK_DELETE_ID, bookId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -460,7 +460,7 @@ class BookControllerTest {
         when(bookService.deleteBook(any())).thenReturn(BookResponseExamplesTest.VALID_BOOK_1);
         //when
         //then
-        mockMvc.perform(put(API.BOOK_DELETE, bookId)
+        mockMvc.perform(put(API.BOOK_DELETE_ID, bookId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -473,7 +473,7 @@ class BookControllerTest {
         when(bookService.getBook(any())).thenReturn(BookResponseExamplesTest.VALID_BOOK_1);
         //when
         //then
-        mockMvc.perform(get(API.GET_BOOK, bookId)
+        mockMvc.perform(get(API.BOOK_GET_ID, bookId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
