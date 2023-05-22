@@ -54,7 +54,7 @@ class BookControllerTest {
     }
 
     @Test
-    @Tag(TagGroup.ERRORS)
+    @Tag(TagGroup.VALIDATION)
     void shouldReturnBadRequestIfBookAllNulls() throws Exception {
         //given
         BookRequest request = BookRequestExamplesTest.BOOK_ALL_NULLS;
@@ -82,7 +82,7 @@ class BookControllerTest {
     }
 
     @Test
-    @Tag(TagGroup.ERRORS)
+    @Tag(TagGroup.VALIDATION)
     void shouldReturnBadRequestIfAuthorAllNulls() throws Exception {
         //given
         BookRequest request = BookRequestExamplesTest.BOOK_AUTHOR_NULLS;
@@ -102,7 +102,7 @@ class BookControllerTest {
     }
 
     @Test
-    @Tag(TagGroup.ERRORS)
+    @Tag(TagGroup.VALIDATION)
     void shouldReturnBadRequestIfPublisherAllNulls() throws Exception {
         //given
         BookRequest request = BookRequestExamplesTest.BOOK_PUBLISHER_NULLS;
@@ -123,7 +123,7 @@ class BookControllerTest {
 
     @ParameterizedTest
     @MethodSource("invalidISBNProvider")
-    @Tag(TagGroup.ERRORS)
+    @Tag(TagGroup.VALIDATION)
     void shouldReturnBadRequestIfInvalidISBN(BookRequest request) throws Exception {
         //given
         //when
@@ -152,7 +152,7 @@ class BookControllerTest {
 
     @ParameterizedTest
     @MethodSource("invalidTitleSizeProvider")
-    @Tag(TagGroup.ERRORS)
+    @Tag(TagGroup.VALIDATION)
     void shouldReturnBadRequestIfInvalidTitleSize(BookRequest request) throws Exception {
         //given
         //when
@@ -179,7 +179,7 @@ class BookControllerTest {
 
     @ParameterizedTest
     @MethodSource("invalidDescriptionSizeProvider")
-    @Tag(TagGroup.ERRORS)
+    @Tag(TagGroup.VALIDATION)
     void shouldReturnBadRequestIfInvalidDescriptionSize(BookRequest request) throws Exception {
         //given
         //when
@@ -206,7 +206,7 @@ class BookControllerTest {
 
     @ParameterizedTest
     @MethodSource("invalidPageCountMinProvider")
-    @Tag(TagGroup.ERRORS)
+    @Tag(TagGroup.VALIDATION)
     void shouldReturnBadRequestIfInvalidPageCountMin(BookRequest request) throws Exception {
         //given
         //when
@@ -233,7 +233,7 @@ class BookControllerTest {
 
     @ParameterizedTest
     @MethodSource("invalidPageCountMaxProvider")
-    @Tag(TagGroup.ERRORS)
+    @Tag(TagGroup.VALIDATION)
     void shouldReturnBadRequestIfInvalidPageCountMax(BookRequest request) throws Exception {
         //given
         //when
@@ -260,7 +260,7 @@ class BookControllerTest {
 
     @ParameterizedTest
     @MethodSource("invalidLanguageCodeProvider")
-    @Tag(TagGroup.ERRORS)
+    @Tag(TagGroup.VALIDATION)
     void shouldReturnBadRequestIfInvalidLanguageCode(BookRequest request) throws Exception {
         //given
         //when
@@ -288,7 +288,7 @@ class BookControllerTest {
 
     @ParameterizedTest
     @MethodSource("invalidAuthorNameProvider")
-    @Tag(TagGroup.ERRORS)
+    @Tag(TagGroup.VALIDATION)
     void shouldReturnBadRequestIfInvalidAuthorNameLength(BookRequest request) throws Exception {
         //given
         //when
@@ -315,7 +315,7 @@ class BookControllerTest {
 
     @ParameterizedTest
     @MethodSource("invalidAuthorDescriptionProvider")
-    @Tag(TagGroup.ERRORS)
+    @Tag(TagGroup.VALIDATION)
     void shouldReturnBadRequestIfInvalidAuthorDescriptionLength(BookRequest request) throws Exception {
         //given
         //when
@@ -342,7 +342,7 @@ class BookControllerTest {
 
     @ParameterizedTest
     @MethodSource("invalidCategoryProvider")
-    @Tag(TagGroup.ERRORS)
+    @Tag(TagGroup.VALIDATION)
     void shouldReturnBadRequestIfInvalidCategory(BookRequest request) throws Exception {
         //given
         //when
@@ -371,7 +371,7 @@ class BookControllerTest {
 
     @ParameterizedTest
     @MethodSource("invalidPublisherNameProvider")
-    @Tag(TagGroup.ERRORS)
+    @Tag(TagGroup.VALIDATION)
     void shouldReturnBadRequestIfInvalidPublisherName(BookRequest request) throws Exception {
         //given
         //when
@@ -397,7 +397,7 @@ class BookControllerTest {
     }
 
     @Test
-    @Tag(TagGroup.ERRORS)
+    @Tag(TagGroup.VALIDATION)
     void shouldReturnBadRequestIfInvalidPublisherName() throws Exception {
         //given
         BookRequest request = BookRequestExamplesTest.INVALID_PUBLISHER_DESCRIPTION_LENGTH_1;
@@ -417,6 +417,7 @@ class BookControllerTest {
     }
 
     @Test
+    @Tag(TagGroup.VALIDATION)
     @Tag(TagGroup.EDIT_BOOK)
     void shouldReturnModifiedBook() throws Exception {
         //given
@@ -475,14 +476,12 @@ class BookControllerTest {
         mockMvc.perform(get(API.GET_BOOK, bookId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+                .andExpect(status().isOk());
     }
 
     @ParameterizedTest
     @MethodSource("validBooksRequestProvider")
+    @Tag(TagGroup.VALIDATION)
     @Tag(TagGroup.SAVE_BOOK)
     void shouldAcceptIfValidBook(BookRequest request) throws Exception {
         //given
@@ -492,10 +491,7 @@ class BookControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+                .andExpect(status().isOk());
 
     }
 
@@ -517,11 +513,7 @@ class BookControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(search)))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
+                .andExpect(status().isOk());
     }
 
     private static List<String> anySearchProvider() {
