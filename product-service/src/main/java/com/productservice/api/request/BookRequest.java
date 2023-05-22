@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.productservice.validation.annotation.BookCategory;
 import com.productservice.validation.annotation.LanguageCode;
 import com.productservice.validation.ValidationErrors;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -13,44 +14,59 @@ import org.hibernate.validator.constraints.ISBN;
 
 import java.util.List;
 @Getter
+@Setter
 @JsonPropertyOrder({"isbn", "title", "description", "title", "description", "publishDate", "pageCount", "languageCode", "authors", "categories", "publisher"})
 public class BookRequest {
     @JsonProperty("isbn")
     @NotNull(message = ValidationErrors.ISBN_NULL)
     @ISBN(message = ValidationErrors.ISBN_INVALID)
-    @Setter
+    @Schema(example = "9780316769488")
     private String isbn;
+
     @JsonProperty("title")
     @NotNull(message = ValidationErrors.TITLE_NULL)
     @Size(min = 1, max = 255, message = ValidationErrors.TITLE_LENGTH)
+    @Schema(example = "The Catcher in the Rye")
     private String title;
+
     @JsonProperty("authors")
     @NotNull(message = ValidationErrors.AUTHORS_NULL)
     @Valid
     private List<AuthorRequest> authors;
+
     @JsonProperty("description")
     @NotNull(message = ValidationErrors.DESCRIPTION_NULL)
     @Size(min = 1, max = 1000, message = ValidationErrors.DESCRIPTION_LENGTH)
+    @Schema(example = "The story of Holden Caulfield, a teenage boy who has been expelled from prep school and is wandering around New York City")
     private String description;
+
     @JsonProperty("categories")
     @NotNull(message = ValidationErrors.CATEGORIES_NULL)
     @BookCategory(message = ValidationErrors.CATEGORY_INVALID)
+    @Schema(example = "[\"FICTION\"]")
     private List<String> categories;
+
     @JsonProperty("publisher")
     @NotNull(message = ValidationErrors.PUBLISHER_NULL)
     @Valid
     private PublisherRequest publisher;
+
     @JsonProperty("publishYear")
     @NotNull(message = ValidationErrors.PUBLISH_YEAR_NULL)
+    @Schema(example = "1951")
     private Integer publishYear;
+
     @JsonProperty("pageCount")
     @NotNull(message = ValidationErrors.PAGE_COUNT_NULL)
     @Min(value = 1, message = ValidationErrors.PAGE_COUNT_MIN)
     @Max(value = 10000, message = ValidationErrors.PAGE_COUNT_MAX)
+    @Schema(example = "224")
     private Integer pageCount;
+
     @JsonProperty("languageCode")
     @NotNull(message = ValidationErrors.LANGUAGE_NULL)
     @LanguageCode(message = ValidationErrors.LANG_CODE)
+    @Schema(example = "en")
     private String languageCode;
 
     public BookRequest() {

@@ -11,15 +11,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 @EqualsAndHashCode(exclude = {"id", "createdDate", "lastEditDate", "deletedDate"})
 public class Book {
 
     @Id
     private String id;
-    @Setter
     private LocalDateTime createdDate;
     private LocalDateTime lastEditDate;
-    @Setter
     private LocalDateTime deletedDate;
     private String isbn;
     private String title;

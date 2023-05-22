@@ -1,11 +1,13 @@
 package com.productservice.mapper;
 
-import com.productservice.api.examples.BookExamples;
-import com.productservice.api.examples.BookRequestExamples;
-import com.productservice.api.examples.BookResponseExamples;
+import com.productservice.api.example.BookExamplesTest;
+import com.productservice.api.example.BookRequestExamplesTest;
+import com.productservice.api.example.BookResponseExamplesTest;
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.BookResponse;
+import com.productservice.api.response.EditBookResponse;
 import com.productservice.document.Book;
+import com.productservice.api.example.EditBookResponseExamplesTest;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
@@ -17,8 +19,8 @@ class BookMapperTest {
     @Test
     void shouldMapCorrectBookToBookResponse() {
         //given
-        Book book = BookExamples.VALID_BOOK_1;
-        BookResponse expected = BookResponseExamples.VALID_BOOK_1;
+        Book book = BookExamplesTest.VALID_BOOK_1;
+        BookResponse expected = BookResponseExamplesTest.VALID_BOOK_1;
         //when
         BookResponse actual = mapper.bookToBookResponse(book);
         //then
@@ -29,10 +31,22 @@ class BookMapperTest {
     @Test
     void shouldMapCorrectBookRequestToBook() {
         //given
-        BookRequest bookRequest = BookRequestExamples.VALID_BOOK_1;
-        Book expected = BookExamples.VALID_BOOK_1;
+        BookRequest bookRequest = BookRequestExamplesTest.VALID_BOOK_1;
+        Book expected = BookExamplesTest.VALID_BOOK_1;
         //when
         Book actual = mapper.bookRequestToBook(bookRequest);
+        //then
+        assertNotNull(actual);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void shouldMapCorrectBookToEditBookResponse() {
+        //given
+        Book book = BookExamplesTest.VALID_BOOK_1;
+        EditBookResponse expected = EditBookResponseExamplesTest.getEditBookResponse(true, BookResponseExamplesTest.VALID_BOOK_1);
+        //when
+        EditBookResponse actual = mapper.bookToEditBookResponse(true, book);
         //then
         assertNotNull(actual);
         assertEquals(expected, actual);

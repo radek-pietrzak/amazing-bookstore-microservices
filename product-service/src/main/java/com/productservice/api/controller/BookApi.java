@@ -2,11 +2,11 @@ package com.productservice.api.controller;
 
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.BookResponseList;
+import com.productservice.api.response.Response;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.QueryParam;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +16,15 @@ public interface BookApi {
     @GetMapping(path = API.GET_BOOK)
     ResponseEntity<?> getBook(@NotNull @PathVariable String id);
 
+    //TODO remove biding result
     @PostMapping(path = API.BOOK_SAVE)
     ResponseEntity<?> saveBook(@Valid @RequestBody BookRequest request, BindingResult bindingResult);
 
     @PostMapping(path = API.BOOK_EDIT)
-    ResponseEntity<HttpStatus> editBook(@NotNull @PathVariable String id, @Valid @RequestBody BookRequest request);
+    ResponseEntity<Response> editBook(
+            @PathVariable String id,
+            @Valid @RequestBody BookRequest request
+    ) throws IllegalAccessException;
 
     @PutMapping(path = API.BOOK_DELETE)
     ResponseEntity<?> deleteBook(@NotNull @PathVariable String id);

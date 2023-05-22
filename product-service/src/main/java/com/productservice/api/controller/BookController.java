@@ -1,19 +1,16 @@
 package com.productservice.api.controller;
 
 import com.productservice.api.request.BookRequest;
-import com.productservice.api.response.BadRequestResponse;
-import com.productservice.api.response.BookResponse;
-import com.productservice.api.response.BookResponseList;
+import com.productservice.api.response.*;
 import com.productservice.api.service.BookService;
 import com.productservice.api.service.ValidationService;
 import com.productservice.api.util.JsonFileToJsonObject;
-import com.productservice.examples.BookRequestJsonExample;
+import com.productservice.example.BookRequestJsonExample;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -27,6 +24,13 @@ import java.io.IOException;
 public class BookController implements BookApi {
 
     private final BookService bookService;
+    private final ValidationService validationService;
+
+    public BookController(BookService bookService, ValidationService validationService) {
+        this.bookService = bookService;
+        this.validationService = validationService;
+    }
+
     // TODO generator of api responses
     @Override
     @Operation(
@@ -39,17 +43,10 @@ public class BookController implements BookApi {
     )
     public ResponseEntity<?> getBook(String id) {
         BookResponse response = bookService.getBook(id);
-        if (response != null){
+        if (response != null) {
             return ResponseEntity.ok(response);
         }
         return ResponseEntity.badRequest().body(BadRequestResponse.UNABLE_TO_FIND_BOOK + id);
-    }
-
-    private final ValidationService validationService;
-
-    public BookController(BookService bookService, ValidationService validationService) {
-        this.bookService = bookService;
-        this.validationService = validationService;
     }
 
     @Override
@@ -85,10 +82,19 @@ public class BookController implements BookApi {
         return ResponseEntity.ok().body(response);
     }
 
+    //TODO make integration tests
+    @Operation(
+            description = "Edit book",
+            responses = {
+                    @ApiResponse(responseCode = "200", ref = "successfullyEditedBook"),
+                    @ApiResponse(responseCode = "400", ref = "400"),
+                    @ApiResponse(responseCode = "404", ref = "404"),
+            }
+    )
     @Override
-    public ResponseEntity<HttpStatus> editBook(String id, BookRequest request) {
-        bookService.editBook(id, request);
-        return ResponseEntity.ok(HttpStatus.ACCEPTED);
+    public ResponseEntity<Response> editBook(String id, BookRequest request) throws IllegalAccessException {
+        Response response = bookService.editBook(id, request);
+        return ResponseEntity.ok(response);
     }
 
     @Override
@@ -102,15 +108,17 @@ public class BookController implements BookApi {
     )
     public ResponseEntity<?> deleteBook(String id) {
         BookResponse response = bookService.deleteBook(id);
-        if (response != null){
+        if (response != null) {
             return ResponseEntity.ok(response);
         }
         return ResponseEntity.badRequest().body(BadRequestResponse.UNABLE_TO_FIND_BOOK + id);
     }
 
     //TODO list example in api response
+    //TODO pageable infos
     @Override
     public ResponseEntity<BookResponseList> getBookList(String search, Integer page, Integer pageSize) {
         return ResponseEntity.ok(bookService.getBookList(search, page, pageSize));
     }
+
 }

@@ -2,6 +2,7 @@ package com.productservice.api.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.productservice.ChatGPTHelper;
+import com.productservice.api.response.Response;
 import com.productservice.document.Book;
 import com.productservice.mapper.BookMapper;
 import com.productservice.repository.BookRepository;
@@ -11,15 +12,15 @@ import com.productservice.api.response.BookResponseList;
 import com.productservice.repository.BookRepositoryTemplate;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class BookService {
@@ -41,10 +42,54 @@ public class BookService {
         return optionalBook.map(bookMapper::bookToBookResponse).orElse(null);
     }
 
+    //TODO return BookResponse in body
     public void saveBook(BookRequest request) {
         Book book = bookMapper.bookRequestToBook(request);
         book.setCreatedDate(LocalDateTime.now());
         repository.save(book);
+    }
+
+    public Response editBook(String id, BookRequest request) throws IllegalAccessException {
+        if (StringUtils.isBlank(id)) {
+            throw new IllegalArgumentException();
+        }
+
+        Optional<Book> optionalBook = repository.findById(id);
+        if (optionalBook.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+
+        Book repoBook = optionalBook.get();
+        Book reqeustBook = bookMapper.bookRequestToBook(request);
+        if (isChangedAndSet(repoBook, reqeustBook)) {
+            repoBook.setLastEditDate(LocalDateTime.now());
+            repository.save(repoBook);
+            return bookMapper.bookToEditBookResponse(true, repoBook);
+        } else {
+            return bookMapper.bookToEditBookResponse(false, repoBook);
+        }
+    }
+
+    private boolean isChangedAndSet(Book repoBook, Book requestBook) throws IllegalAccessException {
+        boolean isChange = false;
+        Field[] fields = Book.class.getDeclaredFields();
+        for (Field field : fields) {
+            if (field.getName().equals("id")
+                    || field.getName().equals("createdDate")
+                    || field.getName().equals("lastEditDate")
+                    || field.getName().equals("deletedDate")) {
+                continue;
+            }
+
+            field.setAccessible(true);
+            Object repoValue = field.get(repoBook);
+            Object requestValue = field.get(requestBook);
+            if (!Objects.equals(repoValue, requestValue)) {
+                field.set(repoBook, requestValue);
+                isChange = true;
+            }
+        }
+        return isChange;
     }
 
     @Scheduled(fixedRate = 10000)
@@ -64,9 +109,6 @@ public class BookService {
         }
         long atEnd = System.currentTimeMillis();
         System.out.println("Response from chatGPT in seconds: " + ((atEnd - atStart) / 1000));
-    }
-
-    public void editBook(String id, BookRequest request) {
     }
 
     public BookResponse deleteBook(String id) {
