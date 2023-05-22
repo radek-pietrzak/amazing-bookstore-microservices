@@ -82,7 +82,6 @@ public class BookController implements BookApi {
         return ResponseEntity.ok().body(response);
     }
 
-    //TODO make integration tests
     @Operation(
             description = "Edit book",
             responses = {
