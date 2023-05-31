@@ -1,6 +1,7 @@
 package com.productservice.config;
 
 import com.productservice.example.BookResponseExample;
+import com.productservice.example.BookResponseListExample;
 import com.productservice.example.EditBookResponseExample;
 import com.productservice.example.ErrorResponseExample;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -50,6 +51,9 @@ public class SpringdocConfig {
 
         Example notFoundExceptionDelete = new Example().value(ErrorResponseExample.NOT_FOUND_EXCEPTION_DELETE);
         addResponseToComponents(components, "notFoundExceptionDelete", notFoundExceptionDelete);
+
+        Example successfullyGetBookList = new Example().value(BookResponseListExample.BOOK_LIST);
+        addResponseToComponents(components, "successfullyGetBookList", successfullyGetBookList);
 
         return new OpenAPI()
                 .components(components)

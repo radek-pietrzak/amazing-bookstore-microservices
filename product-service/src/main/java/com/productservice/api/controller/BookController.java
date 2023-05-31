@@ -72,9 +72,14 @@ public class BookController implements BookApi {
         return ResponseEntity.ok(response);
     }
 
-    //TODO list example in api response
     //TODO pageable infos
     @Override
+    @Operation(
+            description = "Book list",
+            responses = {
+                    @ApiResponse(responseCode = "200", ref = "successfullyGetBookList")
+            }
+    )
     public ResponseEntity<Response> getBookList(String search, Integer page, Integer pageSize) {
         return ResponseEntity.ok(bookService.getBookList(search, page, pageSize));
     }
