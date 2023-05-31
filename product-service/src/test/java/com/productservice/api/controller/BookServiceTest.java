@@ -161,7 +161,7 @@ class BookServiceTest {
 
     @Test
     @Tag(TagGroup.EDIT_BOOK)
-    void shouldThrowIllegalArgumentException() {
+    void shouldThrowIllegalArgumentException_editBook() {
         //given
         BookRequest bookRequest = BookRequestExamplesTest.VALID_BOOK_3;
 
@@ -174,7 +174,7 @@ class BookServiceTest {
 
     @Test
     @Tag(TagGroup.EDIT_BOOK)
-    void shouldThrowNoSuchElementException() {
+    void shouldThrowNoSuchElementException_editBook() {
         //given
         BookRequest bookRequest = BookRequestExamplesTest.VALID_BOOK_3;
         when(bookRepository.findById(any())).thenReturn(Optional.empty());
@@ -189,10 +189,11 @@ class BookServiceTest {
     void shouldPutDeleteDate() {
         //given
         Book book = BookExamplesTest.copy(BookExamplesTest.VALID_BOOK_1);
-        when(bookRepository.findById(any())).thenReturn(Optional.of(book));
+        String bookId = "1";
+        when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
 
         //when
-        bookService.deleteBook(any());
+        bookService.deleteBook(bookId);
 
         //then
         verify(bookRepository).save(bookArgumentCaptor.capture());
@@ -200,6 +201,28 @@ class BookServiceTest {
 
         assertNotNull(actual);
         assertNotNull(actual.getDeletedDate());
+    }
+
+    @Test
+    @Tag(TagGroup.DELETE_BOOK)
+    void shouldThrowIllegalArgumentException_deleteBook() {
+        //given
+        //when
+        //then
+        assertThrows(IllegalArgumentException.class, () -> bookService.deleteBook(null));
+        assertThrows(IllegalArgumentException.class, () -> bookService.deleteBook(""));
+        assertThrows(IllegalArgumentException.class, () -> bookService.deleteBook(" "));
+    }
+
+    @Test
+    @Tag(TagGroup.DELETE_BOOK)
+    void shouldThrowNoSuchElementException_deleteBook() {
+        //given
+        when(bookRepository.findById(any())).thenReturn(Optional.empty());
+
+        //when
+        //then
+        assertThrows(NoSuchElementException.class, () -> bookService.deleteBook("1"));
     }
 
     @Test

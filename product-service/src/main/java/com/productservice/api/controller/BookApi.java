@@ -24,7 +24,7 @@ public interface BookApi {
             throws IllegalAccessException;
 
     @PutMapping(path = API.BOOK_DELETE_ID)
-    ResponseEntity<?> deleteBook(@NotNull @PathVariable String id);
+    ResponseEntity<Response> deleteBook(@PathVariable String id);
 
     @GetMapping(path = API.BOOK_LIST)
     ResponseEntity<BookResponseList> getBookList(

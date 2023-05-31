@@ -64,16 +64,12 @@ public class BookController implements BookApi {
             description = "Delete book",
             responses = {
                     @ApiResponse(responseCode = "200", ref = "successfullyDeletedBook"),
-                    @ApiResponse(responseCode = "400", ref = "bookNotFound"),
-                    @ApiResponse(responseCode = "500", ref = "internalErrorServerApi")
+                    @ApiResponse(responseCode = "400", ref = "bookNotFound")
             }
     )
-    public ResponseEntity<?> deleteBook(String id) {
-        BookResponse response = bookService.deleteBook(id);
-        if (response != null) {
-            return ResponseEntity.ok(response);
-        }
-        return ResponseEntity.badRequest().body(BadRequestResponse.UNABLE_TO_FIND_BOOK + id);
+    public ResponseEntity<Response> deleteBook(String id) {
+        Response response = bookService.deleteBook(id);
+        return ResponseEntity.ok(response);
     }
 
     //TODO list example in api response

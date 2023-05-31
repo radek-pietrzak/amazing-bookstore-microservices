@@ -5,7 +5,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.productservice.TagGroup;
 import com.productservice.api.example.BookRequestExamplesTest;
 import com.productservice.api.example.BookResponseExamplesTest;
-import com.productservice.api.response.BadRequestResponse;
 import com.productservice.api.service.BookService;
 import com.productservice.api.request.BookRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -140,25 +139,7 @@ class BookControllerTest {
     }
 
     @Test
-    @Tag(TagGroup.DELETE_BOOK)
-    void shouldReturnBadRequestInvalidBookId_deleteBook() throws Exception {
-        //given
-        String bookId = "1";
-        when(bookService.deleteBook(any())).thenReturn(null);
-        //when
-        //then
-        String actual = mockMvc.perform(put(API.BOOK_DELETE_ID, bookId)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertTrue(actual.contains(BadRequestResponse.UNABLE_TO_FIND_BOOK));
-    }
-
-    @Test
+    @Tag(TagGroup.VALIDATION)
     @Tag(TagGroup.DELETE_BOOK)
     void shouldReturnOKIfValidBookId_deleteBook() throws Exception {
         //given
@@ -173,6 +154,7 @@ class BookControllerTest {
     }
 
     @Test
+    @Tag(TagGroup.VALIDATION)
     @Tag(TagGroup.GET_BOOK)
     void shouldReturnOKIfValidBookId() throws Exception {
         //given

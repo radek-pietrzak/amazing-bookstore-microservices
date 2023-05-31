@@ -101,15 +101,11 @@ public class BookService {
         System.out.println("Response from chatGPT in seconds: " + ((atEnd - atStart) / 1000));
     }
 
-    public BookResponse deleteBook(String id) {
-        Optional<Book> optionalBook = repository.findById(id);
-        if (optionalBook.isPresent()) {
-            Book book = optionalBook.get();
+    public Response deleteBook(String id) {
+        Book book = getBookIfPresent(id);
             book.setDeletedDate(LocalDateTime.now());
             repository.save(book);
             return bookMapper.bookToBookResponse(book);
-        }
-        return null;
     }
 
     public BookResponseList getBookList(String search, Integer page, Integer pageSize) {
