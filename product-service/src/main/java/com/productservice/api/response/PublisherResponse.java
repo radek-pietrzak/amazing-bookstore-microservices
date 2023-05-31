@@ -13,5 +13,5 @@ public class PublisherResponse {
     private String publisherName;
 
     @Schema(description = "Publisher description", example = "Boston")
-    private String description;
+    private String publisherDescription;
 }

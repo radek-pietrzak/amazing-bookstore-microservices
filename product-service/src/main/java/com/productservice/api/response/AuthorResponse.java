@@ -12,8 +12,8 @@ import lombok.Getter;
 @Getter
 public class AuthorResponse {
     @Schema(description = "Author name", example = "J.D.")
-    private String name;
+    private String authorName;
 
     @Schema(description = "Author description", example = "Salinger")
-    private String description;
+    private String authorDescription;
 }

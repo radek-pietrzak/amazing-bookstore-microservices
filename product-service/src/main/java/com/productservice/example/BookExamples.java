@@ -10,10 +10,10 @@ import java.time.Month;
 import java.util.List;
 
 import static com.productservice.document.Category.*;
-
+// TODO change book example provider
 public interface BookExamples {
 
-    Book VALID_BOOK_1 = new Book.BookBuilder()
+    Book VALID_BOOK_1 = Book.builder()
             .id("1")
             .createdDate(LocalDateTime.of(2014, Month.JULY, 16, 10, 55, 22))
             .lastEditDate(LocalDateTime.of(2023, 4, 16, 9, 59))
@@ -42,7 +42,7 @@ public interface BookExamples {
             COMICS_AND_GRAPHIC_NOVELS
     );
 
-    Book VALID_BOOK_2 = new Book.BookBuilder(VALID_BOOK_1)
+    Book VALID_BOOK_2 = Book.builder(VALID_BOOK_1)
             .id("2")
             .languageCode("pl")
             .authors(VALID_AUTHOR_LIST)
@@ -50,7 +50,7 @@ public interface BookExamples {
             .publisher(new Publisher("Little, Brown and Company", null))
             .build();
 
-    Book VALID_BOOK_3 = new Book.BookBuilder()
+    Book VALID_BOOK_3 = Book.builder()
             .id("1")
             .createdDate(LocalDateTime.of(2014, Month.JULY, 16, 10, 55, 22))
             .lastEditDate(LocalDateTime.of(2023, 4, 16, 9, 59))
@@ -66,6 +66,6 @@ public interface BookExamples {
             .build();
 
     static Book copy(Book book) {
-        return new Book.BookBuilder(book).build();
+        return Book.builder(book).build();
     }
 }

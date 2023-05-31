@@ -25,7 +25,16 @@ class BookMapperTest {
         BookResponse actual = mapper.bookToBookResponse(book);
         //then
         assertNotNull(actual);
-        assertEquals(expected, actual);
+        assertEquals(expected.getIsbn(), actual.getIsbn());
+        assertEquals(expected.getTitle(), actual.getTitle());
+        assertEquals(expected.getAuthors().get(0), actual.getAuthors().get(0));
+        assertEquals(expected.getDescription(), actual.getDescription());
+        assertEquals(expected.getCategories().get(0), actual.getCategories().get(0));
+        assertEquals(expected.getPublisher().getPublisherName(), actual.getPublisher().getPublisherName());
+        assertEquals(expected.getPublisher().getPublisherDescription(), actual.getPublisher().getPublisherDescription());
+        assertEquals(expected.getPublishYear(), actual.getPublishYear());
+        assertEquals(expected.getPageCount(), actual.getPageCount());
+        assertEquals(expected.getLanguageCode(), actual.getLanguageCode());
     }
 
     @Test
@@ -37,7 +46,16 @@ class BookMapperTest {
         Book actual = mapper.bookRequestToBook(bookRequest);
         //then
         assertNotNull(actual);
-        assertEquals(expected, actual);
+        assertEquals(expected.getIsbn(), actual.getIsbn());
+        assertEquals(expected.getTitle(), actual.getTitle());
+        assertEquals(expected.getAuthors().get(0), actual.getAuthors().get(0));
+        assertEquals(expected.getDescription(), actual.getDescription());
+        assertEquals(expected.getCategories().get(0), actual.getCategories().get(0));
+        assertEquals(expected.getPublisher().getPublisherName(), actual.getPublisher().getPublisherName());
+        assertEquals(expected.getPublisher().getPublisherDescription(), actual.getPublisher().getPublisherDescription());
+        assertEquals(expected.getPublishYear(), actual.getPublishYear());
+        assertEquals(expected.getPageCount(), actual.getPageCount());
+        assertEquals(expected.getLanguageCode(), actual.getLanguageCode());
     }
 
     @Test
@@ -49,6 +67,15 @@ class BookMapperTest {
         EditBookResponse actual = mapper.bookToEditBookResponse(true, book);
         //then
         assertNotNull(actual);
-        assertEquals(expected, actual);
+        assertEquals(expected.getIsbn(), actual.getIsbn());
+        assertEquals(expected.getTitle(), actual.getTitle());
+        assertEquals(expected.getAuthors().get(0), actual.getAuthors().get(0));
+        assertEquals(expected.getDescription(), actual.getDescription());
+        assertEquals(expected.getCategories().get(0), actual.getCategories().get(0));
+        assertEquals(expected.getPublisher().getPublisherName(), actual.getPublisher().getPublisherName());
+        assertEquals(expected.getPublisher().getPublisherDescription(), actual.getPublisher().getPublisherDescription());
+        assertEquals(expected.getPublishYear(), actual.getPublishYear());
+        assertEquals(expected.getPageCount(), actual.getPageCount());
+        assertEquals(expected.getLanguageCode(), actual.getLanguageCode());
     }
 }

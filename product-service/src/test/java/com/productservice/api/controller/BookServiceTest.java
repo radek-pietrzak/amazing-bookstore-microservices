@@ -86,30 +86,29 @@ class BookServiceTest {
     void shouldBuildCorrectBookToSave(BookPairRequest bookPairRequest) {
         //given
         BookRequest request = bookPairRequest.bookRequest;
-        Book expectedBook = bookPairRequest.book;
+        Book expected = bookPairRequest.book;
 
         //when
         bookService.saveBook(request);
 
         //then
         verify(bookRepository).save(bookArgumentCaptor.capture());
-        Book actualBook = bookArgumentCaptor.getValue();
+        Book actual = bookArgumentCaptor.getValue();
 
-        assertNotNull(actualBook);
-        assertNotNull(expectedBook.getCreatedDate());
-        assertInstanceOf(LocalDateTime.class, actualBook.getCreatedDate());
-        assertEquals(expectedBook.getIsbn(), actualBook.getIsbn());
-        assertEquals(expectedBook.getTitle(), actualBook.getTitle());
-        assertEquals(expectedBook.getDescription(), actualBook.getDescription());
-        assertEquals(expectedBook.getPublishYear(), actualBook.getPublishYear());
-        assertEquals(expectedBook.getPageCount(), actualBook.getPageCount());
-        assertEquals(expectedBook.getLanguageCode(), actualBook.getLanguageCode());
-        assertNotNull(actualBook.getAuthors());
-        assertEquals(expectedBook.getAuthors().size(), actualBook.getAuthors().size());
-        assertEquals(expectedBook.getAuthors(), actualBook.getAuthors());
-        assertEquals(expectedBook.getCategories(), actualBook.getCategories());
-        assertEquals(expectedBook.getPublisher(), actualBook.getPublisher());
-        assertEquals(expectedBook, actualBook);
+        assertNotNull(actual);
+        assertNotNull(expected.getCreatedDate());
+        assertInstanceOf(LocalDateTime.class, actual.getCreatedDate());
+        assertEquals(expected.getIsbn(), actual.getIsbn());
+        assertEquals(expected.getTitle(), actual.getTitle());
+        assertEquals(expected.getDescription(), actual.getDescription());
+        assertEquals(expected.getPublishYear(), actual.getPublishYear());
+        assertEquals(expected.getPageCount(), actual.getPageCount());
+        assertEquals(expected.getLanguageCode(), actual.getLanguageCode());
+        assertNotNull(actual.getAuthors());
+        assertEquals(expected.getAuthors().size(), actual.getAuthors().size());
+        assertEquals(expected.getAuthors(), actual.getAuthors());
+        assertEquals(expected.getCategories(), actual.getCategories());
+        assertEquals(expected.getPublisher(), actual.getPublisher());
     }
 
     private static List<BookPairRequest> validBookPairRequestsProvider() {

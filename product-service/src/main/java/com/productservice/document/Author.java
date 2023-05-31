@@ -8,6 +8,6 @@ import lombok.*;
 @Getter
 @EqualsAndHashCode
 public class Author {
-    private String name;
-    private String description;
+    private String authorName;
+    private String authorDescription;
 }

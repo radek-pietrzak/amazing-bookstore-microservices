@@ -41,17 +41,17 @@ public class BookService {
         return bookMapper.bookToBookResponse(getBookIfPresent(id));
     }
 
-    //TODO return BookResponse in body
-    public void saveBook(BookRequest request) {
+    public Response saveBook(BookRequest request) {
         Book book = bookMapper.bookRequestToBook(request);
         book.setCreatedDate(LocalDateTime.now());
         repository.save(book);
+        return bookMapper.bookToBookResponse(book);
     }
 
     public Response editBook(String id, BookRequest request) throws IllegalAccessException {
         Book repoBook = getBookIfPresent(id);
-        Book reqeustBook = bookMapper.bookRequestToBook(request);
-        if (isChangedAndSet(repoBook, reqeustBook)) {
+        Book requestBook = bookMapper.bookRequestToBook(request);
+        if (isChangedAndSet(repoBook, requestBook)) {
             repoBook.setLastEditDate(LocalDateTime.now());
             repository.save(repoBook);
             return bookMapper.bookToEditBookResponse(true, repoBook);

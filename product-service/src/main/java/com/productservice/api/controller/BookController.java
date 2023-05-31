@@ -3,32 +3,20 @@ package com.productservice.api.controller;
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.*;
 import com.productservice.api.service.BookService;
-import com.productservice.api.service.ValidationService;
-import com.productservice.api.util.JsonFileToJsonObject;
-import com.productservice.example.BookRequestJsonExample;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.IOException;
 
 @RestController
 @RequestMapping
 public class BookController implements BookApi {
 
     private final BookService bookService;
-    private final ValidationService validationService;
 
-    public BookController(BookService bookService, ValidationService validationService) {
+    public BookController(BookService bookService) {
         this.bookService = bookService;
-        this.validationService = validationService;
     }
 
     @Override
@@ -52,27 +40,8 @@ public class BookController implements BookApi {
                     @ApiResponse(responseCode = "400", ref = "validationExceptionSave")
             }
     )
-    public ResponseEntity<?> saveBook(@RequestBody(
-            content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    examples = {
-                            @ExampleObject(value = BookRequestJsonExample.VALID_BOOK_1)
-                    }
-            )
-    ) BookRequest bookRequest, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(validationService.errorMessages(bindingResult));
-        }
-        bookService.saveBook(bookRequest);
-        String response;
-
-        try {
-            JsonFileToJsonObject jsonFileToJsonObject = new JsonFileToJsonObject();
-            response = jsonFileToJsonObject.readByFileName("response").get("successfullySavedBook").toString();
-        } catch (IOException e) {
-            response = "OK";
-        }
-
+    public ResponseEntity<Response> saveBook(BookRequest request) {
+        Response response = bookService.saveBook(request);
         return ResponseEntity.ok().body(response);
     }
 
