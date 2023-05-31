@@ -47,4 +47,13 @@ public interface ErrorResponseExample {
             .exception("java.util.NoSuchElementException")
             .validationMessages(null)
             .build();
+
+    ErrorResponse NOT_FOUND_EXCEPTION_DELETE = ErrorResponse.builder()
+            .timestamp(LocalDateTime.now())
+            .status(404)
+            .error(HttpStatus.NOT_FOUND)
+            .path(API.BOOK_DELETE + "1")
+            .exception("java.util.NoSuchElementException")
+            .validationMessages(null)
+            .build();
 }

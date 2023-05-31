@@ -1,7 +1,6 @@
 package com.productservice.api.controller;
 
 import com.productservice.api.request.BookRequest;
-import com.productservice.api.response.BookResponseList;
 import com.productservice.api.response.Response;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
@@ -27,7 +26,7 @@ public interface BookApi {
     ResponseEntity<Response> deleteBook(@PathVariable String id);
 
     @GetMapping(path = API.BOOK_LIST)
-    ResponseEntity<BookResponseList> getBookList(
+    ResponseEntity<Response> getBookList(
             @Nullable @QueryParam(value = "search") String search,
             @Nullable @QueryParam(value = "page") Integer page,
             @Nullable @QueryParam(value = "pageSize") Integer pageSize);

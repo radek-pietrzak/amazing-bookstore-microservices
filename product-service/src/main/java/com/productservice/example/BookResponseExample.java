@@ -67,4 +67,12 @@ public interface BookResponseExample {
             .categories(List.of("COMICS_AND_GRAPHIC_NOVELS", "SCIENCE_FICTION_AND_FANTASY"))
             .publisher(new PublisherResponse("Kodansha Comics", "American subsidiary of Japanese publishing company Kodansha, specializing in manga publishing. With over 1000 titles in its catalog, it has become one of the largest English-language manga publishers in the United States"))
             .build();
+
+    BookResponse DELETED_BOOK = getDeletedBook();
+
+    private static BookResponse getDeletedBook() {
+        BookResponse bookResponse = VALID_BOOK_1;
+        bookResponse.setDeletedDate(LocalDateTime.of(2023, 4, 16, 9, 59));
+        return bookResponse;
+    }
 }

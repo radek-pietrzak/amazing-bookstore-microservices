@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class BookResponseList {
+public class BookResponseList implements Response{
     //TODO add pageable instead
     private long bookQuantity;
     private long bookQuantityOnPage;

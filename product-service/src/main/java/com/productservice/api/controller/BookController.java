@@ -64,7 +64,7 @@ public class BookController implements BookApi {
             description = "Delete book",
             responses = {
                     @ApiResponse(responseCode = "200", ref = "successfullyDeletedBook"),
-                    @ApiResponse(responseCode = "400", ref = "bookNotFound")
+                    @ApiResponse(responseCode = "404", ref = "notFoundExceptionDelete")
             }
     )
     public ResponseEntity<Response> deleteBook(String id) {
@@ -75,7 +75,7 @@ public class BookController implements BookApi {
     //TODO list example in api response
     //TODO pageable infos
     @Override
-    public ResponseEntity<BookResponseList> getBookList(String search, Integer page, Integer pageSize) {
+    public ResponseEntity<Response> getBookList(String search, Integer page, Integer pageSize) {
         return ResponseEntity.ok(bookService.getBookList(search, page, pageSize));
     }
 

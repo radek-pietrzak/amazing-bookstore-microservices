@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode(exclude = {"lastEditDate"})
-public class BookResponse implements Response{
+public class BookResponse implements Response {
     @Schema(description = "Book ID", example = "6448f44759850b6631d6a271")
     private String id;
 

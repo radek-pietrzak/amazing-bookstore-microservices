@@ -49,9 +49,11 @@ public class SpringdocConfig {
         Example notFoundExceptionEdit = new Example().value(ErrorResponseExample.NOT_FOUND_EXCEPTION_EDIT);
         addResponseToComponents(components, "notFoundExceptionEdit", notFoundExceptionEdit);
 
-        addResponseToComponents(components, "bookNotFound", "Book not found", "bookNotFound");
-        addResponseToComponents(components, "successfullyDeletedBook", "Successfully deleted book", "successfullyDeletedBook");
-        addResponseToComponents(components, "successfullyDeletedBook", "Successfully deleted book", "successfullyDeletedBook");
+        Example successfullyDeletedBook = new Example().value(BookResponseExample.DELETED_BOOK);
+        addResponseToComponents(components, "successfullyDeletedBook", successfullyDeletedBook);
+
+        Example notFoundExceptionDelete = new Example().value(ErrorResponseExample.NOT_FOUND_EXCEPTION_DELETE);
+        addResponseToComponents(components, "notFoundExceptionDelete", notFoundExceptionDelete);
 
         return new OpenAPI()
                 .components(components)
@@ -77,24 +79,4 @@ public class SpringdocConfig {
         components.addResponses(responseKey, apiResponse);
     }
 
-    private void addResponseToComponents(
-            Components components,
-            String jsonKey,
-            String description,
-            String responseKey
-    ) {
-
-        ApiResponse apiResponse;
-        try {
-            apiResponse = new ApiResponse().content(
-                    new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE,
-                            new io.swagger.v3.oas.models.media.MediaType().addExamples("default",
-                                    new Example().value(jsonFileToJsonObject.readByFileName("response").get(jsonKey).toString())
-                                            .description(description)))
-            );
-        } catch (IOException e) {
-            apiResponse = null;
-        }
-        components.addResponses(responseKey, apiResponse);
-    }
 }
