@@ -1,6 +1,5 @@
 package com.productservice.config;
 
-import com.productservice.api.util.JsonFileToJsonObject;
 import com.productservice.example.BookResponseExample;
 import com.productservice.example.EditBookResponseExample;
 import com.productservice.example.ErrorResponseExample;
@@ -15,13 +14,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 
-import java.io.IOException;
 
 @OpenAPIDefinition
 @Configuration
 public class SpringdocConfig {
-
-    JsonFileToJsonObject jsonFileToJsonObject = new JsonFileToJsonObject();
     Components components = new Components();
 
 
