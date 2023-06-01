@@ -4,7 +4,6 @@ import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.Response;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.QueryParam;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,9 +11,8 @@ import org.springframework.web.bind.annotation.*;
 public interface BookApi {
 
     @GetMapping(path = API.BOOK_GET_ID)
-    ResponseEntity<Response> getBook(@NotNull @PathVariable String id);
+    ResponseEntity<Response> getBook(@PathVariable String id);
 
-    //TODO remove biding result
     @PostMapping(path = API.BOOK_SAVE)
     ResponseEntity<Response> saveBook(@Valid @RequestBody BookRequest request);
 
