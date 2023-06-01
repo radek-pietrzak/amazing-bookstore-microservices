@@ -3,7 +3,7 @@ package com.productservice.example;
 import com.productservice.api.response.BookResponse;
 import com.productservice.api.response.EditBookResponse;
 
-public class EditBookResponseExample {
+public abstract class EditBookResponseExample {
 
     public static EditBookResponse getEditBookResponse(boolean modified, BookResponse bookResponse) {
         return EditBookResponse.builder()

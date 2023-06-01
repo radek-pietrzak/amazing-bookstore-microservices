@@ -1,14 +1,14 @@
 package com.productservice.api.controller;
 
 import com.productservice.TagGroup;
-import com.productservice.api.example.BookRequestExamplesTest;
-import com.productservice.api.example.BookResponseExamplesTest;
 import com.productservice.api.response.EditBookResponse;
 import com.productservice.api.response.Response;
 import com.productservice.api.service.BookService;
 import com.productservice.document.Book;
-import com.productservice.api.example.BookExamplesTest;
-import com.productservice.api.example.EditBookResponseExamplesTest;
+import com.productservice.example.BookExample;
+import com.productservice.example.BookRequestExample;
+import com.productservice.example.BookResponseExample;
+import com.productservice.example.EditBookResponseExample;
 import com.productservice.mapper.BookMapper;
 import com.productservice.repository.BookRepository;
 import com.productservice.api.request.BookRequest;
@@ -72,8 +72,8 @@ class BookServiceTest {
 
     private static List<BookPairResponse> validBookPairResponseProvider() {
         return List.of(
-                new BookPairResponse(BookResponseExamplesTest.VALID_BOOK_1, BookExamplesTest.VALID_BOOK_1),
-                new BookPairResponse(BookResponseExamplesTest.VALID_BOOK_2, BookExamplesTest.VALID_BOOK_2)
+                new BookPairResponse(BookResponseExample.getValidBook1(), BookExample.getValidBook1()),
+                new BookPairResponse(BookResponseExample.getValidBook2(), BookExample.getValidBook2())
         );
     }
 
@@ -113,8 +113,8 @@ class BookServiceTest {
 
     private static List<BookPairRequest> validBookPairRequestsProvider() {
         return List.of(
-                new BookPairRequest(BookRequestExamplesTest.VALID_BOOK_1, BookExamplesTest.VALID_BOOK_1),
-                new BookPairRequest(BookRequestExamplesTest.VALID_BOOK_2, BookExamplesTest.VALID_BOOK_2)
+                new BookPairRequest(BookRequestExample.getValidBook1(), BookExample.getValidBook1()),
+                new BookPairRequest(BookRequestExample.getValidBook2(), BookExample.getValidBook2())
         );
     }
 
@@ -125,10 +125,10 @@ class BookServiceTest {
     @Tag(TagGroup.EDIT_BOOK)
     void shouldReturnModifiedBook() throws IllegalAccessException {
         //given
-        Book bookToEdit = BookExamplesTest.copy(BookExamplesTest.VALID_BOOK_1);
-        EditBookResponse expected = EditBookResponseExamplesTest.getEditBookResponse(true, BookResponseExamplesTest.VALID_BOOK_3);
+        Book bookToEdit = BookExample.getValidBook1();
+        EditBookResponse expected = EditBookResponseExample.getEditBookResponse(true, BookResponseExample.getValidBook3());
         when(bookRepository.findById(any())).thenReturn(Optional.of(bookToEdit));
-        BookRequest bookRequest = BookRequestExamplesTest.VALID_BOOK_3;
+        BookRequest bookRequest = BookRequestExample.getValidBook3();
         String id = "1";
 
         //when
@@ -137,17 +137,30 @@ class BookServiceTest {
 
         assertNotNull(actual);
         assertTrue(expected.getLastEditDate().isBefore(actual.getLastEditDate()));
-        assertEquals(expected, actual);
+        assertNotNull(expected.getCreatedDate());
+        assertInstanceOf(LocalDateTime.class, actual.getCreatedDate());
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getIsbn(), actual.getIsbn());
+        assertEquals(expected.getTitle(), actual.getTitle());
+        assertEquals(expected.getDescription(), actual.getDescription());
+        assertEquals(expected.getPublishYear(), actual.getPublishYear());
+        assertEquals(expected.getPageCount(), actual.getPageCount());
+        assertEquals(expected.getLanguageCode(), actual.getLanguageCode());
+        assertNotNull(actual.getAuthors());
+        assertEquals(expected.getAuthors().size(), actual.getAuthors().size());
+        assertEquals(expected.getAuthors(), actual.getAuthors());
+        assertEquals(expected.getCategories(), actual.getCategories());
+        assertEquals(expected.getPublisher(), actual.getPublisher());
     }
 
     @Test
     @Tag(TagGroup.EDIT_BOOK)
     void shouldNotModifyBook() throws IllegalAccessException {
         //given
-        Book bookToEdit = BookExamplesTest.copy(BookExamplesTest.VALID_BOOK_1);
-        EditBookResponse expected = EditBookResponseExamplesTest.getEditBookResponse(false, BookResponseExamplesTest.VALID_BOOK_1);
+        Book bookToEdit = BookExample.getValidBook1();
+        EditBookResponse expected = EditBookResponseExample.getEditBookResponse(false, BookResponseExample.getValidBook1());
         when(bookRepository.findById(any())).thenReturn(Optional.of(bookToEdit));
-        BookRequest bookRequest = BookRequestExamplesTest.VALID_BOOK_1;
+        BookRequest bookRequest = BookRequestExample.getValidBook1();
         String id = "1";
 
         //when
@@ -163,7 +176,7 @@ class BookServiceTest {
     @Tag(TagGroup.EDIT_BOOK)
     void shouldThrowIllegalArgumentException_editBook() {
         //given
-        BookRequest bookRequest = BookRequestExamplesTest.VALID_BOOK_3;
+        BookRequest bookRequest = BookRequestExample.getValidBook3();
 
         //when
         //then
@@ -176,7 +189,7 @@ class BookServiceTest {
     @Tag(TagGroup.EDIT_BOOK)
     void shouldThrowNoSuchElementException_editBook() {
         //given
-        BookRequest bookRequest = BookRequestExamplesTest.VALID_BOOK_3;
+        BookRequest bookRequest = BookRequestExample.getValidBook3();
         when(bookRepository.findById(any())).thenReturn(Optional.empty());
 
         //when
@@ -188,7 +201,7 @@ class BookServiceTest {
     @Tag(TagGroup.DELETE_BOOK)
     void shouldPutDeleteDate() {
         //given
-        Book book = BookExamplesTest.copy(BookExamplesTest.VALID_BOOK_1);
+        Book book = BookExample.getValidBook1();
         String bookId = "1";
         when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
 
@@ -229,9 +242,9 @@ class BookServiceTest {
     @Tag(TagGroup.GET_BOOK_LIST)
     void shouldReturnCorrectBookList() {
         //given
-        List<Book> books = List.of(BookExamplesTest.VALID_BOOK_1, BookExamplesTest.VALID_BOOK_2);
+        List<Book> books = List.of(BookExample.getValidBook1(), BookExample.getValidBook2());
         when(bookRepositoryTemplate.findBySearchTermAndPageRequest(any(), any())).thenReturn(books);
-        BookResponseList expected = new BookResponseList(2L, 2L, List.of(BookResponseExamplesTest.VALID_BOOK_1, BookResponseExamplesTest.VALID_BOOK_2));
+        BookResponseList expected = new BookResponseList(2L, 2L, List.of(BookResponseExample.getValidBook1(), BookResponseExample.getValidBook2()));
         //when
         BookResponseList actual = bookService.getBookList(null, null, null);
         //then
