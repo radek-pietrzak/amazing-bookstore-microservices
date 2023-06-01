@@ -1,7 +1,7 @@
 package com.productservice.config;
 
-import com.productservice.api.util.JsonFileToJsonObject;
 import com.productservice.example.BookResponseExample;
+import com.productservice.example.BookResponseListExample;
 import com.productservice.example.EditBookResponseExample;
 import com.productservice.example.ErrorResponseExample;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -15,36 +15,45 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 
-import java.io.IOException;
 
 @OpenAPIDefinition
 @Configuration
 public class SpringdocConfig {
-
-    JsonFileToJsonObject jsonFileToJsonObject = new JsonFileToJsonObject();
     Components components = new Components();
 
 
     @Bean
     public OpenAPI baseOpenAPI() {
 
+        Example successfullyGetBook = new Example().value(BookResponseExample.VALID_BOOK_1);
+        addResponseToComponents(components, "successfullyGetBook", successfullyGetBook);
+
+        Example notFoundExceptionGet = new Example().value(ErrorResponseExample.NOT_FOUND_EXCEPTION_GET);
+        addResponseToComponents(components, "notFoundExceptionGet", notFoundExceptionGet);
+
+        Example successfullySavedBook = new Example().value(BookResponseExample.VALID_BOOK_1);
+        addResponseToComponents(components, "successfullySavedBook", successfullySavedBook);
+
+        Example validationExceptionSave = new Example().value(ErrorResponseExample.VALIDATION_EXCEPTION_SAVE);
+        addResponseToComponents(components, "validationExceptionSave", validationExceptionSave);
 
         Example successfullyEditedBook = new Example().value(EditBookResponseExample.getEditBookResponse(true, BookResponseExample.VALID_BOOK_1));
         addResponseToComponents(components, "successfullyEditedBook", successfullyEditedBook);
 
-        Example validationException = new Example().value(ErrorResponseExample.VALIDATION_EXCEPTION);
-        addResponseToComponents(components, "400", validationException);
+        Example validationExceptionEdit = new Example().value(ErrorResponseExample.VALIDATION_EXCEPTION_EDIT);
+        addResponseToComponents(components, "validationExceptionEdit", validationExceptionEdit);
 
-        Example notFoundException = new Example().value(ErrorResponseExample.NOT_FOUND_EXCEPTION);
-        addResponseToComponents(components, "404", notFoundException);
+        Example notFoundExceptionEdit = new Example().value(ErrorResponseExample.NOT_FOUND_EXCEPTION_EDIT);
+        addResponseToComponents(components, "notFoundExceptionEdit", notFoundExceptionEdit);
 
-        addResponseToComponents(components, "badRequest", "Bad request", "badBookRequestApi");
-        addResponseToComponents(components, "internalServerError", "Internal server error", "internalErrorServerApi");
-        addResponseToComponents(components, "successfullySavedBook", "Successfully saved book", "successfullySavedBook");
-        addResponseToComponents(components, "successfullyGetBook", "Successfully get book", "successfullyGetBook");
-        addResponseToComponents(components, "bookNotFound", "Book not found", "bookNotFound");
-        addResponseToComponents(components, "successfullyDeletedBook", "Successfully deleted book", "successfullyDeletedBook");
-        addResponseToComponents(components, "successfullyDeletedBook", "Successfully deleted book", "successfullyDeletedBook");
+        Example successfullyDeletedBook = new Example().value(BookResponseExample.DELETED_BOOK);
+        addResponseToComponents(components, "successfullyDeletedBook", successfullyDeletedBook);
+
+        Example notFoundExceptionDelete = new Example().value(ErrorResponseExample.NOT_FOUND_EXCEPTION_DELETE);
+        addResponseToComponents(components, "notFoundExceptionDelete", notFoundExceptionDelete);
+
+        Example successfullyGetBookList = new Example().value(BookResponseListExample.BOOK_LIST);
+        addResponseToComponents(components, "successfullyGetBookList", successfullyGetBookList);
 
         return new OpenAPI()
                 .components(components)
@@ -70,24 +79,4 @@ public class SpringdocConfig {
         components.addResponses(responseKey, apiResponse);
     }
 
-    private void addResponseToComponents(
-            Components components,
-            String jsonKey,
-            String description,
-            String responseKey
-    ) {
-
-        ApiResponse apiResponse;
-        try {
-            apiResponse = new ApiResponse().content(
-                    new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE,
-                            new io.swagger.v3.oas.models.media.MediaType().addExamples("default",
-                                    new Example().value(jsonFileToJsonObject.readByFileName("response").get(jsonKey).toString())
-                                            .description(description)))
-            );
-        } catch (IOException e) {
-            apiResponse = null;
-        }
-        components.addResponses(responseKey, apiResponse);
-    }
 }

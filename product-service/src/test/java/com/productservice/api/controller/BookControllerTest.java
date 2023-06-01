@@ -5,10 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.productservice.TagGroup;
 import com.productservice.api.example.BookRequestExamplesTest;
 import com.productservice.api.example.BookResponseExamplesTest;
-import com.productservice.api.response.BadRequestResponse;
 import com.productservice.api.service.BookService;
-import com.productservice.api.service.ValidationService;
-import com.productservice.validation.ValidationErrors;
 import com.productservice.api.request.BookRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -21,10 +18,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.productservice.api.example.BookRequestExamplesTest.*;
+import static com.productservice.api.request.JsonPropertyNames.*;
+import static com.productservice.validation.ValidationErrors.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -40,8 +42,6 @@ class BookControllerTest {
     private BookController bookController;
     @Mock
     private BookService bookService;
-    @Mock
-    private ValidationService validationService;
     private ObjectMapper mapper;
 
     @BeforeEach
@@ -49,383 +49,89 @@ class BookControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(bookController).build();
         mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
-        doNothing().when(bookService).saveBook(any());
-        doCallRealMethod().when(validationService).errorMessages(any());
-    }
-
-    @Test
-    @Tag(TagGroup.ERRORS)
-    void shouldReturnBadRequestIfBookAllNulls() throws Exception {
-        //given
-        BookRequest request = BookRequestExamplesTest.BOOK_ALL_NULLS;
-        //when
-        //then
-        String result = mockMvc.perform(post(API.BOOK_SAVE)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertTrue(result.contains(ValidationErrors.ISBN_NULL));
-        assertTrue(result.contains(ValidationErrors.TITLE_NULL));
-        assertTrue(result.contains(ValidationErrors.DESCRIPTION_NULL));
-        assertTrue(result.contains(ValidationErrors.PUBLISH_YEAR_NULL));
-        assertTrue(result.contains(ValidationErrors.PAGE_COUNT_NULL));
-        assertTrue(result.contains(ValidationErrors.LANGUAGE_NULL));
-        assertTrue(result.contains(ValidationErrors.AUTHORS_NULL));
-        assertTrue(result.contains(ValidationErrors.CATEGORIES_NULL));
-        assertTrue(result.contains(ValidationErrors.PUBLISHER_NULL));
-
-    }
-
-    @Test
-    @Tag(TagGroup.ERRORS)
-    void shouldReturnBadRequestIfAuthorAllNulls() throws Exception {
-        //given
-        BookRequest request = BookRequestExamplesTest.BOOK_AUTHOR_NULLS;
-        //when
-        //then
-        String result = mockMvc.perform(post(API.BOOK_SAVE)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertTrue(result.contains(ValidationErrors.AUTHOR_NAME_NULL));
-
-    }
-
-    @Test
-    @Tag(TagGroup.ERRORS)
-    void shouldReturnBadRequestIfPublisherAllNulls() throws Exception {
-        //given
-        BookRequest request = BookRequestExamplesTest.BOOK_PUBLISHER_NULLS;
-        //when
-        //then
-        String result = mockMvc.perform(post(API.BOOK_SAVE)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertTrue(result.contains(ValidationErrors.PUBLISHER_NAME_NULL));
-
     }
 
     @ParameterizedTest
-    @MethodSource("invalidISBNProvider")
-    @Tag(TagGroup.ERRORS)
-    void shouldReturnBadRequestIfInvalidISBN(BookRequest request) throws Exception {
+    @MethodSource("requestProvider")
+    @Tag(TagGroup.VALIDATION)
+    void shouldReturnBadRequest(RequestProvider requestProvider) throws Exception {
         //given
+        BookRequest request = requestProvider.request;
+        String field = requestProvider.field;
+        String error = requestProvider.error;
         //when
         //then
-        String result = mockMvc.perform(post(API.BOOK_SAVE)
+        Exception result = mockMvc.perform(post(API.BOOK_SAVE)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andReturn()
-                .getResponse()
-                .getContentAsString();
+                .getResolvedException();
 
-        assertTrue(result.contains(ValidationErrors.ISBN_INVALID));
-
+        assertNotNull(result);
+        assertTrue(result instanceof MethodArgumentNotValidException);
+        MethodArgumentNotValidException validationException = (MethodArgumentNotValidException) result;
+        BindingResult bindingResult = validationException.getBindingResult();
+        assertNotNull(bindingResult.getFieldError(field));
+        assertTrue(result.getMessage().contains(error));
     }
 
-    private static List<BookRequest> invalidISBNProvider() {
+    private record RequestProvider(String field, BookRequest request, String error) {
+    }
+
+    private static List<RequestProvider> requestProvider() {
         return List.of(
-                BookRequestExamplesTest.INVALID_ISBN_1,
-                BookRequestExamplesTest.INVALID_ISBN_2,
-                BookRequestExamplesTest.INVALID_ISBN_3,
-                BookRequestExamplesTest.INVALID_ISBN_4
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("invalidTitleSizeProvider")
-    @Tag(TagGroup.ERRORS)
-    void shouldReturnBadRequestIfInvalidTitleSize(BookRequest request) throws Exception {
-        //given
-        //when
-        //then
-        String result = mockMvc.perform(post(API.BOOK_SAVE)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertTrue(result.contains(ValidationErrors.TITLE_LENGTH));
-
-    }
-
-    private static List<BookRequest> invalidTitleSizeProvider() {
-        return List.of(
-                BookRequestExamplesTest.INVALID_TITLE_SIZE_MIN,
-                BookRequestExamplesTest.INVALID_TITLE_SIZE_MAX
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("invalidDescriptionSizeProvider")
-    @Tag(TagGroup.ERRORS)
-    void shouldReturnBadRequestIfInvalidDescriptionSize(BookRequest request) throws Exception {
-        //given
-        //when
-        //then
-        String result = mockMvc.perform(post(API.BOOK_SAVE)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertTrue(result.contains(ValidationErrors.DESCRIPTION_LENGTH));
-
-    }
-
-    private static List<BookRequest> invalidDescriptionSizeProvider() {
-        return List.of(
-                BookRequestExamplesTest.INVALID_DESCRIPTION_SIZE_MIN,
-                BookRequestExamplesTest.INVALID_DESCRIPTION_SIZE_MAX
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("invalidPageCountMinProvider")
-    @Tag(TagGroup.ERRORS)
-    void shouldReturnBadRequestIfInvalidPageCountMin(BookRequest request) throws Exception {
-        //given
-        //when
-        //then
-        String result = mockMvc.perform(post(API.BOOK_SAVE)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertTrue(result.contains(ValidationErrors.PAGE_COUNT_MIN));
-
-    }
-
-    private static List<BookRequest> invalidPageCountMinProvider() {
-        return List.of(
-                BookRequestExamplesTest.INVALID_PAGE_COUNT_MIN_1,
-                BookRequestExamplesTest.INVALID_PAGE_COUNT_MIN_2
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("invalidPageCountMaxProvider")
-    @Tag(TagGroup.ERRORS)
-    void shouldReturnBadRequestIfInvalidPageCountMax(BookRequest request) throws Exception {
-        //given
-        //when
-        //then
-        String result = mockMvc.perform(post(API.BOOK_SAVE)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertTrue(result.contains(ValidationErrors.PAGE_COUNT_MAX));
-
-    }
-
-    private static List<BookRequest> invalidPageCountMaxProvider() {
-        return List.of(
-                BookRequestExamplesTest.INVALID_PAGE_COUNT_MAX_1,
-                BookRequestExamplesTest.INVALID_PAGE_COUNT_MAX_2
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("invalidLanguageCodeProvider")
-    @Tag(TagGroup.ERRORS)
-    void shouldReturnBadRequestIfInvalidLanguageCode(BookRequest request) throws Exception {
-        //given
-        //when
-        //then
-        String result = mockMvc.perform(post(API.BOOK_SAVE)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertTrue(result.contains(ValidationErrors.LANG_CODE));
-
-    }
-
-    private static List<BookRequest> invalidLanguageCodeProvider() {
-        return List.of(
-                BookRequestExamplesTest.INVALID_LANG_CODE_1,
-                BookRequestExamplesTest.INVALID_LANG_CODE_2,
-                BookRequestExamplesTest.INVALID_LANG_CODE_3
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("invalidAuthorNameProvider")
-    @Tag(TagGroup.ERRORS)
-    void shouldReturnBadRequestIfInvalidAuthorNameLength(BookRequest request) throws Exception {
-        //given
-        //when
-        //then
-        String result = mockMvc.perform(post(API.BOOK_SAVE)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertTrue(result.contains(ValidationErrors.AUTHOR_NAME_LENGTH));
-
-    }
-
-    private static List<BookRequest> invalidAuthorNameProvider() {
-        return List.of(
-                BookRequestExamplesTest.INVALID_AUTHOR_NAME_1,
-                BookRequestExamplesTest.INVALID_AUTHOR_NAME_2
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("invalidAuthorDescriptionProvider")
-    @Tag(TagGroup.ERRORS)
-    void shouldReturnBadRequestIfInvalidAuthorDescriptionLength(BookRequest request) throws Exception {
-        //given
-        //when
-        //then
-        String result = mockMvc.perform(post(API.BOOK_SAVE)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertTrue(result.contains(ValidationErrors.AUTHOR_DESCRIPTION_LENGTH));
-
-    }
-
-    private static List<BookRequest> invalidAuthorDescriptionProvider() {
-        return List.of(
-                BookRequestExamplesTest.INVALID_AUTHOR_DESCRIPTION_1,
-                BookRequestExamplesTest.INVALID_AUTHOR_DESCRIPTION_2
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("invalidCategoryProvider")
-    @Tag(TagGroup.ERRORS)
-    void shouldReturnBadRequestIfInvalidCategory(BookRequest request) throws Exception {
-        //given
-        //when
-        //then
-        String result = mockMvc.perform(post(API.BOOK_SAVE)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertTrue(result.contains(ValidationErrors.CATEGORY_INVALID));
-
-    }
-
-    private static List<BookRequest> invalidCategoryProvider() {
-        return List.of(
-                BookRequestExamplesTest.INVALID_CATEGORY_1,
-                BookRequestExamplesTest.INVALID_CATEGORY_2,
-                BookRequestExamplesTest.INVALID_CATEGORY_3,
-                BookRequestExamplesTest.INVALID_CATEGORY_4
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("invalidPublisherNameProvider")
-    @Tag(TagGroup.ERRORS)
-    void shouldReturnBadRequestIfInvalidPublisherName(BookRequest request) throws Exception {
-        //given
-        //when
-        //then
-        String result = mockMvc.perform(post(API.BOOK_SAVE)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertTrue(result.contains(ValidationErrors.PUBLISHER_NAME_LENGTH));
-
-    }
-
-    private static List<BookRequest> invalidPublisherNameProvider() {
-        return List.of(
-                BookRequestExamplesTest.INVALID_PUBLISHER_NAME_LENGTH_1,
-                BookRequestExamplesTest.INVALID_PUBLISHER_NAME_LENGTH_2
+                new RequestProvider(ISBN, BOOK_ALL_NULLS, ISBN_NULL),
+                new RequestProvider(ISBN, INVALID_ISBN_1, ISBN_INVALID),
+                new RequestProvider(ISBN, INVALID_ISBN_2, ISBN_INVALID),
+                new RequestProvider(ISBN, INVALID_ISBN_3, ISBN_INVALID),
+                new RequestProvider(ISBN, INVALID_ISBN_4, ISBN_INVALID),
+                new RequestProvider(TITLE, BOOK_ALL_NULLS, TITLE_NULL),
+                new RequestProvider(TITLE, INVALID_TITLE_SIZE_MIN, TITLE_LENGTH),
+                new RequestProvider(TITLE, INVALID_TITLE_SIZE_MAX, TITLE_LENGTH),
+                new RequestProvider(DESCRIPTION, BOOK_ALL_NULLS, DESCRIPTION_NULL),
+                new RequestProvider(DESCRIPTION, INVALID_DESCRIPTION_SIZE_MIN, DESCRIPTION_LENGTH),
+                new RequestProvider(DESCRIPTION, INVALID_DESCRIPTION_SIZE_MAX, DESCRIPTION_LENGTH),
+                new RequestProvider(PUBLISH_YEAR, BOOK_ALL_NULLS, PUBLISH_YEAR_NULL),
+                new RequestProvider(PAGE_COUNT, BOOK_ALL_NULLS, PAGE_COUNT_NULL),
+                new RequestProvider(PAGE_COUNT, INVALID_PAGE_COUNT_MIN_1, PAGE_COUNT_MIN),
+                new RequestProvider(PAGE_COUNT, INVALID_PAGE_COUNT_MIN_2, PAGE_COUNT_MIN),
+                new RequestProvider(PAGE_COUNT, INVALID_PAGE_COUNT_MAX_1, PAGE_COUNT_MAX),
+                new RequestProvider(PAGE_COUNT, INVALID_PAGE_COUNT_MAX_2, PAGE_COUNT_MAX),
+                new RequestProvider(LANG_CODE, BOOK_ALL_NULLS, LANGUAGE_NULL),
+                new RequestProvider(LANG_CODE, INVALID_LANG_CODE_1, LANG_CODE_INVALID),
+                new RequestProvider(LANG_CODE, INVALID_LANG_CODE_2, LANG_CODE_INVALID),
+                new RequestProvider(LANG_CODE, INVALID_LANG_CODE_3, LANG_CODE_INVALID),
+                new RequestProvider(AUTHORS, BOOK_ALL_NULLS, AUTHORS_NULL),
+                new RequestProvider("authors[0]." + AUTHOR_NAME, BOOK_AUTHOR_NULLS, AUTHOR_NAME_NULL),
+                new RequestProvider("authors[0]." + AUTHOR_NAME, INVALID_AUTHOR_NAME_1, AUTHOR_NAME_LENGTH),
+                new RequestProvider("authors[0]." + AUTHOR_NAME, INVALID_AUTHOR_NAME_2, AUTHOR_NAME_LENGTH),
+                new RequestProvider("authors[0]." + AUTHOR_DESCRIPTION, INVALID_AUTHOR_DESCRIPTION_1, AUTHOR_DESCRIPTION_LENGTH),
+                new RequestProvider("authors[0]." + AUTHOR_DESCRIPTION, INVALID_AUTHOR_DESCRIPTION_2, AUTHOR_DESCRIPTION_LENGTH),
+                new RequestProvider(CATEGORIES, BOOK_ALL_NULLS, CATEGORIES_NULL),
+                new RequestProvider(CATEGORIES, INVALID_CATEGORY_1, CATEGORY_INVALID),
+                new RequestProvider(CATEGORIES, INVALID_CATEGORY_2, CATEGORY_INVALID),
+                new RequestProvider(CATEGORIES, INVALID_CATEGORY_3, CATEGORY_INVALID),
+                new RequestProvider(CATEGORIES, INVALID_CATEGORY_4, CATEGORY_INVALID),
+                new RequestProvider(PUBLISHER, BOOK_ALL_NULLS, PUBLISHER_NULL),
+                new RequestProvider("publisher." + PUBLISHER_NAME, BOOK_PUBLISHER_NULLS, PUBLISHER_NAME_NULL),
+                new RequestProvider("publisher." + PUBLISHER_NAME, INVALID_PUBLISHER_NAME_LENGTH_1, PUBLISHER_NAME_LENGTH),
+                new RequestProvider("publisher." + PUBLISHER_NAME, INVALID_PUBLISHER_NAME_LENGTH_2, PUBLISHER_NAME_LENGTH),
+                new RequestProvider("publisher." + PUBLISHER_DESCRIPTION, INVALID_PUBLISHER_DESCRIPTION_LENGTH, PUBLISHER_DESCRIPTION_LENGTH)
         );
     }
 
     @Test
-    @Tag(TagGroup.ERRORS)
-    void shouldReturnBadRequestIfInvalidPublisherName() throws Exception {
-        //given
-        BookRequest request = BookRequestExamplesTest.INVALID_PUBLISHER_DESCRIPTION_LENGTH_1;
-        //when
-        //then
-        String result = mockMvc.perform(post(API.BOOK_SAVE)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertTrue(result.contains(ValidationErrors.PUBLISHER_DESCRIPTION_LENGTH));
-
-    }
-
-    @Test
+    @Tag(TagGroup.VALIDATION)
     @Tag(TagGroup.EDIT_BOOK)
     void shouldReturnModifiedBook() throws Exception {
         //given
         BookRequest request = BookRequestExamplesTest.VALID_BOOK_1;
         String id = "1";
-        when(bookService.editBook(any(), any())).thenReturn(BookResponseExamplesTest.VALID_BOOK_1);
+        when(bookService.editBook(id, request)).thenReturn(BookResponseExamplesTest.VALID_BOOK_1);
         //when
         //then
-        mockMvc.perform(post(API.BOOK_EDIT, id)
+        mockMvc.perform(post(API.BOOK_EDIT_ID, id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andDo(print())
@@ -433,25 +139,7 @@ class BookControllerTest {
     }
 
     @Test
-    @Tag(TagGroup.DELETE_BOOK)
-    void shouldReturnBadRequestInvalidBookId_deleteBook() throws Exception {
-        //given
-        String bookId = "1";
-        when(bookService.deleteBook(any())).thenReturn(null);
-        //when
-        //then
-        String actual = mockMvc.perform(put(API.BOOK_DELETE, bookId)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertTrue(actual.contains(BadRequestResponse.UNABLE_TO_FIND_BOOK));
-    }
-
-    @Test
+    @Tag(TagGroup.VALIDATION)
     @Tag(TagGroup.DELETE_BOOK)
     void shouldReturnOKIfValidBookId_deleteBook() throws Exception {
         //given
@@ -459,12 +147,14 @@ class BookControllerTest {
         when(bookService.deleteBook(any())).thenReturn(BookResponseExamplesTest.VALID_BOOK_1);
         //when
         //then
-        mockMvc.perform(put(API.BOOK_DELETE, bookId)
+        mockMvc.perform(put(API.BOOK_DELETE_ID, bookId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
+
     @Test
+    @Tag(TagGroup.VALIDATION)
     @Tag(TagGroup.GET_BOOK)
     void shouldReturnOKIfValidBookId() throws Exception {
         //given
@@ -472,30 +162,26 @@ class BookControllerTest {
         when(bookService.getBook(any())).thenReturn(BookResponseExamplesTest.VALID_BOOK_1);
         //when
         //then
-        mockMvc.perform(get(API.GET_BOOK, bookId)
+        mockMvc.perform(get(API.BOOK_GET_ID, bookId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+                .andExpect(status().isOk());
     }
 
     @ParameterizedTest
     @MethodSource("validBooksRequestProvider")
+    @Tag(TagGroup.VALIDATION)
     @Tag(TagGroup.SAVE_BOOK)
     void shouldAcceptIfValidBook(BookRequest request) throws Exception {
         //given
+        when(bookService.saveBook(request)).thenReturn(BookResponseExamplesTest.VALID_BOOK_1);
         //when
         //then
         mockMvc.perform(post(API.BOOK_SAVE)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+                .andExpect(status().isOk());
 
     }
 
@@ -517,11 +203,7 @@ class BookControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(search)))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
+                .andExpect(status().isOk());
     }
 
     private static List<String> anySearchProvider() {

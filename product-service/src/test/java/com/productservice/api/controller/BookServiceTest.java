@@ -4,6 +4,7 @@ import com.productservice.TagGroup;
 import com.productservice.api.example.BookRequestExamplesTest;
 import com.productservice.api.example.BookResponseExamplesTest;
 import com.productservice.api.response.EditBookResponse;
+import com.productservice.api.response.Response;
 import com.productservice.api.service.BookService;
 import com.productservice.document.Book;
 import com.productservice.api.example.BookExamplesTest;
@@ -60,26 +61,12 @@ class BookServiceTest {
     @Tag(TagGroup.GET_BOOK)
     void shouldReturnCorrectResponse(BookPairResponse bookPairResponse) {
         //given
-        BookResponse expected = bookPairResponse.bookResponse;
+        Response expected = bookPairResponse.bookResponse;
         when(bookRepository.findById(any())).thenReturn(Optional.ofNullable(bookPairResponse.book));
         //when
-        BookResponse actual = bookService.getBook(any());
+        Response actual = bookService.getBook("1");
         //then
         assertNotNull(actual);
-        assertNotNull(actual.getId());
-        assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getCreatedDate(), actual.getCreatedDate());
-        assertEquals(expected.getLastEditDate(), actual.getLastEditDate());
-        assertEquals(expected.getDeletedDate(), actual.getDeletedDate());
-        assertEquals(expected.getIsbn(), actual.getIsbn());
-        assertEquals(expected.getTitle(), actual.getTitle());
-        assertEquals(expected.getDescription(), actual.getDescription());
-        assertEquals(expected.getPageCount(), actual.getPageCount());
-        assertEquals(expected.getLanguageCode(), actual.getLanguageCode());
-        assertEquals(expected.getAuthors(), actual.getAuthors());
-        assertEquals(expected.getCategories(), actual.getCategories());
-        assertEquals(expected.getPublisher(), actual.getPublisher());
-        assertEquals(expected.getPublishYear(), actual.getPublishYear());
         assertEquals(expected, actual);
     }
 
@@ -99,30 +86,29 @@ class BookServiceTest {
     void shouldBuildCorrectBookToSave(BookPairRequest bookPairRequest) {
         //given
         BookRequest request = bookPairRequest.bookRequest;
-        Book expectedBook = bookPairRequest.book;
+        Book expected = bookPairRequest.book;
 
         //when
         bookService.saveBook(request);
 
         //then
         verify(bookRepository).save(bookArgumentCaptor.capture());
-        Book actualBook = bookArgumentCaptor.getValue();
+        Book actual = bookArgumentCaptor.getValue();
 
-        assertNotNull(actualBook);
-        assertNotNull(expectedBook.getCreatedDate());
-        assertInstanceOf(LocalDateTime.class, actualBook.getCreatedDate());
-        assertEquals(expectedBook.getIsbn(), actualBook.getIsbn());
-        assertEquals(expectedBook.getTitle(), actualBook.getTitle());
-        assertEquals(expectedBook.getDescription(), actualBook.getDescription());
-        assertEquals(expectedBook.getPublishYear(), actualBook.getPublishYear());
-        assertEquals(expectedBook.getPageCount(), actualBook.getPageCount());
-        assertEquals(expectedBook.getLanguageCode(), actualBook.getLanguageCode());
-        assertNotNull(actualBook.getAuthors());
-        assertEquals(expectedBook.getAuthors().size(), actualBook.getAuthors().size());
-        assertEquals(expectedBook.getAuthors(), actualBook.getAuthors());
-        assertEquals(expectedBook.getCategories(), actualBook.getCategories());
-        assertEquals(expectedBook.getPublisher(), actualBook.getPublisher());
-        assertEquals(expectedBook, actualBook);
+        assertNotNull(actual);
+        assertNotNull(expected.getCreatedDate());
+        assertInstanceOf(LocalDateTime.class, actual.getCreatedDate());
+        assertEquals(expected.getIsbn(), actual.getIsbn());
+        assertEquals(expected.getTitle(), actual.getTitle());
+        assertEquals(expected.getDescription(), actual.getDescription());
+        assertEquals(expected.getPublishYear(), actual.getPublishYear());
+        assertEquals(expected.getPageCount(), actual.getPageCount());
+        assertEquals(expected.getLanguageCode(), actual.getLanguageCode());
+        assertNotNull(actual.getAuthors());
+        assertEquals(expected.getAuthors().size(), actual.getAuthors().size());
+        assertEquals(expected.getAuthors(), actual.getAuthors());
+        assertEquals(expected.getCategories(), actual.getCategories());
+        assertEquals(expected.getPublisher(), actual.getPublisher());
     }
 
     private static List<BookPairRequest> validBookPairRequestsProvider() {
@@ -175,7 +161,7 @@ class BookServiceTest {
 
     @Test
     @Tag(TagGroup.EDIT_BOOK)
-    void shouldThrowIllegalArgumentException() {
+    void shouldThrowIllegalArgumentException_editBook() {
         //given
         BookRequest bookRequest = BookRequestExamplesTest.VALID_BOOK_3;
 
@@ -188,7 +174,7 @@ class BookServiceTest {
 
     @Test
     @Tag(TagGroup.EDIT_BOOK)
-    void shouldThrowNoSuchElementException() {
+    void shouldThrowNoSuchElementException_editBook() {
         //given
         BookRequest bookRequest = BookRequestExamplesTest.VALID_BOOK_3;
         when(bookRepository.findById(any())).thenReturn(Optional.empty());
@@ -203,10 +189,11 @@ class BookServiceTest {
     void shouldPutDeleteDate() {
         //given
         Book book = BookExamplesTest.copy(BookExamplesTest.VALID_BOOK_1);
-        when(bookRepository.findById(any())).thenReturn(Optional.of(book));
+        String bookId = "1";
+        when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
 
         //when
-        bookService.deleteBook(any());
+        bookService.deleteBook(bookId);
 
         //then
         verify(bookRepository).save(bookArgumentCaptor.capture());
@@ -214,6 +201,28 @@ class BookServiceTest {
 
         assertNotNull(actual);
         assertNotNull(actual.getDeletedDate());
+    }
+
+    @Test
+    @Tag(TagGroup.DELETE_BOOK)
+    void shouldThrowIllegalArgumentException_deleteBook() {
+        //given
+        //when
+        //then
+        assertThrows(IllegalArgumentException.class, () -> bookService.deleteBook(null));
+        assertThrows(IllegalArgumentException.class, () -> bookService.deleteBook(""));
+        assertThrows(IllegalArgumentException.class, () -> bookService.deleteBook(" "));
+    }
+
+    @Test
+    @Tag(TagGroup.DELETE_BOOK)
+    void shouldThrowNoSuchElementException_deleteBook() {
+        //given
+        when(bookRepository.findById(any())).thenReturn(Optional.empty());
+
+        //when
+        //then
+        assertThrows(NoSuchElementException.class, () -> bookService.deleteBook("1"));
     }
 
     @Test

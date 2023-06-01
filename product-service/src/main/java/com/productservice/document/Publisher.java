@@ -9,5 +9,5 @@ import lombok.*;
 @EqualsAndHashCode
 public class Publisher {
     private String publisherName;
-    private String description;
+    private String publisherDescription;
 }

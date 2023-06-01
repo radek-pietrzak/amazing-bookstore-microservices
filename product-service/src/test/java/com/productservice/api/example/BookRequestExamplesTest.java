@@ -189,7 +189,7 @@ public interface BookRequestExamplesTest {
             .publisher(new PublisherRequest(new String(new char[256]).replace('\0', 'a'), ""))
             .build();
 
-    BookRequest INVALID_PUBLISHER_DESCRIPTION_LENGTH_1 = BookRequest.builder()
+    BookRequest INVALID_PUBLISHER_DESCRIPTION_LENGTH = BookRequest.builder()
             .bookRequest(VALID_BOOK_1)
             .publisher(new PublisherRequest("Name", new String(new char[1001]).replace('\0', 'a')))
             .build();

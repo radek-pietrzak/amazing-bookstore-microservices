@@ -37,31 +37,21 @@ public class BookService {
         this.bookMapper = bookMapper;
     }
 
-    public BookResponse getBook(String id) {
-        Optional<Book> optionalBook = repository.findById(id);
-        return optionalBook.map(bookMapper::bookToBookResponse).orElse(null);
+    public Response getBook(String id) {
+        return bookMapper.bookToBookResponse(getBookIfPresent(id));
     }
 
-    //TODO return BookResponse in body
-    public void saveBook(BookRequest request) {
+    public Response saveBook(BookRequest request) {
         Book book = bookMapper.bookRequestToBook(request);
         book.setCreatedDate(LocalDateTime.now());
         repository.save(book);
+        return bookMapper.bookToBookResponse(book);
     }
 
     public Response editBook(String id, BookRequest request) throws IllegalAccessException {
-        if (StringUtils.isBlank(id)) {
-            throw new IllegalArgumentException();
-        }
-
-        Optional<Book> optionalBook = repository.findById(id);
-        if (optionalBook.isEmpty()) {
-            throw new NoSuchElementException();
-        }
-
-        Book repoBook = optionalBook.get();
-        Book reqeustBook = bookMapper.bookRequestToBook(request);
-        if (isChangedAndSet(repoBook, reqeustBook)) {
+        Book repoBook = getBookIfPresent(id);
+        Book requestBook = bookMapper.bookRequestToBook(request);
+        if (isChangedAndSet(repoBook, requestBook)) {
             repoBook.setLastEditDate(LocalDateTime.now());
             repository.save(repoBook);
             return bookMapper.bookToEditBookResponse(true, repoBook);
@@ -111,15 +101,11 @@ public class BookService {
         System.out.println("Response from chatGPT in seconds: " + ((atEnd - atStart) / 1000));
     }
 
-    public BookResponse deleteBook(String id) {
-        Optional<Book> optionalBook = repository.findById(id);
-        if (optionalBook.isPresent()) {
-            Book book = optionalBook.get();
+    public Response deleteBook(String id) {
+        Book book = getBookIfPresent(id);
             book.setDeletedDate(LocalDateTime.now());
             repository.save(book);
             return bookMapper.bookToBookResponse(book);
-        }
-        return null;
     }
 
     public BookResponseList getBookList(String search, Integer page, Integer pageSize) {
@@ -142,5 +128,18 @@ public class BookService {
                 .toList();
 
         return new BookResponseList(booksTotal, list.size(), list);
+    }
+
+    private Book getBookIfPresent(String id) {
+        if (StringUtils.isBlank(id)) {
+            throw new IllegalArgumentException();
+        }
+
+        Optional<Book> optionalBook = repository.findById(id);
+
+        if (optionalBook.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        return optionalBook.get();
     }
 }
