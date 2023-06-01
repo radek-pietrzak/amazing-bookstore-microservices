@@ -15,7 +15,6 @@ import java.util.List;
 @Builder
 @EqualsAndHashCode
 public class Book {
-
     @Id
     private String id;
     private LocalDateTime createdDate;
@@ -30,26 +29,4 @@ public class Book {
     private Integer publishYear;
     private Integer pageCount;
     private String languageCode;
-
-    public static BookBuilder builder(Book book) {
-        BookBuilder builder = new BookBuilder();
-        builder.id = book.id;
-        builder.createdDate = book.createdDate;
-        builder.lastEditDate = book.lastEditDate;
-        builder.deletedDate = book.deletedDate;
-        builder.isbn = book.isbn;
-        builder.title = book.title;
-        builder.authors = book.authors;
-        builder.description = book.description;
-        builder.categories = book.categories;
-        builder.publisher = book.publisher;
-        builder.publishYear = book.publishYear;
-        builder.pageCount = book.pageCount;
-        builder.languageCode = book.languageCode;
-        return builder;
-    }
-
-    public static BookBuilder builder() {
-        return new BookBuilder();
-    }
 }

@@ -3,10 +3,10 @@ package com.productservice.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.productservice.TagGroup;
-import com.productservice.api.example.BookRequestExamplesTest;
-import com.productservice.api.example.BookResponseExamplesTest;
 import com.productservice.api.service.BookService;
 import com.productservice.api.request.BookRequest;
+import com.productservice.example.BookRequestExample;
+import com.productservice.example.BookResponseExample;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.productservice.api.example.BookRequestExamplesTest.*;
 import static com.productservice.api.request.JsonPropertyNames.*;
 import static com.productservice.validation.ValidationErrors.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -81,43 +80,43 @@ class BookControllerTest {
 
     private static List<RequestProvider> requestProvider() {
         return List.of(
-                new RequestProvider(ISBN, BOOK_ALL_NULLS, ISBN_NULL),
-                new RequestProvider(ISBN, INVALID_ISBN_1, ISBN_INVALID),
-                new RequestProvider(ISBN, INVALID_ISBN_2, ISBN_INVALID),
-                new RequestProvider(ISBN, INVALID_ISBN_3, ISBN_INVALID),
-                new RequestProvider(ISBN, INVALID_ISBN_4, ISBN_INVALID),
-                new RequestProvider(TITLE, BOOK_ALL_NULLS, TITLE_NULL),
-                new RequestProvider(TITLE, INVALID_TITLE_SIZE_MIN, TITLE_LENGTH),
-                new RequestProvider(TITLE, INVALID_TITLE_SIZE_MAX, TITLE_LENGTH),
-                new RequestProvider(DESCRIPTION, BOOK_ALL_NULLS, DESCRIPTION_NULL),
-                new RequestProvider(DESCRIPTION, INVALID_DESCRIPTION_SIZE_MIN, DESCRIPTION_LENGTH),
-                new RequestProvider(DESCRIPTION, INVALID_DESCRIPTION_SIZE_MAX, DESCRIPTION_LENGTH),
-                new RequestProvider(PUBLISH_YEAR, BOOK_ALL_NULLS, PUBLISH_YEAR_NULL),
-                new RequestProvider(PAGE_COUNT, BOOK_ALL_NULLS, PAGE_COUNT_NULL),
-                new RequestProvider(PAGE_COUNT, INVALID_PAGE_COUNT_MIN_1, PAGE_COUNT_MIN),
-                new RequestProvider(PAGE_COUNT, INVALID_PAGE_COUNT_MIN_2, PAGE_COUNT_MIN),
-                new RequestProvider(PAGE_COUNT, INVALID_PAGE_COUNT_MAX_1, PAGE_COUNT_MAX),
-                new RequestProvider(PAGE_COUNT, INVALID_PAGE_COUNT_MAX_2, PAGE_COUNT_MAX),
-                new RequestProvider(LANG_CODE, BOOK_ALL_NULLS, LANGUAGE_NULL),
-                new RequestProvider(LANG_CODE, INVALID_LANG_CODE_1, LANG_CODE_INVALID),
-                new RequestProvider(LANG_CODE, INVALID_LANG_CODE_2, LANG_CODE_INVALID),
-                new RequestProvider(LANG_CODE, INVALID_LANG_CODE_3, LANG_CODE_INVALID),
-                new RequestProvider(AUTHORS, BOOK_ALL_NULLS, AUTHORS_NULL),
-                new RequestProvider("authors[0]." + AUTHOR_NAME, BOOK_AUTHOR_NULLS, AUTHOR_NAME_NULL),
-                new RequestProvider("authors[0]." + AUTHOR_NAME, INVALID_AUTHOR_NAME_1, AUTHOR_NAME_LENGTH),
-                new RequestProvider("authors[0]." + AUTHOR_NAME, INVALID_AUTHOR_NAME_2, AUTHOR_NAME_LENGTH),
-                new RequestProvider("authors[0]." + AUTHOR_DESCRIPTION, INVALID_AUTHOR_DESCRIPTION_1, AUTHOR_DESCRIPTION_LENGTH),
-                new RequestProvider("authors[0]." + AUTHOR_DESCRIPTION, INVALID_AUTHOR_DESCRIPTION_2, AUTHOR_DESCRIPTION_LENGTH),
-                new RequestProvider(CATEGORIES, BOOK_ALL_NULLS, CATEGORIES_NULL),
-                new RequestProvider(CATEGORIES, INVALID_CATEGORY_1, CATEGORY_INVALID),
-                new RequestProvider(CATEGORIES, INVALID_CATEGORY_2, CATEGORY_INVALID),
-                new RequestProvider(CATEGORIES, INVALID_CATEGORY_3, CATEGORY_INVALID),
-                new RequestProvider(CATEGORIES, INVALID_CATEGORY_4, CATEGORY_INVALID),
-                new RequestProvider(PUBLISHER, BOOK_ALL_NULLS, PUBLISHER_NULL),
-                new RequestProvider("publisher." + PUBLISHER_NAME, BOOK_PUBLISHER_NULLS, PUBLISHER_NAME_NULL),
-                new RequestProvider("publisher." + PUBLISHER_NAME, INVALID_PUBLISHER_NAME_LENGTH_1, PUBLISHER_NAME_LENGTH),
-                new RequestProvider("publisher." + PUBLISHER_NAME, INVALID_PUBLISHER_NAME_LENGTH_2, PUBLISHER_NAME_LENGTH),
-                new RequestProvider("publisher." + PUBLISHER_DESCRIPTION, INVALID_PUBLISHER_DESCRIPTION_LENGTH, PUBLISHER_DESCRIPTION_LENGTH)
+                new RequestProvider(ISBN, BookRequestExample.getBookAllNulls(), ISBN_NULL),
+                new RequestProvider(ISBN, BookRequestExample.getInvalidISBN1(), ISBN_INVALID),
+                new RequestProvider(ISBN, BookRequestExample.getInvalidISBN2(), ISBN_INVALID),
+                new RequestProvider(ISBN, BookRequestExample.getInvalidISBN3(), ISBN_INVALID),
+                new RequestProvider(ISBN, BookRequestExample.getInvalidISBN4(), ISBN_INVALID),
+                new RequestProvider(TITLE, BookRequestExample.getBookAllNulls(), TITLE_NULL),
+                new RequestProvider(TITLE, BookRequestExample.getInvalidTitleSizeMin(), TITLE_LENGTH),
+                new RequestProvider(TITLE, BookRequestExample.getInvalidTitleSizeMax(), TITLE_LENGTH),
+                new RequestProvider(DESCRIPTION, BookRequestExample.getBookAllNulls(), DESCRIPTION_NULL),
+                new RequestProvider(DESCRIPTION, BookRequestExample.getInvalidDescriptionSizeMin(), DESCRIPTION_LENGTH),
+                new RequestProvider(DESCRIPTION, BookRequestExample.getInvalidDescriptionSizeMax(), DESCRIPTION_LENGTH),
+                new RequestProvider(PUBLISH_YEAR, BookRequestExample.getBookAllNulls(), PUBLISH_YEAR_NULL),
+                new RequestProvider(PAGE_COUNT, BookRequestExample.getBookAllNulls(), PAGE_COUNT_NULL),
+                new RequestProvider(PAGE_COUNT, BookRequestExample.getInvalidPageCountMin1(), PAGE_COUNT_MIN),
+                new RequestProvider(PAGE_COUNT, BookRequestExample.getInvalidPageCountMin2(), PAGE_COUNT_MIN),
+                new RequestProvider(PAGE_COUNT, BookRequestExample.getInvalidPageCountMax1(), PAGE_COUNT_MAX),
+                new RequestProvider(PAGE_COUNT, BookRequestExample.getInvalidPageCountMax2(), PAGE_COUNT_MAX),
+                new RequestProvider(LANG_CODE, BookRequestExample.getBookAllNulls(), LANGUAGE_NULL),
+                new RequestProvider(LANG_CODE, BookRequestExample.getInvalidLangCode1(), LANG_CODE_INVALID),
+                new RequestProvider(LANG_CODE, BookRequestExample.getInvalidLangCode2(), LANG_CODE_INVALID),
+                new RequestProvider(LANG_CODE, BookRequestExample.getInvalidLangCode3(), LANG_CODE_INVALID),
+                new RequestProvider(AUTHORS, BookRequestExample.getBookAllNulls(), AUTHORS_NULL),
+                new RequestProvider("authors[0]." + AUTHOR_NAME, BookRequestExample.getBookAuthorNulls(), AUTHOR_NAME_NULL),
+                new RequestProvider("authors[0]." + AUTHOR_NAME, BookRequestExample.getInvalidAuthorName1(), AUTHOR_NAME_LENGTH),
+                new RequestProvider("authors[0]." + AUTHOR_NAME, BookRequestExample.getInvalidAuthorName2(), AUTHOR_NAME_LENGTH),
+                new RequestProvider("authors[0]." + AUTHOR_DESCRIPTION, BookRequestExample.getInvalidAuthorDescription1(), AUTHOR_DESCRIPTION_LENGTH),
+                new RequestProvider("authors[0]." + AUTHOR_DESCRIPTION, BookRequestExample.getInvalidAuthorDescription2(), AUTHOR_DESCRIPTION_LENGTH),
+                new RequestProvider(CATEGORIES, BookRequestExample.getBookAllNulls(), CATEGORIES_NULL),
+                new RequestProvider(CATEGORIES, BookRequestExample.getInvalidCategory1(), CATEGORY_INVALID),
+                new RequestProvider(CATEGORIES, BookRequestExample.getInvalidCategory2(), CATEGORY_INVALID),
+                new RequestProvider(CATEGORIES, BookRequestExample.getInvalidCategory3(), CATEGORY_INVALID),
+                new RequestProvider(CATEGORIES, BookRequestExample.getInvalidCategory4(), CATEGORY_INVALID),
+                new RequestProvider(PUBLISHER, BookRequestExample.getBookAllNulls(), PUBLISHER_NULL),
+                new RequestProvider("publisher." + PUBLISHER_NAME, BookRequestExample.getBookPublisherNulls(), PUBLISHER_NAME_NULL),
+                new RequestProvider("publisher." + PUBLISHER_NAME, BookRequestExample.getInvalidPublisherNameLength1(), PUBLISHER_NAME_LENGTH),
+                new RequestProvider("publisher." + PUBLISHER_NAME, BookRequestExample.getInvalidPublisherNameLength2(), PUBLISHER_NAME_LENGTH),
+                new RequestProvider("publisher." + PUBLISHER_DESCRIPTION, BookRequestExample.getInvalidPublisherDescriptionLength1(), PUBLISHER_DESCRIPTION_LENGTH)
         );
     }
 
@@ -126,9 +125,9 @@ class BookControllerTest {
     @Tag(TagGroup.EDIT_BOOK)
     void shouldReturnModifiedBook() throws Exception {
         //given
-        BookRequest request = BookRequestExamplesTest.VALID_BOOK_1;
+        BookRequest request = BookRequestExample.getValidBook1();
         String id = "1";
-        when(bookService.editBook(id, request)).thenReturn(BookResponseExamplesTest.VALID_BOOK_1);
+        when(bookService.editBook(id, request)).thenReturn(BookResponseExample.getValidBook1());
         //when
         //then
         mockMvc.perform(post(API.BOOK_EDIT_ID, id)
@@ -144,7 +143,7 @@ class BookControllerTest {
     void shouldReturnOKIfValidBookId_deleteBook() throws Exception {
         //given
         String bookId = "1";
-        when(bookService.deleteBook(any())).thenReturn(BookResponseExamplesTest.VALID_BOOK_1);
+        when(bookService.deleteBook(any())).thenReturn(BookResponseExample.getValidBook1());
         //when
         //then
         mockMvc.perform(put(API.BOOK_DELETE_ID, bookId)
@@ -159,7 +158,7 @@ class BookControllerTest {
     void shouldReturnOKIfValidBookId() throws Exception {
         //given
         String bookId = "1";
-        when(bookService.getBook(any())).thenReturn(BookResponseExamplesTest.VALID_BOOK_1);
+        when(bookService.getBook(any())).thenReturn(BookResponseExample.getValidBook1());
         //when
         //then
         mockMvc.perform(get(API.BOOK_GET_ID, bookId)
@@ -174,7 +173,7 @@ class BookControllerTest {
     @Tag(TagGroup.SAVE_BOOK)
     void shouldAcceptIfValidBook(BookRequest request) throws Exception {
         //given
-        when(bookService.saveBook(request)).thenReturn(BookResponseExamplesTest.VALID_BOOK_1);
+        when(bookService.saveBook(request)).thenReturn(BookResponseExample.getValidBook1());
         //when
         //then
         mockMvc.perform(post(API.BOOK_SAVE)
@@ -187,8 +186,8 @@ class BookControllerTest {
 
     private static List<BookRequest> validBooksRequestProvider() {
         return List.of(
-                BookRequestExamplesTest.VALID_BOOK_1,
-                BookRequestExamplesTest.VALID_BOOK_2
+                BookRequestExample.getValidBook1(),
+                BookRequestExample.getValidBook2()
         );
     }
 

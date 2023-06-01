@@ -25,34 +25,34 @@ public class SpringdocConfig {
     @Bean
     public OpenAPI baseOpenAPI() {
 
-        Example successfullyGetBook = new Example().value(BookResponseExample.VALID_BOOK_1);
+        Example successfullyGetBook = new Example().value(BookResponseExample.getValidBook1());
         addResponseToComponents(components, "successfullyGetBook", successfullyGetBook);
 
-        Example notFoundExceptionGet = new Example().value(ErrorResponseExample.NOT_FOUND_EXCEPTION_GET);
+        Example notFoundExceptionGet = new Example().value(ErrorResponseExample.getNotFoundExceptionGet());
         addResponseToComponents(components, "notFoundExceptionGet", notFoundExceptionGet);
 
-        Example successfullySavedBook = new Example().value(BookResponseExample.VALID_BOOK_1);
+        Example successfullySavedBook = new Example().value(BookResponseExample.getValidBook1());
         addResponseToComponents(components, "successfullySavedBook", successfullySavedBook);
 
-        Example validationExceptionSave = new Example().value(ErrorResponseExample.VALIDATION_EXCEPTION_SAVE);
+        Example validationExceptionSave = new Example().value(ErrorResponseExample.getValidationExceptionSave());
         addResponseToComponents(components, "validationExceptionSave", validationExceptionSave);
 
-        Example successfullyEditedBook = new Example().value(EditBookResponseExample.getEditBookResponse(true, BookResponseExample.VALID_BOOK_1));
+        Example successfullyEditedBook = new Example().value(EditBookResponseExample.getEditBookResponse(true, BookResponseExample.getValidBook1()));
         addResponseToComponents(components, "successfullyEditedBook", successfullyEditedBook);
 
-        Example validationExceptionEdit = new Example().value(ErrorResponseExample.VALIDATION_EXCEPTION_EDIT);
+        Example validationExceptionEdit = new Example().value(ErrorResponseExample.getValidationExceptionEdit());
         addResponseToComponents(components, "validationExceptionEdit", validationExceptionEdit);
 
-        Example notFoundExceptionEdit = new Example().value(ErrorResponseExample.NOT_FOUND_EXCEPTION_EDIT);
+        Example notFoundExceptionEdit = new Example().value(ErrorResponseExample.getNotFoundExceptionEdit());
         addResponseToComponents(components, "notFoundExceptionEdit", notFoundExceptionEdit);
 
-        Example successfullyDeletedBook = new Example().value(BookResponseExample.DELETED_BOOK);
+        Example successfullyDeletedBook = new Example().value(BookResponseExample.getDeletedBook());
         addResponseToComponents(components, "successfullyDeletedBook", successfullyDeletedBook);
 
-        Example notFoundExceptionDelete = new Example().value(ErrorResponseExample.NOT_FOUND_EXCEPTION_DELETE);
+        Example notFoundExceptionDelete = new Example().value(ErrorResponseExample.getNotFoundExceptionDelete());
         addResponseToComponents(components, "notFoundExceptionDelete", notFoundExceptionDelete);
 
-        Example successfullyGetBookList = new Example().value(BookResponseListExample.BOOK_LIST);
+        Example successfullyGetBookList = new Example().value(BookResponseListExample.getBookList());
         addResponseToComponents(components, "successfullyGetBookList", successfullyGetBookList);
 
         return new OpenAPI()
