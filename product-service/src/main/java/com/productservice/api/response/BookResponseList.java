@@ -1,18 +1,16 @@
 package com.productservice.api.response;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
-public class BookResponseList implements Response {
-    //TODO add pageable instead
-    private long bookQuantity;
-    private long bookQuantityOnPage;
+@EqualsAndHashCode(callSuper = true)
+public class BookResponseList extends PageableResponse {
     private List<BookResponse> bookResponseList;
 }

@@ -14,7 +14,6 @@ import com.productservice.repository.BookRepository;
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.BookResponse;
 import com.productservice.api.response.BookResponseList;
-import com.productservice.repository.BookRepositoryTemplate;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,6 +25,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import jakarta.validation.Validator;
+import org.springframework.data.mongodb.core.MongoOperations;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -43,17 +43,17 @@ class BookServiceTest {
     private BookService bookService;
     @Mock
     private BookRepository bookRepository;
-    @Mock
-    private BookRepositoryTemplate bookRepositoryTemplate;
     @Captor
     private ArgumentCaptor<Book> bookArgumentCaptor;
     @Mock
     private Validator validator;
+    @Mock
+    private MongoOperations mongoOperations;
     private final BookMapper bookMapper = Mappers.getMapper(BookMapper.class);
 
     @BeforeEach
     public void setUp() {
-        bookService = new BookService(bookRepository, bookRepositoryTemplate, validator, bookMapper);
+        bookService = new BookService(bookRepository, validator, bookMapper, mongoOperations);
     }
 
     @ParameterizedTest
@@ -243,13 +243,20 @@ class BookServiceTest {
     void shouldReturnCorrectBookList() {
         //given
         List<Book> books = List.of(BookExample.getValidBook1(), BookExample.getValidBook2());
-        when(bookRepositoryTemplate.findBySearchTermAndPageRequest(any(), any())).thenReturn(books);
-        BookResponseList expected = new BookResponseList(2L, 2L, List.of(BookResponseExample.getValidBook1(), BookResponseExample.getValidBook2()));
+        when(mongoOperations.find(any(), eq(Book.class))).thenReturn(books);
+        when(mongoOperations.count(any(), eq(Book.class))).thenReturn(2L);
+        BookResponseList expected = new BookResponseList(List.of(BookResponseExample.getValidBook1(), BookResponseExample.getValidBook2()));
         //when
-        BookResponseList actual = bookService.getBookList(null, null, null);
+        BookResponseList actual = bookService.getBookList(null, null, null, null);
         //then
         assertNotNull(actual);
-        assertEquals(2, actual.getBookResponseList().size());
+        assertEquals(books.size(), actual.getBookResponseList().size());
+        assertNotNull(actual.getPage());
+        assertEquals(2, actual.getPage().getSize());
+        assertEquals(0, actual.getPage().getNumber());
+        assertEquals(false, actual.getHasNextPage());
+        assertEquals(1, actual.getTotalPages());
+        assertEquals(2, actual.getTotalSize());
 
         for (int i = 0; i < expected.getBookResponseList().size(); i++) {
             BookResponse expectedIteration = expected.getBookResponseList().get(i);

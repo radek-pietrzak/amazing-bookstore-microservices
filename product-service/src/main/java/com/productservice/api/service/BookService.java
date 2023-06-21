@@ -2,18 +2,18 @@ package com.productservice.api.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.productservice.ChatGPTHelper;
-import com.productservice.api.response.Response;
+import com.productservice.api.response.*;
 import com.productservice.document.Book;
 import com.productservice.mapper.BookMapper;
 import com.productservice.repository.BookRepository;
 import com.productservice.api.request.BookRequest;
-import com.productservice.api.response.BookResponse;
-import com.productservice.api.response.BookResponseList;
-import com.productservice.repository.BookRepositoryTemplate;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -26,15 +26,15 @@ import java.util.*;
 public class BookService {
 
     private final BookRepository repository;
-    private final BookRepositoryTemplate repositoryTemplate;
     private final Validator validator;
     private final BookMapper bookMapper;
+    private final MongoOperations mongoOperations;
 
-    public BookService(BookRepository repository, BookRepositoryTemplate repositoryTemplate, Validator validator, BookMapper bookMapper) {
+    public BookService(BookRepository repository, Validator validator, BookMapper bookMapper, MongoOperations mongoOperations) {
         this.repository = repository;
-        this.repositoryTemplate = repositoryTemplate;
         this.validator = validator;
         this.bookMapper = bookMapper;
+        this.mongoOperations = mongoOperations;
     }
 
     public Response getBook(String id) {
@@ -103,14 +103,15 @@ public class BookService {
 
     public Response deleteBook(String id) {
         Book book = getBookIfPresent(id);
-            book.setDeletedDate(LocalDateTime.now());
-            repository.save(book);
-            return bookMapper.bookToBookResponse(book);
+        book.setDeletedDate(LocalDateTime.now());
+        repository.save(book);
+        return bookMapper.bookToBookResponse(book);
     }
 
-    public BookResponseList getBookList(String search, Integer page, Integer pageSize) {
-        if (page == null) {
-            page = 0;
+    //TODO extract criteria and searchKeys
+    public BookResponseList getBookList(String search, Integer pageNo, Integer pageSize, String searchKey) {
+        if (pageNo == null) {
+            pageNo = 0;
         }
         if (pageSize == null) {
             pageSize = 10;
@@ -119,15 +120,47 @@ public class BookService {
             search = "";
         }
 
-        PageRequest pageRequest = PageRequest.of(page, pageSize);
-        long booksTotal = repositoryTemplate.countBySearchTerm(search);
-        List<Book> books = repositoryTemplate.findBySearchTermAndPageRequest(search, pageRequest);
+        Set<String> searchKeys = new HashSet<>();
+        if (searchKey == null) {
+            searchKeys.add("isbn");
+            searchKeys.add("title");
+            searchKeys.add("authors.authorName");
+            searchKeys.add("description");
+            searchKeys.add("categories");
+            searchKeys.add("publisher.publisherName");
+        } else {
+            searchKeys.add(searchKey);
+        }
+
+        Collection<Criteria> criteriaCollection = new HashSet<>();
+        String finalSearch = search;
+        searchKeys.forEach(s -> criteriaCollection.add(Criteria.where(s).regex(finalSearch, "i")));
+
+        Criteria criteria = new Criteria().orOperator(criteriaCollection);
+
+        Query queryPage = Query.query(criteria)
+                .with(PageRequest.of(pageNo, pageSize));
+
+        Query queryTotal = Query.query(criteria);
+
+        List<Book> books = mongoOperations.find(queryPage, Book.class);
+        long totalSize = mongoOperations.count(queryTotal, Book.class);
 
         List<BookResponse> list = books.stream()
                 .map(bookMapper::bookToBookResponse)
                 .toList();
 
-        return new BookResponseList(booksTotal, list.size(), list);
+        return BookResponseList.builder()
+                .page(new com.productservice.api.response.Page(
+                                books.size(),
+                                pageNo
+                        )
+                )
+                .hasNextPage(list.size() >= pageSize)
+                .totalPages((int) Math.ceil((double) totalSize / pageSize))
+                .totalSize(totalSize)
+                .bookResponseList(list)
+                .build();
     }
 
     private Book getBookIfPresent(String id) {
