@@ -20,7 +20,6 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import jakarta.validation.Validator;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Query;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -44,13 +43,11 @@ class BookServiceTest {
     private Validator validator;
     @Mock
     private MongoOperations mongoOperations;
-    @Mock
-    private SearchCriteria searchCriteria;
     private final BookMapper bookMapper = Mappers.getMapper(BookMapper.class);
 
     @BeforeEach
     public void setUp() {
-        bookService = new BookService(bookRepository, validator, bookMapper, mongoOperations, searchCriteria);
+        bookService = new BookService(bookRepository, validator, bookMapper, mongoOperations);
     }
 
     @ParameterizedTest
@@ -240,10 +237,6 @@ class BookServiceTest {
     void shouldReturnCorrectBookList() {
         //given
         List<Book> books = List.of(BookExample.getValidBook1(), BookExample.getValidBook2());
-        org.springframework.data.mongodb.core.query.Query queryPage = Mockito.mock(Query.class);
-        org.springframework.data.mongodb.core.query.Query queryTotal = Mockito.mock(Query.class);
-        SearchCriteria.QueryPage query = new SearchCriteria.QueryPage(queryPage, queryTotal, 10, 0);
-        when(searchCriteria.getSearchCriteria(null, null, null, null)).thenReturn(query);
         when(mongoOperations.find(any(), eq(Book.class))).thenReturn(books);
         when(mongoOperations.count(any(), eq(Book.class))).thenReturn(2L);
         BookResponseList expected = new BookResponseList(List.of(BookResponseExample.getValidBook1(), BookResponseExample.getValidBook2()));

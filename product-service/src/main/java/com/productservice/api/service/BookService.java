@@ -26,14 +26,12 @@ public class BookService {
     private final Validator validator;
     private final BookMapper bookMapper;
     private final MongoOperations mongoOperations;
-    private final SearchCriteria searchCriteria;
 
-    public BookService(BookRepository repository, Validator validator, BookMapper bookMapper, MongoOperations mongoOperations, SearchCriteria searchCriteria) {
+    public BookService(BookRepository repository, Validator validator, BookMapper bookMapper, MongoOperations mongoOperations) {
         this.repository = repository;
         this.validator = validator;
         this.bookMapper = bookMapper;
         this.mongoOperations = mongoOperations;
-        this.searchCriteria = searchCriteria;
     }
 
     public Response getBook(String id) {
@@ -108,7 +106,19 @@ public class BookService {
     }
 
     public BookResponseList getBookList(String search, Integer pageNo, Integer pageSize, String searchKey) {
-        SearchCriteria.QueryPage queryPage = searchCriteria.getSearchCriteria(search, pageNo, pageSize, searchKey);
+        Set<String> searchKeys = new HashSet<>();
+        if (searchKey != null){
+            searchKeys.add(searchKey);
+        }
+
+        SearchCriteria searchCriteria = SearchCriteria.builder()
+                .search(search)
+                .pageNo(pageNo)
+                .pageSize(pageSize)
+                .searchKeys(searchKeys)
+                .build();
+
+        SearchCriteria.QueryPage queryPage = searchCriteria.getQueryPage();
 
         List<Book> books = mongoOperations.find(queryPage.queryPage(), Book.class);
         long totalSize = mongoOperations.count(queryPage.queryTotal(), Book.class);
@@ -120,11 +130,11 @@ public class BookService {
         return BookResponseList.builder()
                 .page(new com.productservice.api.response.Page(
                                 books.size(),
-                        queryPage.pageNo()
+                        searchCriteria.getPageNo()
                         )
                 )
-                .hasNextPage(list.size() >= queryPage.pageSize())
-                .totalPages((int) Math.ceil((double) totalSize / queryPage.pageSize()))
+                .hasNextPage(list.size() >= searchCriteria.getPageSize())
+                .totalPages((int) Math.ceil((double) totalSize / searchCriteria.getPageSize()))
                 .totalSize(totalSize)
                 .bookResponseList(list)
                 .build();
