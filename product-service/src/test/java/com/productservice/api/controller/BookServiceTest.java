@@ -1,8 +1,7 @@
 package com.productservice.api.controller;
 
 import com.productservice.TagGroup;
-import com.productservice.api.response.EditBookResponse;
-import com.productservice.api.response.Response;
+import com.productservice.api.response.*;
 import com.productservice.api.service.BookService;
 import com.productservice.document.Book;
 import com.productservice.example.BookExample;
@@ -12,20 +11,16 @@ import com.productservice.example.EditBookResponseExample;
 import com.productservice.mapper.BookMapper;
 import com.productservice.repository.BookRepository;
 import com.productservice.api.request.BookRequest;
-import com.productservice.api.response.BookResponse;
-import com.productservice.api.response.BookResponseList;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mapstruct.factory.Mappers;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import jakarta.validation.Validator;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Query;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -49,11 +44,13 @@ class BookServiceTest {
     private Validator validator;
     @Mock
     private MongoOperations mongoOperations;
+    @Mock
+    private SearchCriteria searchCriteria;
     private final BookMapper bookMapper = Mappers.getMapper(BookMapper.class);
 
     @BeforeEach
     public void setUp() {
-        bookService = new BookService(bookRepository, validator, bookMapper, mongoOperations);
+        bookService = new BookService(bookRepository, validator, bookMapper, mongoOperations, searchCriteria);
     }
 
     @ParameterizedTest
@@ -243,11 +240,17 @@ class BookServiceTest {
     void shouldReturnCorrectBookList() {
         //given
         List<Book> books = List.of(BookExample.getValidBook1(), BookExample.getValidBook2());
+        org.springframework.data.mongodb.core.query.Query queryPage = Mockito.mock(Query.class);
+        org.springframework.data.mongodb.core.query.Query queryTotal = Mockito.mock(Query.class);
+        SearchCriteria.QueryPage query = new SearchCriteria.QueryPage(queryPage, queryTotal, 10, 0);
+        when(searchCriteria.getSearchCriteria(null, null, null, null)).thenReturn(query);
         when(mongoOperations.find(any(), eq(Book.class))).thenReturn(books);
         when(mongoOperations.count(any(), eq(Book.class))).thenReturn(2L);
         BookResponseList expected = new BookResponseList(List.of(BookResponseExample.getValidBook1(), BookResponseExample.getValidBook2()));
+
         //when
         BookResponseList actual = bookService.getBookList(null, null, null, null);
+
         //then
         assertNotNull(actual);
         assertEquals(books.size(), actual.getBookResponseList().size());

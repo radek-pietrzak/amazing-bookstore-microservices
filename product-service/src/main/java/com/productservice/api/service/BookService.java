@@ -10,10 +10,7 @@ import com.productservice.api.request.BookRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -29,12 +26,14 @@ public class BookService {
     private final Validator validator;
     private final BookMapper bookMapper;
     private final MongoOperations mongoOperations;
+    private final SearchCriteria searchCriteria;
 
-    public BookService(BookRepository repository, Validator validator, BookMapper bookMapper, MongoOperations mongoOperations) {
+    public BookService(BookRepository repository, Validator validator, BookMapper bookMapper, MongoOperations mongoOperations, SearchCriteria searchCriteria) {
         this.repository = repository;
         this.validator = validator;
         this.bookMapper = bookMapper;
         this.mongoOperations = mongoOperations;
+        this.searchCriteria = searchCriteria;
     }
 
     public Response getBook(String id) {
@@ -108,43 +107,11 @@ public class BookService {
         return bookMapper.bookToBookResponse(book);
     }
 
-    //TODO extract criteria and searchKeys
     public BookResponseList getBookList(String search, Integer pageNo, Integer pageSize, String searchKey) {
-        if (pageNo == null) {
-            pageNo = 0;
-        }
-        if (pageSize == null) {
-            pageSize = 10;
-        }
-        if (search == null) {
-            search = "";
-        }
+        SearchCriteria.QueryPage queryPage = searchCriteria.getSearchCriteria(search, pageNo, pageSize, searchKey);
 
-        Set<String> searchKeys = new HashSet<>();
-        if (searchKey == null) {
-            searchKeys.add("isbn");
-            searchKeys.add("title");
-            searchKeys.add("authors.authorName");
-            searchKeys.add("description");
-            searchKeys.add("categories");
-            searchKeys.add("publisher.publisherName");
-        } else {
-            searchKeys.add(searchKey);
-        }
-
-        Collection<Criteria> criteriaCollection = new HashSet<>();
-        String finalSearch = search;
-        searchKeys.forEach(s -> criteriaCollection.add(Criteria.where(s).regex(finalSearch, "i")));
-
-        Criteria criteria = new Criteria().orOperator(criteriaCollection);
-
-        Query queryPage = Query.query(criteria)
-                .with(PageRequest.of(pageNo, pageSize));
-
-        Query queryTotal = Query.query(criteria);
-
-        List<Book> books = mongoOperations.find(queryPage, Book.class);
-        long totalSize = mongoOperations.count(queryTotal, Book.class);
+        List<Book> books = mongoOperations.find(queryPage.queryPage(), Book.class);
+        long totalSize = mongoOperations.count(queryPage.queryTotal(), Book.class);
 
         List<BookResponse> list = books.stream()
                 .map(bookMapper::bookToBookResponse)
@@ -153,11 +120,11 @@ public class BookService {
         return BookResponseList.builder()
                 .page(new com.productservice.api.response.Page(
                                 books.size(),
-                                pageNo
+                        queryPage.pageNo()
                         )
                 )
-                .hasNextPage(list.size() >= pageSize)
-                .totalPages((int) Math.ceil((double) totalSize / pageSize))
+                .hasNextPage(list.size() >= queryPage.pageSize())
+                .totalPages((int) Math.ceil((double) totalSize / queryPage.pageSize()))
                 .totalSize(totalSize)
                 .bookResponseList(list)
                 .build();
