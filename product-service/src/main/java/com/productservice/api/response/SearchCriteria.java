@@ -15,5 +15,5 @@ import java.util.Set;
 @NoArgsConstructor
 public class SearchCriteria {
     private String search;
-    private Set<String> searchKeys;
+    private Set<SearchKey> searchKeys;
 }

@@ -33,7 +33,7 @@ public class QueryProvider {
 
     public Query getQuery() {
         Collection<Criteria> criteriaCollection = new HashSet<>();
-        searchCriteria.getSearchKeys().forEach(s -> criteriaCollection.add(Criteria.where(s).regex(searchCriteria.getSearch(), "i")));
+        searchCriteria.getSearchKeys().forEach(s -> criteriaCollection.add(Criteria.where(s.getKey()).regex(searchCriteria.getSearch(), "i")));
 
         Criteria criteria = new Criteria().orOperator(criteriaCollection);
         Query query = new Query();

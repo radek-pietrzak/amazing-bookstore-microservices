@@ -112,14 +112,14 @@ public class BookService {
         pageNo = pageNo == null ? 0 : pageNo;
         pageSize = pageSize == null ? 10 : pageSize;
         search = search == null ? "" : search;
-        Set<String> searchKeys = new HashSet<>();
+        Set<SearchKey> searchKeys = new HashSet<>();
 
-        searchKeys.add("isbn");
-        searchKeys.add("title");
-        searchKeys.add("authors.authorName");
-        searchKeys.add("description");
-        searchKeys.add("categories");
-        searchKeys.add("publisher.publisherName");
+        searchKeys.add(SearchKey.ISBN);
+        searchKeys.add(SearchKey.TITLE);
+        searchKeys.add(SearchKey.AUTHOR_NAME);
+        searchKeys.add(SearchKey.DESCRIPTION);
+        searchKeys.add(SearchKey.CATEGORIES);
+        searchKeys.add(SearchKey.PUBLISHER_NAME);
 
         SearchCriteria searchCriteria = SearchCriteria.builder()
                 .search(search)
