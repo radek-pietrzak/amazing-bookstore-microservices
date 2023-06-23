@@ -2,8 +2,8 @@ package com.productservice.api.controller;
 
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.Response;
-import com.productservice.api.response.SearchSortKey;
-import com.productservice.api.response.Sort;
+import com.productservice.api.criteria.SearchSortKey;
+import com.productservice.api.criteria.Sort;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.QueryParam;

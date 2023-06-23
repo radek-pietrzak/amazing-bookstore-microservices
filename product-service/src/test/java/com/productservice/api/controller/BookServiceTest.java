@@ -1,6 +1,7 @@
 package com.productservice.api.controller;
 
 import com.productservice.TagGroup;
+import com.productservice.api.criteria.BookListCriteria;
 import com.productservice.api.response.*;
 import com.productservice.api.service.BookService;
 import com.productservice.document.Book;

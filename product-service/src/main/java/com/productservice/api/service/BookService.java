@@ -2,7 +2,8 @@ package com.productservice.api.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.productservice.ChatGPTHelper;
-import com.productservice.api.controller.BookListCriteria;
+import com.productservice.api.criteria.BookListCriteria;
+import com.productservice.api.criteria.Page;
 import com.productservice.api.response.*;
 import com.productservice.document.Book;
 import com.productservice.mapper.BookMapper;

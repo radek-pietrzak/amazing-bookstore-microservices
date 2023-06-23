@@ -1,6 +1,5 @@
-package com.productservice.api.controller;
+package com.productservice.api.criteria;
 
-import com.productservice.api.response.*;
 import lombok.*;
 import org.springframework.data.mongodb.core.query.Query;
 

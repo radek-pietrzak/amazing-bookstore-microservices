@@ -1,5 +1,6 @@
 package com.productservice.api.response;
 
+import com.productservice.api.criteria.Page;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 

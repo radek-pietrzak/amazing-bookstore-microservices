@@ -1,4 +1,4 @@
-package com.productservice.api.response;
+package com.productservice.api.criteria;
 
 
 import lombok.AllArgsConstructor;
@@ -37,7 +37,7 @@ public class QueryProvider {
         }
 
         if (sortCriteria != null) {
-            if (sortCriteria.getSort().equals(com.productservice.api.response.Sort.ASC)) {
+            if (sortCriteria.getSort().equals(com.productservice.api.criteria.Sort.ASC)) {
                 query.with(Sort.by(Sort.Direction.ASC, sortCriteria.getSortKey().getKey()));
             } else {
                 query.with(Sort.by(Sort.Direction.DESC, sortCriteria.getSortKey().getKey()));

@@ -1,4 +1,4 @@
-package com.productservice.api.response;
+package com.productservice.api.criteria;
 
 import lombok.*;
 

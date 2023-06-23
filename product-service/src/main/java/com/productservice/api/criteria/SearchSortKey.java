@@ -1,4 +1,4 @@
-package com.productservice.api.response;
+package com.productservice.api.criteria;
 
 public enum SearchSortKey {
     ISBN("isbn"),
