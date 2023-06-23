@@ -6,14 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Set;
-
 @Component
 @Builder
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SearchCriteria {
-    private String search;
-    private Set<String> searchKeys;
+public class PageCriteria {
+    private Integer pageNo;
+    private Integer pageSize;
+
 }

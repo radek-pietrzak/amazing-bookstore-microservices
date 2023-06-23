@@ -8,7 +8,7 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public abstract class PageableResponse implements Response{
+public abstract class PageableResponse implements Response {
     private Page page;
     private Boolean hasNextPage;
     private Integer totalPages;

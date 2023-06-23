@@ -27,7 +27,10 @@ public class BookService {
     private final BookMapper bookMapper;
     private final MongoOperations mongoOperations;
 
-    public BookService(BookRepository repository, Validator validator, BookMapper bookMapper, MongoOperations mongoOperations) {
+    public BookService(BookRepository repository,
+                       Validator validator,
+                       BookMapper bookMapper,
+                       MongoOperations mongoOperations) {
         this.repository = repository;
         this.validator = validator;
         this.bookMapper = bookMapper;
@@ -106,22 +109,45 @@ public class BookService {
     }
 
     public BookResponseList getBookList(String search, Integer pageNo, Integer pageSize, String searchKey) {
+        pageNo = pageNo == null ? 0 : pageNo;
+        pageSize = pageSize == null ? 10 : pageSize;
+        search = search == null ? "" : search;
         Set<String> searchKeys = new HashSet<>();
-        if (searchKey != null){
+
+        if (searchKey != null) {
             searchKeys.add(searchKey);
+        } else {
+            searchKeys.add("isbn");
+            searchKeys.add("title");
+            searchKeys.add("authors.authorName");
+            searchKeys.add("description");
+            searchKeys.add("categories");
+            searchKeys.add("publisher.publisherName");
         }
 
         SearchCriteria searchCriteria = SearchCriteria.builder()
                 .search(search)
-                .pageNo(pageNo)
-                .pageSize(pageSize)
                 .searchKeys(searchKeys)
                 .build();
 
-        SearchCriteria.QueryPage queryPage = searchCriteria.getQueryPage();
+        PageCriteria pageCriteria = PageCriteria.builder()
+                .pageNo(pageNo)
+                .pageSize(pageSize)
+                .build();
 
-        List<Book> books = mongoOperations.find(queryPage.queryPage(), Book.class);
-        long totalSize = mongoOperations.count(queryPage.queryTotal(), Book.class);
+        QueryProvider queryProvider = new QueryProvider();
+
+
+        List<Book> books = mongoOperations.find(queryProvider
+                        .withSearchCriteria(searchCriteria)
+                        .withPageCriteria(pageCriteria)
+                        .getQuery(),
+                Book.class);
+
+        long totalSize = mongoOperations.count(queryProvider
+                        .withSearchCriteria(searchCriteria)
+                        .getQuery(),
+                Book.class);
 
         List<BookResponse> list = books.stream()
                 .map(bookMapper::bookToBookResponse)
@@ -130,11 +156,11 @@ public class BookService {
         return BookResponseList.builder()
                 .page(new com.productservice.api.response.Page(
                                 books.size(),
-                        searchCriteria.getPageNo()
+                                pageCriteria.getPageNo()
                         )
                 )
-                .hasNextPage(list.size() >= searchCriteria.getPageSize())
-                .totalPages((int) Math.ceil((double) totalSize / searchCriteria.getPageSize()))
+                .hasNextPage(list.size() >= pageCriteria.getPageSize())
+                .totalPages((int) Math.ceil((double) totalSize / pageCriteria.getPageSize()))
                 .totalSize(totalSize)
                 .bookResponseList(list)
                 .build();
