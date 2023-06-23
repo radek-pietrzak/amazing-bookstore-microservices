@@ -52,7 +52,7 @@ public class BookService {
     public Response editBook(String id, BookRequest request) throws IllegalAccessException {
         Book repoBook = getBookIfPresent(id);
         Book requestBook = bookMapper.bookRequestToBook(request);
-        if (isChangedAndSet(repoBook, requestBook)) {
+        if (updateChangedFields(repoBook, requestBook)) {
             repoBook.setLastEditDate(LocalDateTime.now());
             repository.save(repoBook);
             return bookMapper.bookToEditBookResponse(true, repoBook);
@@ -61,27 +61,30 @@ public class BookService {
         }
     }
 
-    private boolean isChangedAndSet(Book repoBook, Book requestBook) throws IllegalAccessException {
-        boolean isChange = false;
+    private boolean updateChangedFields(Book repoBook, Book requestBook) throws IllegalAccessException {
+        boolean isChanged = false;
         Field[] fields = Book.class.getDeclaredFields();
         for (Field field : fields) {
-            if (field.getName().equals("id")
-                    || field.getName().equals("createdDate")
-                    || field.getName().equals("lastEditDate")
-                    || field.getName().equals("deletedDate")) {
+            field.setAccessible(true);
+            String fieldName = field.getName();
+            Object repoValue = field.get(repoBook);
+            Object requestValue = field.get(requestBook);
+
+            if (isFieldIgnored(fieldName) || Objects.equals(repoValue, requestValue)) {
                 continue;
             }
 
-            field.setAccessible(true);
-            Object repoValue = field.get(repoBook);
-            Object requestValue = field.get(requestBook);
-            if (!Objects.equals(repoValue, requestValue)) {
-                field.set(repoBook, requestValue);
-                isChange = true;
-            }
+            field.set(repoBook, requestValue);
+            isChanged = true;
         }
-        return isChange;
+        return isChanged;
     }
+
+    private boolean isFieldIgnored(String fieldName) {
+        Set<String> ignoredFields = new HashSet<>(Arrays.asList("id", "createdDate", "lastEditDate", "deletedDate"));
+        return ignoredFields.contains(fieldName);
+    }
+
 
     @Scheduled(fixedRate = 10000)
     public void saveBookChatGPT() throws IOException {
