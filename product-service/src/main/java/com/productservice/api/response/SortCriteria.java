@@ -5,13 +5,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
-
 @Builder
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
-public class SearchCriteria {
-    private String search;
-    private Set<SearchSortKey> searchKeys;
+@AllArgsConstructor
+public class SortCriteria {
+    private Sort sort;
+    private SearchSortKey sortKey;
 }

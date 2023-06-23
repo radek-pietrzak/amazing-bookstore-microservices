@@ -79,8 +79,8 @@ public class BookController implements BookApi {
                     @ApiResponse(responseCode = "200", ref = "successfullyGetBookList")
             }
     )
-    public ResponseEntity<Response> getBookList(String search, Integer page, Integer pageSize) {
-        return ResponseEntity.ok(bookService.getBookList(search, page, pageSize));
+    public ResponseEntity<Response> getBookList(String search, Integer page, Integer pageSize, SearchSortKey searchKey, SearchSortKey sortKey, Sort sort) {
+        return ResponseEntity.ok(bookService.getBookList(search, page, pageSize, searchKey, sortKey, sort));
     }
 
 }

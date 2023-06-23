@@ -1,6 +1,6 @@
 package com.productservice.api.response;
 
-public enum SearchKey {
+public enum SearchSortKey {
     ISBN("isbn"),
     TITLE("title"),
     AUTHOR_NAME("authors.authorName"),
@@ -10,7 +10,7 @@ public enum SearchKey {
 
     private final String key;
 
-    SearchKey(String key) {
+    SearchSortKey(String key) {
         this.key = key;
     }
 

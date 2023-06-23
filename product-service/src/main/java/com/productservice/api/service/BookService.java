@@ -108,22 +108,34 @@ public class BookService {
         return bookMapper.bookToBookResponse(book);
     }
 
-    public BookResponseList getBookList(String search, Integer pageNo, Integer pageSize) {
+    public BookResponseList getBookList(String search, Integer pageNo, Integer pageSize, SearchSortKey searchKey, SearchSortKey sortKey, Sort sort) {
         pageNo = pageNo == null ? 0 : pageNo;
         pageSize = pageSize == null ? 10 : pageSize;
         search = search == null ? "" : search;
-        Set<SearchKey> searchKeys = new HashSet<>();
+        sort = sort == null ? Sort.ASC : sort;
+        sortKey = sortKey == null ? SearchSortKey.TITLE : sortKey;
+        Set<SearchSortKey> searchKeys = new HashSet<>();
 
-        searchKeys.add(SearchKey.ISBN);
-        searchKeys.add(SearchKey.TITLE);
-        searchKeys.add(SearchKey.AUTHOR_NAME);
-        searchKeys.add(SearchKey.DESCRIPTION);
-        searchKeys.add(SearchKey.CATEGORIES);
-        searchKeys.add(SearchKey.PUBLISHER_NAME);
+        if (searchKey == null) {
+            searchKeys.add(SearchSortKey.ISBN);
+            searchKeys.add(SearchSortKey.TITLE);
+            searchKeys.add(SearchSortKey.AUTHOR_NAME);
+            searchKeys.add(SearchSortKey.DESCRIPTION);
+            searchKeys.add(SearchSortKey.CATEGORIES);
+            searchKeys.add(SearchSortKey.PUBLISHER_NAME);
+        } else {
+            searchKeys.add(searchKey);
+        }
+
 
         SearchCriteria searchCriteria = SearchCriteria.builder()
                 .search(search)
                 .searchKeys(searchKeys)
+                .build();
+
+        SortCriteria sortCriteria = SortCriteria.builder()
+                .sort(sort)
+                .sortKey(sortKey)
                 .build();
 
         PageCriteria pageCriteria = PageCriteria.builder()
@@ -134,6 +146,7 @@ public class BookService {
         List<Book> books = mongoOperations.find(new QueryProvider()
                         .withSearchCriteria(searchCriteria)
                         .withPageCriteria(pageCriteria)
+                        .withSortCriteria(sortCriteria)
                         .getQuery(),
                 Book.class);
 
