@@ -242,7 +242,7 @@ class BookServiceTest {
         BookResponseList expected = new BookResponseList(List.of(BookResponseExample.getValidBook1(), BookResponseExample.getValidBook2()));
 
         //when
-        BookResponseList actual = bookService.getBookList(null, null, null, null);
+        BookResponseList actual = bookService.getBookList(null, null, null);
 
         //then
         assertNotNull(actual);

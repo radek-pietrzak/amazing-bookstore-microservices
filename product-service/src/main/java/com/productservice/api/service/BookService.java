@@ -108,22 +108,18 @@ public class BookService {
         return bookMapper.bookToBookResponse(book);
     }
 
-    public BookResponseList getBookList(String search, Integer pageNo, Integer pageSize, String searchKey) {
+    public BookResponseList getBookList(String search, Integer pageNo, Integer pageSize) {
         pageNo = pageNo == null ? 0 : pageNo;
         pageSize = pageSize == null ? 10 : pageSize;
         search = search == null ? "" : search;
         Set<String> searchKeys = new HashSet<>();
 
-        if (searchKey != null) {
-            searchKeys.add(searchKey);
-        } else {
-            searchKeys.add("isbn");
-            searchKeys.add("title");
-            searchKeys.add("authors.authorName");
-            searchKeys.add("description");
-            searchKeys.add("categories");
-            searchKeys.add("publisher.publisherName");
-        }
+        searchKeys.add("isbn");
+        searchKeys.add("title");
+        searchKeys.add("authors.authorName");
+        searchKeys.add("description");
+        searchKeys.add("categories");
+        searchKeys.add("publisher.publisherName");
 
         SearchCriteria searchCriteria = SearchCriteria.builder()
                 .search(search)
@@ -135,16 +131,13 @@ public class BookService {
                 .pageSize(pageSize)
                 .build();
 
-        QueryProvider queryProvider = new QueryProvider();
-
-
-        List<Book> books = mongoOperations.find(queryProvider
+        List<Book> books = mongoOperations.find(new QueryProvider()
                         .withSearchCriteria(searchCriteria)
                         .withPageCriteria(pageCriteria)
                         .getQuery(),
                 Book.class);
 
-        long totalSize = mongoOperations.count(queryProvider
+        long totalSize = mongoOperations.count(new QueryProvider()
                         .withSearchCriteria(searchCriteria)
                         .getQuery(),
                 Book.class);

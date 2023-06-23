@@ -27,8 +27,7 @@ public interface BookApi {
     ResponseEntity<Response> getBookList(
             @Nullable @QueryParam(value = "search") String search,
             @Nullable @QueryParam(value = "page") Integer page,
-            @Nullable @QueryParam(value = "pageSize") Integer pageSize,
-            @Nullable @QueryParam(value = "searchKey") String searchKey);
+            @Nullable @QueryParam(value = "pageSize") Integer pageSize);
 
 
 }

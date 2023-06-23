@@ -3,6 +3,8 @@ package com.productservice.api.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
@@ -12,14 +14,12 @@ import java.util.HashSet;
 
 @Component
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 public class QueryProvider {
 
     private SearchCriteria searchCriteria;
     private PageCriteria pageCriteria;
-    public QueryProvider() {
-
-    }
 
     public QueryProvider withSearchCriteria(SearchCriteria searchCriteria) {
         this.searchCriteria = searchCriteria;
@@ -38,7 +38,9 @@ public class QueryProvider {
         Criteria criteria = new Criteria().orOperator(criteriaCollection);
         Query query = new Query();
 
-        query.addCriteria(criteria);
+        if (pageCriteria != null) {
+            query.addCriteria(criteria).with(PageRequest.of(pageCriteria.getPageNo(), pageCriteria.getPageSize()));
+        }
 
         return query;
     }
