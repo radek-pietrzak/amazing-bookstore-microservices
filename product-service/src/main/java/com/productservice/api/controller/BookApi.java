@@ -2,6 +2,8 @@ package com.productservice.api.controller;
 
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.Response;
+import com.productservice.api.criteria.SearchSortKey;
+import com.productservice.api.criteria.Sort;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.QueryParam;
@@ -27,7 +29,10 @@ public interface BookApi {
     ResponseEntity<Response> getBookList(
             @Nullable @QueryParam(value = "search") String search,
             @Nullable @QueryParam(value = "page") Integer page,
-            @Nullable @QueryParam(value = "pageSize") Integer pageSize);
+            @Nullable @QueryParam(value = "pageSize") Integer pageSize,
+            @Nullable @QueryParam(value = "searchKey") SearchSortKey searchKey,
+            @Nullable @QueryParam(value = "sortKey") SearchSortKey sortKey,
+            @Nullable @QueryParam(value = "sort") Sort sort);
 
 
 }

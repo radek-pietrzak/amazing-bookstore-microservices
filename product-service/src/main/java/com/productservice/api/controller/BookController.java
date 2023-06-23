@@ -1,5 +1,8 @@
 package com.productservice.api.controller;
 
+import com.productservice.api.criteria.BookListCriteria;
+import com.productservice.api.criteria.SearchSortKey;
+import com.productservice.api.criteria.Sort;
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.*;
 import com.productservice.api.service.BookService;
@@ -72,7 +75,6 @@ public class BookController implements BookApi {
         return ResponseEntity.ok(response);
     }
 
-    //TODO pageable infos
     @Override
     @Operation(
             description = "Book list",
@@ -80,8 +82,16 @@ public class BookController implements BookApi {
                     @ApiResponse(responseCode = "200", ref = "successfullyGetBookList")
             }
     )
-    public ResponseEntity<Response> getBookList(String search, Integer page, Integer pageSize) {
-        return ResponseEntity.ok(bookService.getBookList(search, page, pageSize));
+    public ResponseEntity<Response> getBookList(String search, Integer page, Integer pageSize, SearchSortKey searchKey, SearchSortKey sortKey, Sort sort) {
+        BookListCriteria bookListCriteria = BookListCriteria.builder()
+                .search(search)
+                .pageNo(page)
+                .pageSize(pageSize)
+                .searchKey(searchKey)
+                .sortKey(sortKey)
+                .sort(sort)
+                .build();
+        return ResponseEntity.ok(bookService.getBookList(bookListCriteria));
     }
 
 }

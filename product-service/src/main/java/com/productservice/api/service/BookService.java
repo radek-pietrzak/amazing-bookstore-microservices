@@ -2,18 +2,17 @@ package com.productservice.api.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.productservice.ChatGPTHelper;
-import com.productservice.api.response.Response;
+import com.productservice.api.criteria.BookListCriteria;
+import com.productservice.api.criteria.Page;
+import com.productservice.api.response.*;
 import com.productservice.document.Book;
 import com.productservice.mapper.BookMapper;
 import com.productservice.repository.BookRepository;
 import com.productservice.api.request.BookRequest;
-import com.productservice.api.response.BookResponse;
-import com.productservice.api.response.BookResponseList;
-import com.productservice.repository.BookRepositoryTemplate;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -26,15 +25,18 @@ import java.util.*;
 public class BookService {
 
     private final BookRepository repository;
-    private final BookRepositoryTemplate repositoryTemplate;
     private final Validator validator;
     private final BookMapper bookMapper;
+    private final MongoOperations mongoOperations;
 
-    public BookService(BookRepository repository, BookRepositoryTemplate repositoryTemplate, Validator validator, BookMapper bookMapper) {
+    public BookService(BookRepository repository,
+                       Validator validator,
+                       BookMapper bookMapper,
+                       MongoOperations mongoOperations) {
         this.repository = repository;
-        this.repositoryTemplate = repositoryTemplate;
         this.validator = validator;
         this.bookMapper = bookMapper;
+        this.mongoOperations = mongoOperations;
     }
 
     public Response getBook(String id) {
@@ -51,7 +53,7 @@ public class BookService {
     public Response editBook(String id, BookRequest request) throws IllegalAccessException {
         Book repoBook = getBookIfPresent(id);
         Book requestBook = bookMapper.bookRequestToBook(request);
-        if (isChangedAndSet(repoBook, requestBook)) {
+        if (updateChangedFields(repoBook, requestBook)) {
             repoBook.setLastEditDate(LocalDateTime.now());
             repository.save(repoBook);
             return bookMapper.bookToEditBookResponse(true, repoBook);
@@ -60,27 +62,30 @@ public class BookService {
         }
     }
 
-    private boolean isChangedAndSet(Book repoBook, Book requestBook) throws IllegalAccessException {
-        boolean isChange = false;
+    private boolean updateChangedFields(Book repoBook, Book requestBook) throws IllegalAccessException {
+        boolean isChanged = false;
         Field[] fields = Book.class.getDeclaredFields();
         for (Field field : fields) {
-            if (field.getName().equals("id")
-                    || field.getName().equals("createdDate")
-                    || field.getName().equals("lastEditDate")
-                    || field.getName().equals("deletedDate")) {
+            field.setAccessible(true);
+            String fieldName = field.getName();
+            Object repoValue = field.get(repoBook);
+            Object requestValue = field.get(requestBook);
+
+            if (isFieldIgnored(fieldName) || Objects.equals(repoValue, requestValue)) {
                 continue;
             }
 
-            field.setAccessible(true);
-            Object repoValue = field.get(repoBook);
-            Object requestValue = field.get(requestBook);
-            if (!Objects.equals(repoValue, requestValue)) {
-                field.set(repoBook, requestValue);
-                isChange = true;
-            }
+            field.set(repoBook, requestValue);
+            isChanged = true;
         }
-        return isChange;
+        return isChanged;
     }
+
+    private boolean isFieldIgnored(String fieldName) {
+        Set<String> ignoredFields = new HashSet<>(Arrays.asList("id", "createdDate", "lastEditDate", "deletedDate"));
+        return ignoredFields.contains(fieldName);
+    }
+
 
     @Scheduled(fixedRate = 10000)
     public void saveBookChatGPT() throws IOException {
@@ -103,31 +108,40 @@ public class BookService {
 
     public Response deleteBook(String id) {
         Book book = getBookIfPresent(id);
-            book.setDeletedDate(LocalDateTime.now());
-            repository.save(book);
-            return bookMapper.bookToBookResponse(book);
+        book.setDeletedDate(LocalDateTime.now());
+        repository.save(book);
+        return bookMapper.bookToBookResponse(book);
     }
 
-    public BookResponseList getBookList(String search, Integer page, Integer pageSize) {
-        if (page == null) {
-            page = 0;
-        }
-        if (pageSize == null) {
-            pageSize = 10;
-        }
-        if (search == null) {
-            search = "";
-        }
+    public BookResponseList getBookList(BookListCriteria bookListCriteria) {
+        bookListCriteria.fillDefaultValues();
+        bookListCriteria.fillCriteria();
 
-        PageRequest pageRequest = PageRequest.of(page, pageSize);
-        long booksTotal = repositoryTemplate.countBySearchTerm(search);
-        List<Book> books = repositoryTemplate.findBySearchTermAndPageRequest(search, pageRequest);
+        List<Book> books = mongoOperations.find(bookListCriteria.getFindQuery(), Book.class);
+        long totalSize = mongoOperations.count(bookListCriteria.getCountQuery(), Book.class);
 
         List<BookResponse> list = books.stream()
                 .map(bookMapper::bookToBookResponse)
                 .toList();
 
-        return new BookResponseList(booksTotal, list.size(), list);
+        return buildBookResponseList(bookListCriteria, list, totalSize);
+    }
+
+    private BookResponseList buildBookResponseList(BookListCriteria bookListCriteria, List<BookResponse> list, long totalSize) {
+        int listSize = list.size();
+        int pageSize = bookListCriteria.getPageCriteria().getPageSize();
+        int pageNo = bookListCriteria.getPageCriteria().getPageNo();
+        Page page = new Page(listSize, pageNo);
+        boolean hasNextPage = listSize >= pageSize;
+        int totalPages = (int) Math.ceil((double) totalSize / pageSize);
+
+        return BookResponseList.builder()
+                .page(page)
+                .hasNextPage(hasNextPage)
+                .totalPages(totalPages)
+                .totalSize(totalSize)
+                .bookResponseList(list)
+                .build();
     }
 
     private Book getBookIfPresent(String id) {
