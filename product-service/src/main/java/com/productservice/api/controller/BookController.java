@@ -80,7 +80,15 @@ public class BookController implements BookApi {
             }
     )
     public ResponseEntity<Response> getBookList(String search, Integer page, Integer pageSize, SearchSortKey searchKey, SearchSortKey sortKey, Sort sort) {
-        return ResponseEntity.ok(bookService.getBookList(search, page, pageSize, searchKey, sortKey, sort));
+        BookListCriteria bookListCriteria = BookListCriteria.builder()
+                .search(search)
+                .pageNo(page)
+                .pageSize(pageSize)
+                .searchKey(searchKey)
+                .sortKey(sortKey)
+                .sort(sort)
+                .build();
+        return ResponseEntity.ok(bookService.getBookList(bookListCriteria));
     }
 
 }

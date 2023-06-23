@@ -2,6 +2,7 @@ package com.productservice.api.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.productservice.ChatGPTHelper;
+import com.productservice.api.controller.BookListCriteria;
 import com.productservice.api.response.*;
 import com.productservice.document.Book;
 import com.productservice.mapper.BookMapper;
@@ -108,65 +109,32 @@ public class BookService {
         return bookMapper.bookToBookResponse(book);
     }
 
-    public BookResponseList getBookList(String search, Integer pageNo, Integer pageSize, SearchSortKey searchKey, SearchSortKey sortKey, Sort sort) {
-        pageNo = pageNo == null ? 0 : pageNo;
-        pageSize = pageSize == null ? 10 : pageSize;
-        search = search == null ? "" : search;
-        sort = sort == null ? Sort.ASC : sort;
-        sortKey = sortKey == null ? SearchSortKey.TITLE : sortKey;
-        Set<SearchSortKey> searchKeys = new HashSet<>();
+    public BookResponseList getBookList(BookListCriteria bookListCriteria) {
+        bookListCriteria.fillDefaultValues();
+        bookListCriteria.fillCriteria();
 
-        if (searchKey == null) {
-            searchKeys.add(SearchSortKey.ISBN);
-            searchKeys.add(SearchSortKey.TITLE);
-            searchKeys.add(SearchSortKey.AUTHOR_NAME);
-            searchKeys.add(SearchSortKey.DESCRIPTION);
-            searchKeys.add(SearchSortKey.CATEGORIES);
-            searchKeys.add(SearchSortKey.PUBLISHER_NAME);
-        } else {
-            searchKeys.add(searchKey);
-        }
-
-
-        SearchCriteria searchCriteria = SearchCriteria.builder()
-                .search(search)
-                .searchKeys(searchKeys)
-                .build();
-
-        SortCriteria sortCriteria = SortCriteria.builder()
-                .sort(sort)
-                .sortKey(sortKey)
-                .build();
-
-        PageCriteria pageCriteria = PageCriteria.builder()
-                .pageNo(pageNo)
-                .pageSize(pageSize)
-                .build();
-
-        List<Book> books = mongoOperations.find(new QueryProvider()
-                        .withSearchCriteria(searchCriteria)
-                        .withPageCriteria(pageCriteria)
-                        .withSortCriteria(sortCriteria)
-                        .getQuery(),
-                Book.class);
-
-        long totalSize = mongoOperations.count(new QueryProvider()
-                        .withSearchCriteria(searchCriteria)
-                        .getQuery(),
-                Book.class);
+        List<Book> books = mongoOperations.find(bookListCriteria.getFindQuery(), Book.class);
+        long totalSize = mongoOperations.count(bookListCriteria.getCountQuery(), Book.class);
 
         List<BookResponse> list = books.stream()
                 .map(bookMapper::bookToBookResponse)
                 .toList();
 
+        return buildBookResponseList(bookListCriteria, list, totalSize);
+    }
+
+    private BookResponseList buildBookResponseList(BookListCriteria bookListCriteria, List<BookResponse> list, long totalSize) {
+        int listSize = list.size();
+        int pageSize = bookListCriteria.getPageCriteria().getPageSize();
+        int pageNo = bookListCriteria.getPageCriteria().getPageNo();
+        Page page = new Page(listSize, pageNo);
+        boolean hasNextPage = listSize >= pageSize;
+        int totalPages = (int) Math.ceil((double) totalSize / pageSize);
+
         return BookResponseList.builder()
-                .page(new com.productservice.api.response.Page(
-                                books.size(),
-                                pageCriteria.getPageNo()
-                        )
-                )
-                .hasNextPage(list.size() >= pageCriteria.getPageSize())
-                .totalPages((int) Math.ceil((double) totalSize / pageCriteria.getPageSize()))
+                .page(page)
+                .hasNextPage(hasNextPage)
+                .totalPages(totalPages)
                 .totalSize(totalSize)
                 .bookResponseList(list)
                 .build();

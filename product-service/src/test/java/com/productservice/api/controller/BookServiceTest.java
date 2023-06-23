@@ -240,9 +240,10 @@ class BookServiceTest {
         when(mongoOperations.find(any(), eq(Book.class))).thenReturn(books);
         when(mongoOperations.count(any(), eq(Book.class))).thenReturn(2L);
         BookResponseList expected = new BookResponseList(List.of(BookResponseExample.getValidBook1(), BookResponseExample.getValidBook2()));
+        BookListCriteria bookListCriteria = new BookListCriteria();
 
         //when
-        BookResponseList actual = bookService.getBookList(null, null, null, null, null, null);
+        BookResponseList actual = bookService.getBookList(bookListCriteria);
 
         //then
         assertNotNull(actual);
@@ -250,7 +251,7 @@ class BookServiceTest {
         assertNotNull(actual.getPage());
         assertEquals(2, actual.getPage().getSize());
         assertEquals(0, actual.getPage().getNumber());
-        assertEquals(false, actual.getHasNextPage());
+        assertFalse(actual.getHasNextPage());
         assertEquals(1, actual.getTotalPages());
         assertEquals(2, actual.getTotalSize());
 
