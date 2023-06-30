@@ -31,11 +31,3 @@ build/
 
 ### VS Code ###
 .vscode/
-
-/inventory-service/mvnw.cmd
-/order-service/mvnw.cmd
-/product-service/mvnw.cmd
-/product-autofill-service/mvnw.cmd
-
-### ENV ###
-env.properties
