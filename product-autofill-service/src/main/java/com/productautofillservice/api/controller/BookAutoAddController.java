@@ -18,7 +18,8 @@ public class BookAutoAddController implements BookAutoAddApi {
 
     @Override
     public ResponseEntity<Response> getBooks(GetBooksRequest request) {
-        return bookAutoAddService.getBooks(request);
+        Response response = bookAutoAddService.getBooks(request);
+        return ResponseEntity.ok(response);
     }
 
 
