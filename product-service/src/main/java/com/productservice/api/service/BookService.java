@@ -156,4 +156,15 @@ public class BookService {
         }
         return optionalBook.get();
     }
+
+    public Response getIsbnList(List<String> isbnList) {
+        List<Book> books = repository.findByIsbnIn(isbnList);
+        if (books.isEmpty()) {
+            return new IsbnListResponse();
+        } else {
+            return new IsbnListResponse(books.stream()
+                    .map(Book::getIsbn)
+                    .toList());
+        }
+    }
 }

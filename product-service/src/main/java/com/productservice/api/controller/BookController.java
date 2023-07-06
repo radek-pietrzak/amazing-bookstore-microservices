@@ -4,6 +4,7 @@ import com.productservice.api.criteria.BookListCriteria;
 import com.productservice.api.criteria.SearchSortKey;
 import com.productservice.api.criteria.Sort;
 import com.productservice.api.request.BookRequest;
+import com.productservice.api.request.IsbnListRequest;
 import com.productservice.api.response.*;
 import com.productservice.api.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -93,5 +94,12 @@ public class BookController implements BookApi {
                 .build();
         return ResponseEntity.ok(bookService.getBookList(bookListCriteria));
     }
+
+    //TODO openapi
+    public ResponseEntity<Response> getIsbnList(IsbnListRequest isbnList) {
+        Response response = bookService.getIsbnList(isbnList.getIsbn());
+        return ResponseEntity.ok(response);
+    }
+
 
 }

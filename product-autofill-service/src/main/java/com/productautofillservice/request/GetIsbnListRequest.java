@@ -6,6 +6,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class GetBooksRequest {
+public class GetIsbnListRequest {
     private SearchRequest searchRequest;
 }

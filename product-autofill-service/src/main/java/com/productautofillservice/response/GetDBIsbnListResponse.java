@@ -11,7 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode
-public class GetBooksResponse implements Response {
-    private Integer numFound;
+public class GetDBIsbnListResponse implements Response {
     private List<String> isbn;
 }
