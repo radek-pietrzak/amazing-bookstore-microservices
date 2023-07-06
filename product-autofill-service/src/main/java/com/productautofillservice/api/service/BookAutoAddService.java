@@ -39,7 +39,9 @@ public class BookAutoAddService {
                     .collect(Collectors.toList());
 
             GetDBIsbnListResponse isbnDBList = productService.getDBPresentIsbnList(new IsbnDBListRequest(isbnList));
-            isbnList.removeAll(isbnDBList.getIsbn());
+            if (Objects.nonNull(isbnDBList.getIsbn())){
+                isbnList.removeAll(isbnDBList.getIsbn());
+            }
 
             return GetIsbnListResponse.builder()
                     .numFound(isbnList.size())
@@ -47,6 +49,10 @@ public class BookAutoAddService {
                     .build();
         }
         return null;
+    }
+
+    public Response getOpenLibraryBookDetails(String isbn){
+        return openLibraryService.getBookDetails(isbn);
     }
 
 }

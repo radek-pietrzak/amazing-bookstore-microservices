@@ -21,4 +21,10 @@ public class BookAutoAddController implements BookAutoAddApi {
         Response response = bookAutoAddService.getIsbnList(request);
         return ResponseEntity.ok(response);
     }
+
+    @Override
+    public ResponseEntity<Response> getOpenLibraryBookDetails(String isbn) {
+        Response response = bookAutoAddService.getOpenLibraryBookDetails(isbn);
+        return ResponseEntity.ok(response);
+    }
 }
