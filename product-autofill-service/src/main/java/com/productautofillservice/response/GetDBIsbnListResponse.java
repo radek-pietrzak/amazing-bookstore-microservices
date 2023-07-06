@@ -11,6 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode
-public class GetDBIsbnListResponse implements Response {
+public class GetDBIsbnListResponse {
     private List<String> isbn;
 }

@@ -6,9 +6,7 @@ import com.productautofillservice.response.GetDBIsbnListResponse;
 import com.productautofillservice.response.GetIsbnListResponse;
 import com.productautofillservice.response.OpenLibraryResponse;
 import com.productautofillservice.response.Response;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Objects;
@@ -20,11 +18,11 @@ import java.util.stream.Collectors;
 public class BookAutoAddService {
 
     private final OpenLibraryService openLibraryService;
-    private final RestTemplate restTemplate;
+    private final ProductService productService;
 
-    public BookAutoAddService(OpenLibraryService openLibraryService, RestTemplate restTemplate) {
+    public BookAutoAddService(OpenLibraryService openLibraryService, ProductService productService) {
         this.openLibraryService = openLibraryService;
-        this.restTemplate = restTemplate;
+        this.productService = productService;
     }
 
     public Response getIsbnList(GetIsbnListRequest request) {
@@ -40,6 +38,9 @@ public class BookAutoAddService {
                     .distinct()
                     .collect(Collectors.toList());
 
+            GetDBIsbnListResponse isbnDBList = productService.getDBPresentIsbnList(new IsbnDBListRequest(isbnList));
+            isbnList.removeAll(isbnDBList.getIsbn());
+
             return GetIsbnListResponse.builder()
                     .numFound(isbnList.size())
                     .isbn(isbnList)
@@ -48,13 +49,4 @@ public class BookAutoAddService {
         return null;
     }
 
-    public Response getDBPresentIsbnList(IsbnDBListRequest request) {
-        //TODO to environment variable
-        String apiUrl = "http://localhost:8082/product-service/isbn-list";
-        ResponseEntity<GetDBIsbnListResponse> responseLibrary = restTemplate.postForEntity(apiUrl, request, GetDBIsbnListResponse.class);
-        if (responseLibrary.getStatusCode().is2xxSuccessful()) {
-            return responseLibrary.getBody();
-        }
-        return null;
-    }
 }
