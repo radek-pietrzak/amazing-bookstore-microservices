@@ -2,6 +2,7 @@ package com.productautofillservice.api.controller;
 
 import com.productautofillservice.api.service.BookAutoAddService;
 import com.productautofillservice.request.GetIsbnListRequest;
+import com.productautofillservice.request.IsbnRequestList;
 import com.productautofillservice.response.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +24,7 @@ public class BookAutoAddController implements BookAutoAddApi {
     }
 
     @Override
-    public ResponseEntity<Response> getOpenLibraryBookDetails(String isbn) {
+    public ResponseEntity<Response> getOpenLibraryBookDetails(IsbnRequestList isbn) {
         Response response = bookAutoAddService.getOpenLibraryBookDetails(isbn);
         return ResponseEntity.ok(response);
     }

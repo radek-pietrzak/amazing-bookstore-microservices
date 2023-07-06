@@ -2,10 +2,8 @@ package com.productautofillservice.api.service;
 
 import com.productautofillservice.request.GetIsbnListRequest;
 import com.productautofillservice.request.IsbnDBListRequest;
-import com.productautofillservice.response.GetDBIsbnListResponse;
-import com.productautofillservice.response.GetIsbnListResponse;
-import com.productautofillservice.response.OpenLibraryResponse;
-import com.productautofillservice.response.Response;
+import com.productautofillservice.request.IsbnRequestList;
+import com.productautofillservice.response.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,7 +37,7 @@ public class BookAutoAddService {
                     .collect(Collectors.toList());
 
             GetDBIsbnListResponse isbnDBList = productService.getDBPresentIsbnList(new IsbnDBListRequest(isbnList));
-            if (Objects.nonNull(isbnDBList.getIsbn())){
+            if (Objects.nonNull(isbnDBList.getIsbn())) {
                 isbnList.removeAll(isbnDBList.getIsbn());
             }
 
@@ -51,8 +49,19 @@ public class BookAutoAddService {
         return null;
     }
 
-    public Response getOpenLibraryBookDetails(String isbn){
-        return openLibraryService.getBookDetails(isbn);
+    public Response getOpenLibraryBookDetails(IsbnRequestList isbn) {
+        if (Objects.nonNull(isbn) && Objects.nonNull(isbn.getIsbn())) {
+            List<BookDetailsResponse> bookDetailsList = isbn.getIsbn().stream()
+                    .map(openLibraryService::getBookDetails)
+                    .collect(Collectors.toList());
+
+            return BookDetailsResponseList.builder()
+                    .bookDetailsResponseList(bookDetailsList)
+                    .numFound(bookDetailsList.size())
+                    .build();
+        }
+
+        return null;
     }
 
 }
