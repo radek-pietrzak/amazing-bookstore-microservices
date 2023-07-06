@@ -13,5 +13,5 @@ import java.util.List;
 @EqualsAndHashCode
 public class GetBooksResponse implements Response {
     private Integer numFound;
-    private List<String> titles;
+    private List<String> isbn;
 }

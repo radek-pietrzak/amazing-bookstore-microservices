@@ -3,6 +3,8 @@ package com.productautofillservice.response;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -10,5 +12,5 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @EqualsAndHashCode
 public class OpenLibraryDoc {
-    private String title;
+    private List<String> isbn;
 }

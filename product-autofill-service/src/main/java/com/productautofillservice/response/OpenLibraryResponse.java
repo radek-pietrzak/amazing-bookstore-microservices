@@ -11,7 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode
-public class OpenLibraryResponse implements Response {
-    private Integer numFound;
+public class OpenLibraryResponse {
     private List<OpenLibraryDoc> docs;
 }
