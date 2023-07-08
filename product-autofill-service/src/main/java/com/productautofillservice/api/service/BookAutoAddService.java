@@ -1,11 +1,13 @@
 package com.productautofillservice.api.service;
 
+import com.productautofillservice.ChatGPTHelper;
 import com.productautofillservice.request.GetIsbnListRequest;
 import com.productautofillservice.request.IsbnDBListRequest;
 import com.productautofillservice.request.IsbnRequestList;
 import com.productautofillservice.response.*;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -94,13 +96,40 @@ public class BookAutoAddService {
     }
 
     private List<String> getLanguages(BookDetailsResponseOpenLibrary bookDetails) {
-        if (Objects.isNull(bookDetails) || Objects.isNull(bookDetails.getDetails()) || Objects.isNull(bookDetails.getDetails().getLanguages())) {
-            return List.of();
+        List<String> languages = new ArrayList<>();
+        String title;
+
+        if (!Objects.isNull(bookDetails) && !Objects.isNull(bookDetails.getDetails())) {
+            title = bookDetails.getDetails().getTitle();
+
+            if (Objects.isNull(bookDetails.getDetails().getLanguages())) {
+                languages.add(getLanguagesFromChatGPT(title));
+                return languages;
+            }
+
+            languages = bookDetails.getDetails().getLanguages().stream()
+                    .map(BookDetailsResponseOpenLibrary.Details.Language::getKey)
+                    .map(l -> l.replace("/languages/", ""))
+                    .toList();
+
+            if (languages.isEmpty()) {
+                getLanguagesFromChatGPT(title);
+                return languages;
+            }
         }
 
-        return bookDetails.getDetails().getLanguages().stream()
-                .map(BookDetailsResponseOpenLibrary.Details.Language::getKey)
-                .collect(Collectors.toList());
+        return languages;
+    }
+
+    private String getLanguagesFromChatGPT(String title) {
+        try {
+            ChatGPTHelper chatGPTHelper = new ChatGPTHelper();
+            return chatGPTHelper.getLanguage(title);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
 }
