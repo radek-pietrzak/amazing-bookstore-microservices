@@ -6,9 +6,7 @@ import com.productautofillservice.request.IsbnRequestList;
 import com.productautofillservice.response.*;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -49,19 +47,60 @@ public class BookAutoAddService {
         return null;
     }
 
-    public Response getOpenLibraryBookDetails(IsbnRequestList isbn) {
-        if (Objects.nonNull(isbn) && Objects.nonNull(isbn.getIsbn())) {
-            List<BookDetailsResponse> bookDetailsList = isbn.getIsbn().stream()
-                    .map(openLibraryService::getBookDetails)
-                    .collect(Collectors.toList());
+
+    public Response getBookListWithDetails(IsbnRequestList isbn) {
+        //TODO mapstruct
+        BookDetailsResponseMapOpenLibrary bookDetails = openLibraryService.getOpenLibraryBookMapWithDetails(isbn);
+
+        if (Objects.nonNull(bookDetails)) {
+            List<BookDetailsResponse> bookDetailsResponseList = bookDetails.getBookDetailsResponseOpenLibraryMap().entrySet().stream()
+                    .map(entry -> BookDetailsResponse.builder()
+                            .isbn(entry.getKey())
+                            .title(entry.getValue().getDetails().getTitle())
+                            .authors(getAuthors(entry.getValue()))
+                            .publishDate(entry.getValue().getDetails().getPublish_date())
+                            .publishers(getPublishers(entry.getValue()))
+                            .numberOfPages(entry.getValue().getDetails().getNumber_of_pages())
+                            .languages(getLanguages(entry.getValue()))
+                            .build())
+                    .toList();
+
 
             return BookDetailsResponseList.builder()
-                    .bookDetailsResponseList(bookDetailsList)
-                    .numFound(bookDetailsList.size())
+                    .numFound(bookDetails.getNumFound())
+                    .bookDetailsResponseList(bookDetailsResponseList)
                     .build();
         }
 
         return null;
+    }
+
+    private List<String> getAuthors(BookDetailsResponseOpenLibrary bookDetails) {
+        if (Objects.isNull(bookDetails) || Objects.isNull(bookDetails.getDetails()) || Objects.isNull(bookDetails.getDetails().getAuthors())) {
+            return List.of();
+        }
+
+        return bookDetails.getDetails().getAuthors().stream()
+                .map(BookDetailsResponseOpenLibrary.Details.Author::getName)
+                .collect(Collectors.toList());
+    }
+
+    private List<String> getPublishers(BookDetailsResponseOpenLibrary bookDetails) {
+        if (Objects.isNull(bookDetails) || Objects.isNull(bookDetails.getDetails()) || Objects.isNull(bookDetails.getDetails().getPublishers())) {
+            return List.of();
+        }
+
+        return new ArrayList<>(bookDetails.getDetails().getPublishers());
+    }
+
+    private List<String> getLanguages(BookDetailsResponseOpenLibrary bookDetails) {
+        if (Objects.isNull(bookDetails) || Objects.isNull(bookDetails.getDetails()) || Objects.isNull(bookDetails.getDetails().getLanguages())) {
+            return List.of();
+        }
+
+        return bookDetails.getDetails().getLanguages().stream()
+                .map(BookDetailsResponseOpenLibrary.Details.Language::getKey)
+                .collect(Collectors.toList());
     }
 
 }

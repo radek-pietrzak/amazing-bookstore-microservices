@@ -10,6 +10,6 @@ public interface BookAutoAddApi {
     @PostMapping(API.ISBN_LIST)
     ResponseEntity<Response> getIsbnList(@RequestBody GetIsbnListRequest request);
 
-    @PostMapping(API.OPEN_LIBRARY_BOOK_DETAILS_LIST)
-    ResponseEntity<Response> getOpenLibraryBookDetails(IsbnRequestList isbn);
+    @PostMapping(API.BOOK_LIST_WITH_DETAILS)
+    ResponseEntity<Response> getBookListWithDetails(@RequestBody IsbnRequestList request);
 }
