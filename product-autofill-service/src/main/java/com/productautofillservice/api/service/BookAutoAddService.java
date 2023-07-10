@@ -101,7 +101,8 @@ public class BookAutoAddService {
                     return;
                 }
 
-                List<String> publishers = getPublishers(details);
+                List<String> publishers = details.getPublishers();
+                List<String> subjects = details.getSubjects();
                 String description = getDescriptionFromChatGPT(title, authors, languages);
 
                 BookDetailsResponse bookDetailsResponse = BookDetailsResponse.builder()
@@ -112,6 +113,7 @@ public class BookAutoAddService {
                         .numberOfPages(numberOfPages)
                         .languages(languages)
                         .publishers(publishers)
+                        .subjects(subjects)
                         .description(description)
                         .build();
 
@@ -163,15 +165,6 @@ public class BookAutoAddService {
             return Integer.parseInt(yearString);
         }
         return null;
-    }
-
-    private List<String> getPublishers(BookDetailsResponseOpenLibrary.Details details) {
-        List<String> publishers = details.getPublishers();
-        if (Objects.isNull(publishers)) {
-            return List.of();
-        }
-
-        return new ArrayList<>(publishers);
     }
 
     private List<String> getLanguages(BookDetailsResponseOpenLibrary.Details details) {
