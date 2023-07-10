@@ -1,0 +1,67 @@
+{
+  "numFound": 3,
+  "bookDetailsResponseList": [
+    {
+      "isbn": "9788385254027",
+      "title": "Przygody człowieka książkowego",
+      "authors": [
+        "Edward Balcerzan"
+      ],
+      "publishYear": 1990,
+      "publishers": [
+        "Wydawn. PEN"
+      ],
+      "numberOfPages": 135,
+      "languages": [
+        "pol"
+      ],
+      "subjects": [
+        "Polish literature -- 20th century -- History and criticism."
+      ],
+      "description": "Opowieść o mężczyźnie, który zakochuje się w książkach i w ich światach. Wędruje przez strony literatury, odkrywając niezwykłe przygody i spotykając fascynujących bohaterów. Porusza się między różnymi gatunkami literackimi, od klasycznej powieści po poezję i dramat. Jego pasja zostaje wystawiona na próbę, gdy staje przed wyborem między rzeczywistością a światem fikcji. Czy ta przygoda zmieni go na zawsze?"
+    },
+    {
+      "isbn": "9788324598960",
+      "title": "Martynka - najlepsze przygody",
+      "authors": [
+        "Gilbert Delahaye"
+      ],
+      "publishYear": 2012,
+      "publishers": [
+        "Papilon"
+      ],
+      "numberOfPages": 159,
+      "languages": [
+        "pol"
+      ],
+      "subjects": [
+        "Martine (Fictitious character : Delahaye)",
+        "Juvenile fiction",
+        "Brothers and sisters",
+        "Fiction",
+        "Polish language materials"
+      ],
+      "description": "\"Martynka - najlepsze przygody\" to captivating children's book by Gilbert Delahaye filled with exciting adventures. (Polish)"
+    },
+    {
+      "isbn": "9788321902333",
+      "title": "Przygody z kryminalistyką",
+      "authors": [
+        "Jan Markiewicz"
+      ],
+      "publishYear": 1983,
+      "publishers": [
+        "Wydawn. Prawnicze"
+      ],
+      "numberOfPages": 76,
+      "languages": [
+        "pol"
+      ],
+      "subjects": [
+        "Criminologists -- Poland -- Biography.",
+        "Criminal investigation -- Poland."
+      ],
+      "description": "\"Przygody z kryminalistyką\" is an enthralling book written by Jan Markiewicz. This thrilling crime novel takes readers on a gripping journey as they explore the world of criminal investigations. With a captivating plot and well-developed characters, the author keeps readers on the edge of their seats from start to finish. \"Przygody z kryminalistyką\" is a must-read for all fans of the genre. (Polish)"
+    }
+  ]
+}
