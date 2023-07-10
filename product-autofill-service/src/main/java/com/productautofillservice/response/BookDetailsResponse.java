@@ -14,7 +14,7 @@ public class BookDetailsResponse {
     private String isbn;
     private String title;
     private List<String> authors;
-    private String publishDate;
+    private Integer publishYear;
     private List<String> publishers;
     private int numberOfPages;
     private List<String> languages;

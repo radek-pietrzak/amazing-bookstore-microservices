@@ -26,6 +26,10 @@ public class ChatGPTHelper {
                 title +
                 "\" and nothing more.";
 
+        return getAnswer(question);
+    }
+
+    private String getAnswer(String question) {
         ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
                 .messages(List.of(new ChatMessage("user", question)))
                 .model("gpt-3.5-turbo")

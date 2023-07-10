@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -60,7 +61,7 @@ public class BookAutoAddService {
                             .isbn(entry.getKey())
                             .title(entry.getValue().getDetails().getTitle())
                             .authors(getAuthors(entry.getValue()))
-                            .publishDate(entry.getValue().getDetails().getPublish_date())
+                            .publishYear(getPublishYear(entry.getValue()))
                             .publishers(getPublishers(entry.getValue()))
                             .numberOfPages(entry.getValue().getDetails().getNumber_of_pages())
                             .languages(getLanguages(entry.getValue()))
@@ -85,6 +86,23 @@ public class BookAutoAddService {
         return bookDetails.getDetails().getAuthors().stream()
                 .map(BookDetailsResponseOpenLibrary.Details.Author::getName)
                 .collect(Collectors.toList());
+    }
+
+    private Integer getPublishYear(BookDetailsResponseOpenLibrary response) {
+        String publishYear = "";
+        if (Objects.isNull(response) || Objects.isNull(response.getDetails()) || Objects.isNull(response.getDetails().getPublish_date())) {
+            return null;
+        }
+
+        publishYear = response.getDetails().getPublish_date();
+        Pattern pattern = Pattern.compile("\\b\\d{4}\\b");
+        Matcher matcher = pattern.matcher(publishYear);
+
+        if (matcher.find()) {
+            String yearString = matcher.group();
+            return Integer.parseInt(yearString);
+        }
+        return null;
     }
 
     private List<String> getPublishers(BookDetailsResponseOpenLibrary bookDetails) {
@@ -128,8 +146,8 @@ public class BookAutoAddService {
 
         } catch (IOException e) {
             e.printStackTrace();
+            return "";
         }
-        return "";
     }
 
 }
