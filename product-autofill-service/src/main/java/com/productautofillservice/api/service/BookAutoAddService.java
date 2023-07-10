@@ -52,25 +52,72 @@ public class BookAutoAddService {
 
 
     public Response getBookListWithDetails(IsbnRequestList isbn) {
-        //TODO mapstruct
         BookDetailsResponseMapOpenLibrary bookDetails = openLibraryService.getOpenLibraryBookMapWithDetails(isbn);
 
         if (Objects.nonNull(bookDetails)) {
-            List<BookDetailsResponse> bookDetailsResponseList = bookDetails.getBookDetailsResponseOpenLibraryMap().entrySet().stream()
-                    .map(entry -> BookDetailsResponse.builder()
-                            .isbn(entry.getKey())
-                            .title(entry.getValue().getDetails().getTitle())
-                            .authors(getAuthors(entry.getValue()))
-                            .publishYear(getPublishYear(entry.getValue()))
-                            .publishers(getPublishers(entry.getValue()))
-                            .numberOfPages(entry.getValue().getDetails().getNumber_of_pages())
-                            .languages(getLanguages(entry.getValue()))
-                            .build())
-                    .toList();
 
+            List<BookDetailsResponse> bookDetailsResponseList = new ArrayList<>();
+
+
+            bookDetails.getBookDetailsResponseOpenLibraryMap().forEach((key, value) -> {
+
+                if (Objects.isNull(key) || Objects.isNull(value)) {
+                    return;
+                }
+
+                BookDetailsResponseOpenLibrary.Details details = value.getDetails();
+
+                if (Objects.isNull(details)) {
+                    return;
+                }
+
+                String title = details.getTitle();
+
+                if (Objects.isNull(title)) {
+                    return;
+                }
+
+                List<String> authors = getAuthors(details);
+
+                if (Objects.isNull(authors)) {
+                    return;
+                }
+
+                Integer publishYear = getPublishYear(details);
+
+                if (Objects.isNull(details.getPublish_date())) {
+                    return;
+                }
+
+                int numberOfPages = details.getNumber_of_pages();
+
+                if (numberOfPages < 1) {
+                    return;
+                }
+
+                List<String> languages = getLanguages(details);
+
+                if (Objects.isNull(languages)) {
+                    return;
+                }
+
+                List<String> publishers = getPublishers(details);
+
+                BookDetailsResponse bookDetailsResponse = BookDetailsResponse.builder()
+                        .isbn(key)
+                        .title(title)
+                        .authors(authors)
+                        .publishYear(publishYear)
+                        .numberOfPages(numberOfPages)
+                        .languages(languages)
+                        .publishers(publishers)
+                        .build();
+
+                bookDetailsResponseList.add(bookDetailsResponse);
+            });
 
             return BookDetailsResponseList.builder()
-                    .numFound(bookDetails.getNumFound())
+                    .numFound(bookDetailsResponseList.size())
                     .bookDetailsResponseList(bookDetailsResponseList)
                     .build();
         }
@@ -78,25 +125,25 @@ public class BookAutoAddService {
         return null;
     }
 
-    private List<String> getAuthors(BookDetailsResponseOpenLibrary bookDetails) {
-        if (Objects.isNull(bookDetails) || Objects.isNull(bookDetails.getDetails()) || Objects.isNull(bookDetails.getDetails().getAuthors())) {
-            return List.of();
+    private List<String> getAuthors(BookDetailsResponseOpenLibrary.Details details) {
+        List<BookDetailsResponseOpenLibrary.Details.Author> authors = details.getAuthors();
+        if (Objects.isNull(details.getAuthors())) {
+            return null;
         }
 
-        return bookDetails.getDetails().getAuthors().stream()
+        return authors.stream()
                 .map(BookDetailsResponseOpenLibrary.Details.Author::getName)
                 .collect(Collectors.toList());
     }
 
-    private Integer getPublishYear(BookDetailsResponseOpenLibrary response) {
-        String publishYear = "";
-        if (Objects.isNull(response) || Objects.isNull(response.getDetails()) || Objects.isNull(response.getDetails().getPublish_date())) {
+    private Integer getPublishYear(BookDetailsResponseOpenLibrary.Details details) {
+        String publishDate = details.getPublish_date();
+        if (Objects.isNull(publishDate)) {
             return null;
         }
 
-        publishYear = response.getDetails().getPublish_date();
         Pattern pattern = Pattern.compile("\\b\\d{4}\\b");
-        Matcher matcher = pattern.matcher(publishYear);
+        Matcher matcher = pattern.matcher(publishDate);
 
         if (matcher.find()) {
             String yearString = matcher.group();
@@ -105,38 +152,34 @@ public class BookAutoAddService {
         return null;
     }
 
-    private List<String> getPublishers(BookDetailsResponseOpenLibrary bookDetails) {
-        if (Objects.isNull(bookDetails) || Objects.isNull(bookDetails.getDetails()) || Objects.isNull(bookDetails.getDetails().getPublishers())) {
+    private List<String> getPublishers(BookDetailsResponseOpenLibrary.Details details) {
+        List<String> publishers = details.getPublishers();
+        if (Objects.isNull(publishers)) {
             return List.of();
         }
 
-        return new ArrayList<>(bookDetails.getDetails().getPublishers());
+        return new ArrayList<>(publishers);
     }
 
-    private List<String> getLanguages(BookDetailsResponseOpenLibrary bookDetails) {
-        List<String> languages = new ArrayList<>();
-        String title;
+    private List<String> getLanguages(BookDetailsResponseOpenLibrary.Details details) {
+        List<BookDetailsResponseOpenLibrary.Details.Language> languages = details.getLanguages();
+        String title = details.getTitle();
 
-        if (!Objects.isNull(bookDetails) && !Objects.isNull(bookDetails.getDetails())) {
-            title = bookDetails.getDetails().getTitle();
-
-            if (Objects.isNull(bookDetails.getDetails().getLanguages())) {
-                languages.add(getLanguagesFromChatGPT(title));
-                return languages;
-            }
-
-            languages = bookDetails.getDetails().getLanguages().stream()
-                    .map(BookDetailsResponseOpenLibrary.Details.Language::getKey)
-                    .map(l -> l.replace("/languages/", ""))
-                    .toList();
-
-            if (languages.isEmpty()) {
-                getLanguagesFromChatGPT(title);
-                return languages;
-            }
+        if (Objects.isNull(languages)) {
+            return null;
         }
 
-        return languages;
+        List<String> languagesStr = new ArrayList<>(languages.stream()
+                .map(BookDetailsResponseOpenLibrary.Details.Language::getKey)
+                .map(l -> l.replace("/languages/", ""))
+                .toList());
+
+        if (languages.isEmpty()) {
+            languagesStr.add(getLanguagesFromChatGPT(title));
+            return languagesStr;
+        }
+
+        return languagesStr;
     }
 
     private String getLanguagesFromChatGPT(String title) {
