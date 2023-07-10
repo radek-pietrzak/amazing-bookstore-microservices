@@ -77,7 +77,7 @@ public class BookAutoAddService {
                     return;
                 }
 
-                List<String> authors = getAuthors(details);
+                List<AuthorResponse> authors = getAuthors(details);
 
                 if (Objects.isNull(authors)) {
                     return;
@@ -103,7 +103,12 @@ public class BookAutoAddService {
 
                 List<String> publishers = details.getPublishers();
                 List<String> subjects = details.getSubjects();
-                String description = getDescriptionFromChatGPT(title, authors, languages);
+
+                List<String> authorNames = authors.stream()
+                        .map(AuthorResponse::getAuthorName)
+                        .toList();
+
+                String description = getDescriptionFromChatGPT(title, authorNames, languages);
 
                 BookDetailsResponse bookDetailsResponse = BookDetailsResponse.builder()
                         .isbn(key)
@@ -140,14 +145,16 @@ public class BookAutoAddService {
         }
     }
 
-    private List<String> getAuthors(BookDetailsResponseOpenLibrary.Details details) {
+    private List<AuthorResponse> getAuthors(BookDetailsResponseOpenLibrary.Details details) {
         List<BookDetailsResponseOpenLibrary.Details.Author> authors = details.getAuthors();
         if (Objects.isNull(details.getAuthors())) {
             return null;
         }
 
         return authors.stream()
-                .map(BookDetailsResponseOpenLibrary.Details.Author::getName)
+                .map(author -> AuthorResponse.builder()
+                        .authorName(author.getName())
+                        .build())
                 .collect(Collectors.toList());
     }
 

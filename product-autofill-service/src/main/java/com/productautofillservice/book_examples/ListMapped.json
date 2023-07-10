@@ -5,7 +5,10 @@
       "isbn": "9788385254027",
       "title": "Przygody człowieka książkowego",
       "authors": [
-        "Edward Balcerzan"
+        {
+          "authorName": "Edward Balcerzan",
+          "authorDescription": null
+        }
       ],
       "publishYear": 1990,
       "publishers": [
@@ -18,13 +21,16 @@
       "subjects": [
         "Polish literature -- 20th century -- History and criticism."
       ],
-      "description": "Opowieść o mężczyźnie, który zakochuje się w książkach i w ich światach. Wędruje przez strony literatury, odkrywając niezwykłe przygody i spotykając fascynujących bohaterów. Porusza się między różnymi gatunkami literackimi, od klasycznej powieści po poezję i dramat. Jego pasja zostaje wystawiona na próbę, gdy staje przed wyborem między rzeczywistością a światem fikcji. Czy ta przygoda zmieni go na zawsze?"
+      "description": "Przygody człowieka książkowego to fascynująca powieść autorstwa Edwarda Balcerzana. Książka przedstawia pełne przygód życie młodego mężczyzny, który poświęca się literaturze. Autor w doskonały sposób opisuje jego pasję do czytania, podróże po różnych światach za pomocą książek oraz spotkania z innymi miłośnikami literatury. Czytelnik odnajdzie się w historii bohatera, będąc świadkiem jego odkrywania magicznego świata literatury. Przygody człowieka książkowego to wciągająca opowieść, która z pewnością przypadnie do gustu miłośnikom literatury i przygód."
     },
     {
       "isbn": "9788324598960",
       "title": "Martynka - najlepsze przygody",
       "authors": [
-        "Gilbert Delahaye"
+        {
+          "authorName": "Gilbert Delahaye",
+          "authorDescription": null
+        }
       ],
       "publishYear": 2012,
       "publishers": [
@@ -41,13 +47,16 @@
         "Fiction",
         "Polish language materials"
       ],
-      "description": "\"Martynka - najlepsze przygody\" to captivating children's book by Gilbert Delahaye filled with exciting adventures. (Polish)"
+      "description": "\"Martynka - najlepsze przygody\" to fascynująca książka dla dzieci autorstwa Gilberta Delahaye. Ta barwna i pełna przygód opowieść przedstawia niezwykłe przygody młodej dziewczynki o imieniu Martynka. Razem z nią czytelnicy przeniosą się do magicznego świata pełnego tajemnic, gdzie czekają na nich wspaniałe przygody i fascynujące postacie. Ta opowieść z pewnością wzbudzi wyobraźnię młodych czytelników i zapewni im niezapomniane chwile pełne radości i napięcia."
     },
     {
       "isbn": "9788321902333",
       "title": "Przygody z kryminalistyką",
       "authors": [
-        "Jan Markiewicz"
+        {
+          "authorName": "Jan Markiewicz",
+          "authorDescription": null
+        }
       ],
       "publishYear": 1983,
       "publishers": [
@@ -61,7 +70,7 @@
         "Criminologists -- Poland -- Biography.",
         "Criminal investigation -- Poland."
       ],
-      "description": "\"Przygody z kryminalistyką\" is an enthralling book written by Jan Markiewicz. This thrilling crime novel takes readers on a gripping journey as they explore the world of criminal investigations. With a captivating plot and well-developed characters, the author keeps readers on the edge of their seats from start to finish. \"Przygody z kryminalistyką\" is a must-read for all fans of the genre. (Polish)"
+      "description": "\"Przygody z kryminalistyką\" to fascynująca książka autorstwa Jana Markiewicza. Ta ekscytująca lektura zabiera czytelnika w świat mrocznych zagadek i zbrodni, odkrywając tajemnice kryminalistyki. Wciągająca fabuła pełna jest zwrotów akcji i nieoczekiwanych rozwiązań, które trzymają czytelnika w napięciu do ostatniej strony. Za pomocą ciekawych postaci i precyzyjnie skonstruowanej narracji, autor wciąga nas w śledztwo, gdzie rozwiązywanie zagadek staje się prawdziwą przygodą. Ta książka to must-read dla miłośników kryminałów i zagadkowych historii."
     }
   ]
 }

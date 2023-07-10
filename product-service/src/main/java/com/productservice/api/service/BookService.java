@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.productservice.ChatGPTHelper;
 import com.productservice.api.criteria.BookListCriteria;
 import com.productservice.api.criteria.Page;
+import com.productservice.api.request.AutoFillBookListRequest;
 import com.productservice.api.response.*;
 import com.productservice.document.Book;
 import com.productservice.mapper.BookMapper;
@@ -166,5 +167,19 @@ public class BookService {
                     .map(Book::getIsbn)
                     .toList());
         }
+    }
+
+    public Response saveBookList(AutoFillBookListRequest request) {
+        List<Book> books = request.getBooks().stream()
+                .map(bookMapper::bookRequestToBook)
+                .toList();
+
+        //TODO: set created date in auditable
+        books.forEach(book -> book.setCreatedDate(LocalDateTime.now()));
+
+
+        return new AutoFillBookListResponse(books.stream()
+                .map(bookMapper::bookToBookResponse)
+                .toList());
     }
 }

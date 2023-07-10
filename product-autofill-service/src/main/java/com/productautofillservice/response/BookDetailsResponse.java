@@ -13,7 +13,7 @@ import java.util.List;
 public class BookDetailsResponse {
     private String isbn;
     private String title;
-    private List<String> authors;
+    private List<AuthorResponse> authors;
     private Integer publishYear;
     private List<String> publishers;
     private int numberOfPages;

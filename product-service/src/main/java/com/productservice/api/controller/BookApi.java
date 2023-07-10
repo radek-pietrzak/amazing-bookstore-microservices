@@ -1,5 +1,6 @@
 package com.productservice.api.controller;
 
+import com.productservice.api.request.AutoFillBookListRequest;
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.request.IsbnListRequest;
 import com.productservice.api.response.Response;
@@ -39,5 +40,8 @@ public interface BookApi {
 
     @PostMapping(path = API.ISBN_LIST)
     ResponseEntity<Response> getIsbnList(@Valid @RequestBody IsbnListRequest request);
+
+    @PostMapping(path = API.BOOK_LIST_SAVE)
+    ResponseEntity<Response> saveBookList(@Valid @RequestBody AutoFillBookListRequest request);
 
 }

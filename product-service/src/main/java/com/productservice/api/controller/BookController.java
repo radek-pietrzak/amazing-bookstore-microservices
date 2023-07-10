@@ -3,6 +3,7 @@ package com.productservice.api.controller;
 import com.productservice.api.criteria.BookListCriteria;
 import com.productservice.api.criteria.SearchSortKey;
 import com.productservice.api.criteria.Sort;
+import com.productservice.api.request.AutoFillBookListRequest;
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.request.IsbnListRequest;
 import com.productservice.api.response.*;
@@ -98,6 +99,12 @@ public class BookController implements BookApi {
     //TODO openapi
     public ResponseEntity<Response> getIsbnList(IsbnListRequest isbnList) {
         Response response = bookService.getIsbnList(isbnList.getIsbn());
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<Response> saveBookList(AutoFillBookListRequest request) {
+        Response response = bookService.saveBookList(request);
         return ResponseEntity.ok(response);
     }
 
