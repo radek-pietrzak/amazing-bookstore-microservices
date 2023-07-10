@@ -102,6 +102,7 @@ public class BookAutoAddService {
                 }
 
                 List<String> publishers = getPublishers(details);
+                String description = getDescriptionFromChatGPT(title, authors, languages);
 
                 BookDetailsResponse bookDetailsResponse = BookDetailsResponse.builder()
                         .isbn(key)
@@ -111,6 +112,7 @@ public class BookAutoAddService {
                         .numberOfPages(numberOfPages)
                         .languages(languages)
                         .publishers(publishers)
+                        .description(description)
                         .build();
 
                 bookDetailsResponseList.add(bookDetailsResponse);
@@ -123,6 +125,17 @@ public class BookAutoAddService {
         }
 
         return null;
+    }
+
+    private String getDescriptionFromChatGPT(String title, List<String> authors, List<String> languages) {
+        try {
+            ChatGPTHelper chatGPTHelper = new ChatGPTHelper();
+            return chatGPTHelper.getDescription(title, authors, languages);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 
     private List<String> getAuthors(BookDetailsResponseOpenLibrary.Details details) {

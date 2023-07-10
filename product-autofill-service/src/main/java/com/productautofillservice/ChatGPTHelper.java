@@ -44,4 +44,18 @@ public class ChatGPTHelper {
 
         return stringBuilder.toString();
     }
+
+    public String getDescription(String title, List<String> authors, List<String> languages) {
+        String authorsStr = String.join(", ", authors);
+        String question = "Give me in description of book that contains not more than 1000 characters where\"" +
+                "title is: " +
+                title +
+                ", and authors are:" +
+                authorsStr +
+                ". Write this description in language that is defined by ISO 639-2 and is: " +
+                languages.get(0) +
+                ". Give me nothing more than this description.";
+
+        return getAnswer(question);
+    }
 }

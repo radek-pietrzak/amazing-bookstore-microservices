@@ -18,4 +18,5 @@ public class BookDetailsResponse {
     private List<String> publishers;
     private int numberOfPages;
     private List<String> languages;
+    private String description;
 }
