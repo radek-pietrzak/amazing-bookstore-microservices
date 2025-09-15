@@ -1,6 +1,8 @@
 package com.productservice.api.controller;
 
+import com.productservice.api.request.AutoFillBookListRequest;
 import com.productservice.api.request.BookRequest;
+import com.productservice.api.request.IsbnListRequest;
 import com.productservice.api.response.Response;
 import com.productservice.api.criteria.SearchSortKey;
 import com.productservice.api.criteria.Sort;
@@ -18,6 +20,7 @@ public interface BookApi {
     @PostMapping(path = API.BOOK_SAVE)
     ResponseEntity<Response> saveBook(@Valid @RequestBody BookRequest request);
 
+    //TODO change to put
     @PostMapping(path = API.BOOK_EDIT_ID)
     ResponseEntity<Response> editBook(@PathVariable String id, @Valid @RequestBody BookRequest request)
             throws IllegalAccessException;
@@ -34,5 +37,11 @@ public interface BookApi {
             @Nullable @QueryParam(value = "sortKey") SearchSortKey sortKey,
             @Nullable @QueryParam(value = "sort") Sort sort);
 
+
+    @PostMapping(path = API.ISBN_LIST)
+    ResponseEntity<Response> getIsbnList(@Valid @RequestBody IsbnListRequest request);
+
+    @PostMapping(path = API.BOOK_LIST_SAVE)
+    ResponseEntity<Response> saveBookList(@Valid @RequestBody AutoFillBookListRequest request);
 
 }

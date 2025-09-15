@@ -14,4 +14,5 @@ public interface JsonPropertyNames {
     String AUTHOR_DESCRIPTION = "authorDescription";
     String PUBLISHER_NAME = "publisherName";
     String PUBLISHER_DESCRIPTION = "publisherDescription";
+    String AUTO_FILL_BOOK_LIST = "autoFillBookList";
 }

@@ -1,0 +1,99 @@
+{
+  "ISBN:9781476734767": {
+    "bib_key": "ISBN:9781476734767",
+    "info_url": "https://openlibrary.org/books/OL30385448M/Star_trek_into_darkness",
+    "preview": "noview",
+    "preview_url": "https://openlibrary.org/books/OL30385448M/Star_trek_into_darkness",
+    "details": {
+      "publishers": [
+        "Pocket Books"
+      ],
+      "subtitle": "a novelization",
+      "isbn_10": [
+        "1476734763"
+      ],
+      "series": [
+        "Pocket Books Star Trek"
+      ],
+      "lc_classifications": [
+        "CPB Box no. 3811 vol. 5"
+      ],
+      "key": "/books/OL30385448M",
+      "authors": [
+        {
+          "key": "/authors/OL29487A",
+          "name": "Alan Dean Foster"
+        }
+      ],
+      "publish_places": [
+        "New York"
+      ],
+      "contributions": [
+        "Orci, Roberto",
+        "Kurtzman, Alex",
+        "Lindelof, Damon, 1973-",
+        "Roddenberry, Gene",
+        "Copyright Paperback Collection (Library of Congress)",
+        "Foster, Alan Dean"
+      ],
+      "isbn_13": [
+        "9781476734767"
+      ],
+      "pagination": "374 p.",
+      "source_records": [
+        "marc:marc_loc_2016/BooksAll.2016.part42.utf8:16469789:1472"
+      ],
+      "title": "Star trek, into darkness",
+      "lccn": [
+        "2014656469"
+      ],
+      "notes": {
+        "type": "/type/text",
+        "value": "\"Based on the motion picture screenplay by Roberto Orci, Alex Kurtzman, & Damon Lindelof; based upon Star Trek created by Gene Roddenberry.\""
+      },
+      "number_of_pages": 374,
+      "languages": [
+        {
+          "key": "/languages/eng"
+        }
+      ],
+      "subjects": [
+        "American Science fiction",
+        "Space warfare",
+        "Human-alien encounters",
+        "Star Trek fiction",
+        "Interstellar travel",
+        "Time travel",
+        "Fiction"
+      ],
+      "subject_people": [
+        "Spock Mr",
+        "James T. Kirk (2233-2371)"
+      ],
+      "publish_country": "nyu",
+      "publish_date": "2013",
+      "by_statement": "by Alan Dean Foster",
+      "oclc_numbers": [
+        "855045798"
+      ],
+      "works": [
+        {
+          "key": "/works/OL17382282W"
+        }
+      ],
+      "type": {
+        "key": "/type/edition"
+      },
+      "latest_revision": 2,
+      "revision": 2,
+      "created": {
+        "type": "/type/datetime",
+        "value": "2020-09-20T23:19:11.537195"
+      },
+      "last_modified": {
+        "type": "/type/datetime",
+        "value": "2021-08-24T04:45:09.514240"
+      }
+    }
+  }
+}

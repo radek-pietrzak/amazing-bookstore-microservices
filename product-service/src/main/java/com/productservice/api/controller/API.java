@@ -11,5 +11,7 @@ public interface API {
     String BOOK_DELETE = "/product-service/book/delete/";
     String BOOK_DELETE_ID = BOOK_DELETE + ID;
     String BOOK_LIST = "/product-service/book-list";
+    String ISBN_LIST = "/product-service/isbn-list";
+    String BOOK_LIST_SAVE = "/product-service/book-list/save";
 
 }
