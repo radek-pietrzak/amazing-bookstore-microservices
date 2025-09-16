@@ -4,7 +4,7 @@ import com.productservice.TagGroup;
 import com.productservice.api.criteria.BookListCriteria;
 import com.productservice.api.response.*;
 import com.productservice.api.service.BookService;
-import com.productservice.document.Book;
+import com.productservice.entity.Book;
 import com.productservice.example.BookExample;
 import com.productservice.example.BookRequestExample;
 import com.productservice.example.BookResponseExample;
@@ -20,7 +20,10 @@ import org.mapstruct.factory.Mappers;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import jakarta.validation.Validator;
-import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,13 +45,11 @@ class BookServiceTest {
     private ArgumentCaptor<Book> bookArgumentCaptor;
     @Mock
     private Validator validator;
-    @Mock
-    private MongoOperations mongoOperations;
     private final BookMapper bookMapper = Mappers.getMapper(BookMapper.class);
 
     @BeforeEach
     public void setUp() {
-        bookService = new BookService(bookRepository, validator, bookMapper, mongoOperations);
+        bookService = new BookService(bookRepository, validator, bookMapper);
     }
 
     @ParameterizedTest
@@ -197,11 +198,11 @@ class BookServiceTest {
     void shouldPutDeleteDate() {
         //given
         Book book = BookExample.getValidBook1();
-        String bookId = "1";
+        Long bookId = 1L;
         when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
 
         //when
-        bookService.deleteBook(bookId);
+        bookService.deleteBook(String.valueOf(bookId));
 
         //then
         verify(bookRepository).save(bookArgumentCaptor.capture());
@@ -238,10 +239,12 @@ class BookServiceTest {
     void shouldReturnCorrectBookList() {
         //given
         List<Book> books = List.of(BookExample.getValidBook1(), BookExample.getValidBook2());
-        when(mongoOperations.find(any(), eq(Book.class))).thenReturn(books);
-        when(mongoOperations.count(any(), eq(Book.class))).thenReturn(2L);
         BookResponseList expected = new BookResponseList(List.of(BookResponseExample.getValidBook1(), BookResponseExample.getValidBook2()));
         BookListCriteria bookListCriteria = new BookListCriteria();
+
+        Page<Book> booksPage = new PageImpl<>(books);
+        when(bookRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(booksPage);
+
 
         //when
         BookResponseList actual = bookService.getBookList(bookListCriteria);
@@ -249,9 +252,9 @@ class BookServiceTest {
         //then
         assertNotNull(actual);
         assertEquals(books.size(), actual.getBookResponseList().size());
-        assertNotNull(actual.getPage());
-        assertEquals(2, actual.getPage().getSize());
-        assertEquals(0, actual.getPage().getNumber());
+        assertNotNull(actual.getPageInfo());
+        assertEquals(2, actual.getPageInfo().getSize());
+        assertEquals(0, actual.getPageInfo().getNumber());
         assertFalse(actual.getHasNextPage());
         assertEquals(1, actual.getTotalPages());
         assertEquals(2, actual.getTotalSize());

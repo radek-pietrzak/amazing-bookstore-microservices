@@ -3,7 +3,7 @@ package com.productservice.mapper;
 import com.productservice.api.request.BookRequest;
 import com.productservice.api.response.BookResponse;
 import com.productservice.api.response.EditBookResponse;
-import com.productservice.document.Book;
+import com.productservice.entity.Book;
 import com.productservice.example.BookExample;
 import com.productservice.example.BookRequestExample;
 import com.productservice.example.BookResponseExample;

@@ -7,7 +7,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Page {
+public class PageInfo {
     private Integer size;
     private Integer number;
 }

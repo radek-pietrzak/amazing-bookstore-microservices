@@ -1,20 +1,20 @@
 package com.productservice.example;
 
-import com.productservice.document.Author;
-import com.productservice.document.Book;
-import com.productservice.document.Publisher;
+import com.productservice.entity.Author;
+import com.productservice.entity.Book;
+import com.productservice.entity.Publisher;
 
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 
-import static com.productservice.document.Category.*;
+import static com.productservice.entity.Category.*;
 
 public abstract class BookExample {
 
     public static Book getValidBook1() {
         return Book.builder()
-                .id("1")
+                .id(1L)
                 .createdDate(LocalDateTime.of(2014, Month.JULY, 16, 10, 55, 22))
                 .lastEditDate(LocalDateTime.of(2023, 4, 16, 9, 59))
                 .isbn("9780316769488")
@@ -31,7 +31,7 @@ public abstract class BookExample {
 
     public static Book getValidBook2() {
         Book book = getValidBook1();
-        book.setId("2");
+        book.setId(2L);
         book.setLanguageCode("pl");
         book.setAuthors(List.of(
                 new Author("J.D.", "Salinger"),

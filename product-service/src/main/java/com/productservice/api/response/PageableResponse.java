@@ -1,6 +1,6 @@
 package com.productservice.api.response;
 
-import com.productservice.api.criteria.Page;
+import com.productservice.api.criteria.PageInfo;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -10,7 +10,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 public abstract class PageableResponse implements Response {
-    private Page page;
+    private PageInfo pageInfo;
     private Boolean hasNextPage;
     private Integer totalPages;
     private Long totalSize;

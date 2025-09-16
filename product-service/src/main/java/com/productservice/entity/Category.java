@@ -1,4 +1,4 @@
-package com.productservice.document;
+package com.productservice.entity;
 
 public enum Category {
 

@@ -1,16 +1,21 @@
 package com.productservice.api.service;
 
 import com.productservice.api.criteria.BookListCriteria;
-import com.productservice.api.criteria.Page;
+import com.productservice.api.criteria.BookSpecification;
+import com.productservice.api.criteria.PageInfo;
 import com.productservice.api.request.AutoFillBookListRequest;
 import com.productservice.api.response.*;
-import com.productservice.document.Book;
+import com.productservice.entity.Book;
 import com.productservice.mapper.BookMapper;
 import com.productservice.repository.BookRepository;
 import com.productservice.api.request.BookRequest;
 import jakarta.validation.Validator;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
@@ -23,20 +28,15 @@ public class BookService {
     private final BookRepository repository;
     private final Validator validator;
     private final BookMapper bookMapper;
-    private final MongoOperations mongoOperations;
 
-    public BookService(BookRepository repository,
-                       Validator validator,
-                       BookMapper bookMapper,
-                       MongoOperations mongoOperations) {
+    public BookService(BookRepository repository, Validator validator, BookMapper bookMapper) {
         this.repository = repository;
         this.validator = validator;
         this.bookMapper = bookMapper;
-        this.mongoOperations = mongoOperations;
     }
 
     public Response getBook(String id) {
-        return bookMapper.bookToBookResponse(getBookIfPresent(id));
+        return bookMapper.bookToBookResponse(getBookIfPresent(Long.valueOf(id)));
     }
 
     public Response saveBook(BookRequest request) {
@@ -47,7 +47,7 @@ public class BookService {
     }
 
     public Response editBook(String id, BookRequest request) throws IllegalAccessException {
-        Book repoBook = getBookIfPresent(id);
+        Book repoBook = getBookIfPresent(Long.valueOf(id));
         Book requestBook = bookMapper.bookRequestToBook(request);
         if (updateChangedFields(repoBook, requestBook)) {
             repoBook.setLastEditDate(LocalDateTime.now());
@@ -83,7 +83,7 @@ public class BookService {
     }
 
     public Response deleteBook(String id) {
-        Book book = getBookIfPresent(id);
+        Book book = getBookIfPresent(Long.valueOf(id));
         book.setDeletedDate(LocalDateTime.now());
         repository.save(book);
         return bookMapper.bookToBookResponse(book);
@@ -91,28 +91,33 @@ public class BookService {
 
     public BookResponseList getBookList(BookListCriteria bookListCriteria) {
         bookListCriteria.fillDefaultValues();
-        bookListCriteria.fillCriteria();
 
-        List<Book> books = mongoOperations.find(bookListCriteria.getFindQuery(), Book.class);
-        long totalSize = mongoOperations.count(bookListCriteria.getCountQuery(), Book.class);
+        Sort sort = Sort.by(Sort.Direction.fromString(bookListCriteria.getSort().name()), bookListCriteria.getSortKey().getKey());
+        Pageable pageable = PageRequest.of(bookListCriteria.getPageNo(), bookListCriteria.getPageSize(), sort);
+
+        Specification<Book> spec = new BookSpecification(bookListCriteria);
+
+        Page<Book> booksPageInfo = repository.findAll(spec, pageable);
+        List<Book> books = booksPageInfo.getContent();
+        long totalSize = booksPageInfo.getTotalElements();
 
         List<BookResponse> list = books.stream()
                 .map(bookMapper::bookToBookResponse)
                 .toList();
 
-        return buildBookResponseList(bookListCriteria, list, totalSize);
+        return buildBookResponseList(bookListCriteria, list, totalSize); // Ta metoda wymaga drobnych poprawek
     }
 
     private BookResponseList buildBookResponseList(BookListCriteria bookListCriteria, List<BookResponse> list, long totalSize) {
         int listSize = list.size();
-        int pageSize = bookListCriteria.getPageCriteria().getPageSize();
-        int pageNo = bookListCriteria.getPageCriteria().getPageNo();
-        Page page = new Page(listSize, pageNo);
+        int pageSize = bookListCriteria.getPageSize();
+        int pageNo = bookListCriteria.getPageNo();
+        PageInfo pageInfo = new PageInfo(listSize, pageNo);
         boolean hasNextPage = listSize >= pageSize;
         int totalPages = (int) Math.ceil((double) totalSize / pageSize);
 
         return BookResponseList.builder()
-                .page(page)
+                .pageInfo(pageInfo)
                 .hasNextPage(hasNextPage)
                 .totalPages(totalPages)
                 .totalSize(totalSize)
@@ -120,8 +125,8 @@ public class BookService {
                 .build();
     }
 
-    private Book getBookIfPresent(String id) {
-        if (StringUtils.isBlank(id)) {
+    private Book getBookIfPresent(Long id) {
+        if (StringUtils.isBlank(String.valueOf(id))) {
             throw new IllegalArgumentException();
         }
 

@@ -1,6 +1,6 @@
 package com.productservice.validation.validator;
 
-import com.productservice.document.Category;
+import com.productservice.entity.Category;
 import com.productservice.validation.annotation.BookCategory;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
