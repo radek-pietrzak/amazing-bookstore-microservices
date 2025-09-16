@@ -10,10 +10,20 @@ import java.util.stream.Stream;
 public class FindJavaFilesContent {
 
     public static void main(String[] args) {
-        Path startPath = Paths.get(".");
-
+//        Path startPath = Paths.get(".");
+        Path startPath = Paths.get("./product-service");
         String outputFileNamePrefix = "find-files-content/file-content/";
-//        String outputFileNamePrefix = "";
+        saveSeparated(startPath, outputFileNamePrefix);
+        saveAllPaths(startPath, outputFileNamePrefix);
+
+    }
+
+    private static void saveAllPaths(Path startPath, String outputFileNamePrefix) {
+        String outputFileName = outputFileNamePrefix + "all_paths.txt";
+        saveFilePaths(startPath, outputFileName);
+    }
+
+    private static void saveSeparated(Path startPath, String outputFileNamePrefix) {
 
         String javaEndsWith = ".java";
         String outputFileNameJava = outputFileNamePrefix + "java_files_content.txt";
@@ -35,6 +45,33 @@ public class FindJavaFilesContent {
         saveFileContent(startPath, yamlEndsWith, outputFileNameYaml);
         saveFileContent(startPath, sqlEndsWith, outputFileNameSql);
         saveFileContent(startPath, pomXml, outputFileNamePom);
+    }
+
+    private static void saveFilePaths(Path startPath, String outputFileName) {
+        try (Stream<Path> stream = Files.walk(startPath)) {
+            List<Path> filesPaths = stream
+                    .filter(Files::isRegularFile)
+                    .toList();
+
+            StringBuilder allContent = new StringBuilder();
+
+            for (Path path : filesPaths) {
+                allContent.append(path).append("\n");
+            }
+
+            Path outputFile = Paths.get(outputFileName);
+            Path parentPath = outputFile.getParent();
+            if (Files.notExists(parentPath)) {
+                Files.createDirectories(parentPath);
+            }
+
+            Files.writeString(outputFile, allContent.toString());
+            System.out.println("Przetworzono " + filesPaths.size() + " plików.");
+
+        } catch (IOException e) {
+            System.err.println("Wystąpił błąd podczas operacji na plikach: " + e.getMessage());
+            e.printStackTrace();
+        }
 
     }
 
@@ -49,6 +86,7 @@ public class FindJavaFilesContent {
 
             for (Path path : filesPaths) {
                 allContent.append("// ===== START OF: ").append(path.toString()).append(" =====\n\n");
+                System.out.println(path);
                 String fileContent = Files.readString(path);
                 allContent.append(fileContent);
                 allContent.append("\n\n// ===== END OF: ").append(path.toString()).append(" =====\n\n");
