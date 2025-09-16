@@ -1,8 +1,16 @@
-HELP.md
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+# Maven build-generated files
+/target/
+!/.mvn/wrapper/maven-wrapper.jar
+
+# Log files
+*.log
+*.log.*
+
+### IntelliJ IDEA ###
+/.idea/
+*.iml
+*.iws
+*.ipr
 
 ### STS ###
 .apt_generated
@@ -12,12 +20,6 @@ target/
 .settings
 .springBeans
 .sts4-cache
-
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
 
 ### NetBeans ###
 /nbproject/private/
@@ -32,5 +34,6 @@ build/
 ### VS Code ###
 .vscode/
 
-### Maven ###
-.mvn
+### OS-generated files ###
+.DS_Store
+Thumbs.db

@@ -88,24 +88,24 @@ public class BookService {
     }
 
 
-    @Scheduled(fixedRate = 10000)
-    public void saveBookChatGPT() throws IOException {
-        long atStart = System.currentTimeMillis();
-        ObjectMapper objectMapper = new ObjectMapper();
-        ChatGPTHelper chatGPTHelper = new ChatGPTHelper();
-        String jsonRequest = chatGPTHelper.getBookExample();
-        System.out.println(jsonRequest);
-        BookRequest request = objectMapper.readValue(jsonRequest, BookRequest.class);
-        Set<ConstraintViolation<BookRequest>> violations = validator.validate(request);
-        if (!violations.isEmpty()) {
-            System.out.println("Book is not valid: " + jsonRequest);
-        } else {
-            saveBook(request);
-            System.out.println("Book is valid and saved successfully" + jsonRequest);
-        }
-        long atEnd = System.currentTimeMillis();
-        System.out.println("Response from chatGPT in seconds: " + ((atEnd - atStart) / 1000));
-    }
+//    @Scheduled(fixedRate = 10000)
+//    public void saveBookChatGPT() throws IOException {
+//        long atStart = System.currentTimeMillis();
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        ChatGPTHelper chatGPTHelper = new ChatGPTHelper();
+//        String jsonRequest = chatGPTHelper.getBookExample();
+//        System.out.println(jsonRequest);
+//        BookRequest request = objectMapper.readValue(jsonRequest, BookRequest.class);
+//        Set<ConstraintViolation<BookRequest>> violations = validator.validate(request);
+//        if (!violations.isEmpty()) {
+//            System.out.println("Book is not valid: " + jsonRequest);
+//        } else {
+//            saveBook(request);
+//            System.out.println("Book is valid and saved successfully" + jsonRequest);
+//        }
+//        long atEnd = System.currentTimeMillis();
+//        System.out.println("Response from chatGPT in seconds: " + ((atEnd - atStart) / 1000));
+//    }
 
     public Response deleteBook(String id) {
         Book book = getBookIfPresent(id);

@@ -6,9 +6,7 @@ import com.productservice.api.request.IsbnListRequest;
 import com.productservice.api.response.Response;
 import com.productservice.api.criteria.SearchSortKey;
 import com.productservice.api.criteria.Sort;
-import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.QueryParam;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,12 +28,12 @@ public interface BookApi {
 
     @GetMapping(path = API.BOOK_LIST)
     ResponseEntity<Response> getBookList(
-            @Nullable @QueryParam(value = "search") String search,
-            @Nullable @QueryParam(value = "page") Integer page,
-            @Nullable @QueryParam(value = "pageSize") Integer pageSize,
-            @Nullable @QueryParam(value = "searchKey") SearchSortKey searchKey,
-            @Nullable @QueryParam(value = "sortKey") SearchSortKey sortKey,
-            @Nullable @QueryParam(value = "sort") Sort sort);
+            @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "searchKey", required = false) SearchSortKey searchKey,
+            @RequestParam(value = "sortKey", required = false) SearchSortKey sortKey,
+            @RequestParam(value = "sort", required = false) Sort sort);
 
 
     @PostMapping(path = API.ISBN_LIST)
