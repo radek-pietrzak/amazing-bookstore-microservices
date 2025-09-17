@@ -1,6 +1,7 @@
 package com.productservice.api.criteria;
 
 import lombok.*;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,6 +17,7 @@ public class BookListCriteria {
     private SearchSortKey searchKey;
     private SearchSortKey sortKey;
     private Sort sort;
+    @Builder.Default
     private Set<SearchSortKey> searchKeys = new HashSet<>();
 
     public void fillDefaultValues() {

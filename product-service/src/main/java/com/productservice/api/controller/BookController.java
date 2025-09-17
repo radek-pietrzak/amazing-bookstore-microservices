@@ -77,6 +77,8 @@ public class BookController implements BookApi {
         return ResponseEntity.ok(response);
     }
 
+    //TODO no booklist in response body
+    //TODO check all parameters and fix bugs
     @Override
     @Operation(
             description = "Book list",
@@ -102,6 +104,7 @@ public class BookController implements BookApi {
         return ResponseEntity.ok(response);
     }
 
+    //TODO implement this functionality
     @Override
     public ResponseEntity<Response> saveBookList(AutoFillBookListRequest request) {
         Response response = bookService.saveBookList(request);
