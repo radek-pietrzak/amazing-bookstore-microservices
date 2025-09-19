@@ -20,8 +20,8 @@ public class InventoryController implements InventoryApi {
     }
 
     @Override
-    public ResponseEntity<Response> getISBN(String isbn) {
-        Response response = inventoryService.getISBN(isbn);
+    public ResponseEntity<Response> getPriceAndQuantity(String isbn) {
+        Response response = inventoryService.getPriceAndQuantity(isbn);
         return ResponseEntity.ok(response);
     }
 

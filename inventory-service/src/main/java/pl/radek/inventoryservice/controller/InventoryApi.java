@@ -1,5 +1,6 @@
 package pl.radek.inventoryservice.controller;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.radek.inventoryservice.request.InventoryRequest;
@@ -11,8 +12,8 @@ import static pl.radek.inventoryservice.controller.API.*;
 
 public interface InventoryApi {
 
-    @GetMapping(path = ISBN)
-    ResponseEntity<Response> getISBN(@PathVariable String isbn);
+    @GetMapping(path = ISBN, produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<Response> getPriceAndQuantity(@PathVariable String isbn);
 
     @PostMapping(path = STOCK_CHECK)
     ResponseEntity<Response> getStockCheck(@RequestBody StockRequest stockRequest);

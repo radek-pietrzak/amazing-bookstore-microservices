@@ -1,12 +1,16 @@
 package pl.radek.inventoryservice.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "book_inventory")
+@Getter
+@ToString
 public class BookInventory {
 
     @Id
