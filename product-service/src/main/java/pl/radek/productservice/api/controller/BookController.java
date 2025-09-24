@@ -112,6 +112,7 @@ public class BookController implements BookApi {
         return ResponseEntity.ok(response);
     }
 
+    // TODO create response body in case inventory service not available
     @Override
     public ResponseEntity<Response> getInventoryByIsbn(String isbn) {
         Response  response = bookService.getInventoryByIsbn(isbn);

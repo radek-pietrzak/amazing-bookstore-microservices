@@ -168,6 +168,10 @@ public class BookService {
     }
 
     public InventoryResponse getInventoryByIsbn(String isbn) {
-        return inventoryService.getInventoryByIsbn(isbn);
+        try {
+            return inventoryService.getInventoryByIsbn(isbn);
+        } catch (Exception e) {
+            return new InventoryResponse();
+        }
     }
 }
