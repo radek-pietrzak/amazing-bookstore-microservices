@@ -27,13 +27,16 @@ import java.util.*;
 public class BookService {
 
     private final BookRepository repository;
+    // TODO use validator
     private final Validator validator;
     private final BookMapper bookMapper;
+    private final InventoryService inventoryService;
 
-    public BookService(BookRepository repository, Validator validator, BookMapper bookMapper) {
+    public BookService(BookRepository repository, Validator validator, BookMapper bookMapper, InventoryService inventoryService) {
         this.repository = repository;
         this.validator = validator;
         this.bookMapper = bookMapper;
+        this.inventoryService = inventoryService;
     }
 
     public Response getBook(String id) {
@@ -162,5 +165,9 @@ public class BookService {
         return new AutoFillBookListResponse(books.stream()
                 .map(bookMapper::bookToBookResponse)
                 .toList());
+    }
+
+    public InventoryResponse getInventoryByIsbn(String isbn) {
+        return inventoryService.getInventoryByIsbn(isbn);
     }
 }

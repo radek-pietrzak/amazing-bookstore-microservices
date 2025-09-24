@@ -42,4 +42,7 @@ public interface BookApi {
     @PostMapping(path = API.BOOK_LIST_SAVE)
     ResponseEntity<Response> saveBookList(@Valid @RequestBody AutoFillBookListRequest request);
 
+    @GetMapping(path = API.GET_INVENTORY)
+    ResponseEntity<Response> getInventoryByIsbn(@PathVariable String isbn);
+
 }

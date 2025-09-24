@@ -14,5 +14,6 @@ public interface API {
     String BOOK_LIST = API + "/book-list";
     String ISBN_LIST = API + "/isbn-list";
     String BOOK_LIST_SAVE = API + "/book-list/save";
+    String GET_INVENTORY =  "api/inventory/{isbn}";
 
 }

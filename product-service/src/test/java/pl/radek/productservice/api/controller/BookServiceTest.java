@@ -7,6 +7,7 @@ import pl.radek.productservice.api.response.BookResponseList;
 import pl.radek.productservice.api.response.EditBookResponse;
 import pl.radek.productservice.api.response.Response;
 import pl.radek.productservice.api.service.BookService;
+import pl.radek.productservice.api.service.InventoryService;
 import pl.radek.productservice.entity.Book;
 import pl.radek.productservice.example.BookExample;
 import pl.radek.productservice.example.BookRequestExample;
@@ -48,11 +49,13 @@ class BookServiceTest {
     private ArgumentCaptor<Book> bookArgumentCaptor;
     @Mock
     private Validator validator;
+    @Mock
+    private InventoryService inventoryService;
     private final BookMapper bookMapper = Mappers.getMapper(BookMapper.class);
 
     @BeforeEach
     public void setUp() {
-        bookService = new BookService(bookRepository, validator, bookMapper);
+        bookService = new BookService(bookRepository, validator, bookMapper, inventoryService);
     }
 
     @ParameterizedTest

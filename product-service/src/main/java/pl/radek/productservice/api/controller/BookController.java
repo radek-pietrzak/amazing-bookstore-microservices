@@ -112,5 +112,11 @@ public class BookController implements BookApi {
         return ResponseEntity.ok(response);
     }
 
+    @Override
+    public ResponseEntity<Response> getInventoryByIsbn(String isbn) {
+        Response  response = bookService.getInventoryByIsbn(isbn);
+        return ResponseEntity.ok(response);
+    }
+
 
 }
