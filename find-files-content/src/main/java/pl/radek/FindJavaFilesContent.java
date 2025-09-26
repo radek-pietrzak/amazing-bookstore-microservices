@@ -4,104 +4,108 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
 public class FindJavaFilesContent {
 
     public static void main(String[] args) {
-//        Path startPath = Paths.get(".");
-        Path startPath = Paths.get("./product-service");
+        if (args.length == 0) {
+            System.err.println("Błąd: Nie podano ścieżek startowych jako argumentów programu.");
+            System.err.println("Przykład użycia: ./product-service ./inventory-service");
+            return;
+        }
+
+        List<Path> startPaths = Arrays.stream(args)
+                .map(Paths::get)
+                .toList();
+
         String outputFileNamePrefix = "find-files-content/file-content/";
-        saveSeparated(startPath, outputFileNamePrefix);
-        saveAllPaths(startPath, outputFileNamePrefix);
-
+        saveSeparated(startPaths, outputFileNamePrefix);
+        saveAllPaths(startPaths, outputFileNamePrefix);
     }
 
-    private static void saveAllPaths(Path startPath, String outputFileNamePrefix) {
+    private static void saveAllPaths(List<Path> startPaths, String outputFileNamePrefix) {
         String outputFileName = outputFileNamePrefix + "all_paths.txt";
-        saveFilePaths(startPath, outputFileName);
+        saveFilePaths(startPaths, outputFileName);
     }
 
-    private static void saveSeparated(Path startPath, String outputFileNamePrefix) {
-
-        String javaEndsWith = ".java";
-        String outputFileNameJava = outputFileNamePrefix + "java_files_content.txt";
-
-        String propertiesEndsWith = ".properties";
-        String outputFileNameProperties = outputFileNamePrefix + "properties_files_content.txt";
-
-        String yamlEndsWith = ".yaml";
-        String outputFileNameYaml = outputFileNamePrefix + "yaml_files_content.txt";
-
-        String sqlEndsWith = ".sql";
-        String outputFileNameSql = outputFileNamePrefix + "sql_files_content.txt";
-
-        String pomXml = "pom.xml";
-        String outputFileNamePom = outputFileNamePrefix + "pom_files_content.txt";
-
-        saveFileContent(startPath, javaEndsWith, outputFileNameJava);
-        saveFileContent(startPath, propertiesEndsWith, outputFileNameProperties);
-        saveFileContent(startPath, yamlEndsWith, outputFileNameYaml);
-        saveFileContent(startPath, sqlEndsWith, outputFileNameSql);
-        saveFileContent(startPath, pomXml, outputFileNamePom);
+    private static void saveSeparated(List<Path> startPaths, String outputFileNamePrefix) {
+        saveFileContent(startPaths, ".java", outputFileNamePrefix + "java_files_content.txt");
+        saveFileContent(startPaths, ".properties", outputFileNamePrefix + "properties_files_content.txt");
+        saveFileContent(startPaths, ".yaml", outputFileNamePrefix + "yaml_files_content.txt");
+        saveFileContent(startPaths, ".sql", outputFileNamePrefix + "sql_files_content.txt");
+        saveFileContent(startPaths, "pom.xml", outputFileNamePrefix + "pom_files_content.txt");
     }
 
-    private static void saveFilePaths(Path startPath, String outputFileName) {
-        try (Stream<Path> stream = Files.walk(startPath)) {
-            List<Path> filesPaths = stream
-                    .filter(Files::isRegularFile)
-                    .toList();
+    private static void saveFilePaths(List<Path> startPaths, String outputFileName) {
+        List<Path> allFilesPaths = new ArrayList<>();
+        for (Path startPath : startPaths) {
+            try (Stream<Path> stream = Files.walk(startPath)) {
+                List<Path> filesInPath = stream
+                        .filter(Files::isRegularFile)
+                        .toList();
+                allFilesPaths.addAll(filesInPath);
+            } catch (IOException e) {
+                System.err.println("Wystąpił błąd podczas przeszukiwania ścieżki " + startPath + ": " + e.getMessage());
+            }
+        }
 
+        try {
             StringBuilder allContent = new StringBuilder();
-
-            for (Path path : filesPaths) {
+            for (Path path : allFilesPaths) {
                 allContent.append(path).append("\n");
             }
 
             Path outputFile = Paths.get(outputFileName);
             Path parentPath = outputFile.getParent();
-            if (Files.notExists(parentPath)) {
+            if (parentPath != null && Files.notExists(parentPath)) {
                 Files.createDirectories(parentPath);
             }
 
             Files.writeString(outputFile, allContent.toString());
-            System.out.println("Przetworzono " + filesPaths.size() + " plików.");
+            System.out.println("Zapisano ścieżki " + allFilesPaths.size() + " plików do: " + outputFile.toAbsolutePath());
 
         } catch (IOException e) {
-            System.err.println("Wystąpił błąd podczas operacji na plikach: " + e.getMessage());
+            System.err.println("Wystąpił błąd podczas zapisu do pliku: " + e.getMessage());
             e.printStackTrace();
         }
-
     }
 
-    private static void saveFileContent(Path startPath, String endsWith, String outputFileName) {
-        try (Stream<Path> stream = Files.walk(startPath)) {
-            List<Path> filesPaths = stream
-                    .filter(Files::isRegularFile)
-                    .filter(path -> path.toString().endsWith(endsWith))
-                    .toList();
+    private static void saveFileContent(List<Path> startPaths, String endsWith, String outputFileName) {
+        List<Path> allFilesToProcess = new ArrayList<>();
+        for (Path startPath : startPaths) {
+            try (Stream<Path> stream = Files.walk(startPath)) {
+                List<Path> filesInPath = stream
+                        .filter(Files::isRegularFile)
+                        .filter(path -> path.toString().endsWith(endsWith))
+                        .toList();
+                allFilesToProcess.addAll(filesInPath);
+            } catch (IOException e) {
+                System.err.println("Wystąpił błąd podczas przeszukiwania ścieżki " + startPath + ": " + e.getMessage());
+            }
+        }
 
+        try {
             StringBuilder allContent = new StringBuilder();
-
-            for (Path path : filesPaths) {
+            for (Path path : allFilesToProcess) {
                 allContent.append("// ===== START OF: ").append(path.toString()).append(" =====\n\n");
-                System.out.println(path);
                 String fileContent = Files.readString(path);
                 allContent.append(fileContent);
                 allContent.append("\n\n// ===== END OF: ").append(path.toString()).append(" =====\n\n");
             }
 
-            Path outputFile = Paths.get(outputFileName);
-            Path parentPath = outputFile.getParent();
-            if (Files.notExists(parentPath)) {
-                Files.createDirectories(parentPath);
+            if (!allFilesToProcess.isEmpty()) {
+                Path outputFile = Paths.get(outputFileName);
+                Path parentPath = outputFile.getParent();
+                if (parentPath != null && Files.notExists(parentPath)) {
+                    Files.createDirectories(parentPath);
+                }
+                Files.writeString(outputFile, allContent.toString());
+                System.out.println("Przetworzono " + allFilesToProcess.size() + " plików kończących się na '" + endsWith + "' i zapisano do: " + outputFile.toAbsolutePath());
             }
-
-            Files.writeString(outputFile, allContent.toString());
-            System.out.println("Przetworzono " + filesPaths.size() + " plików ." + endsWith);
-            System.out.println("Ich połączona zawartość została zapisana do pliku: " + outputFile.toAbsolutePath());
-
         } catch (IOException e) {
             System.err.println("Wystąpił błąd podczas operacji na plikach: " + e.getMessage());
             e.printStackTrace();
