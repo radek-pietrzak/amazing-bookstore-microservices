@@ -27,14 +27,14 @@ public class BookController implements BookApi {
 
     @Override
     @Operation(
-            description = "Get book",
+            description = "Get book by isbn",
             responses = {
                     @ApiResponse(responseCode = "200", ref = "successfullyGetBook"),
                     @ApiResponse(responseCode = "404", ref = "notFoundExceptionGet")
             }
     )
-    public ResponseEntity<Response> getBook(String id) {
-        Response response = bookService.getBook(id);
+    public ResponseEntity<Response> getBookByIsbn(String isbn) {
+        Response response = bookService.getBookByIsbn(isbn);
         return ResponseEntity.ok(response);
     }
 

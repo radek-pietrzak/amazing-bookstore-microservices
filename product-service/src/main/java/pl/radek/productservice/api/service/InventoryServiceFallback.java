@@ -10,7 +10,6 @@ public class InventoryServiceFallback implements InventoryService {
     @Override
     public InventoryResponse getInventoryByIsbn(String isbn) {
         // TODO logger
-        System.out.println("Inventory service is unavailable. Falling back for ISBN: " +  isbn);
         return new InventoryResponse();
     }
 }

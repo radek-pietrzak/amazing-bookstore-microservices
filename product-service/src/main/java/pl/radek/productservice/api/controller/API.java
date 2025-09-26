@@ -4,8 +4,9 @@ public interface API {
 
     String API = "/api/product";
     String ID = "{id}";
+    String ISBN = "{isbn}";
     String BOOK_GET = API + "/book/";
-    String BOOK_GET_ID = BOOK_GET + ID;
+    String BOOK_GET_ISBN = BOOK_GET + ISBN;
     String BOOK_SAVE = API + "/book/save";
     String BOOK_EDIT = API + "/book/edit/";
     String BOOK_EDIT_ID = BOOK_EDIT + ID;

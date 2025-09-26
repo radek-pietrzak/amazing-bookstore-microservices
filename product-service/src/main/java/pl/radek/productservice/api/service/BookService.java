@@ -1,5 +1,7 @@
 package pl.radek.productservice.api.service;
 
+import feign.FeignException;
+import lombok.extern.slf4j.Slf4j;
 import pl.radek.productservice.api.criteria.BookListCriteria;
 import pl.radek.productservice.api.criteria.BookSpecification;
 import pl.radek.productservice.api.criteria.PageInfo;
@@ -24,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
+@Slf4j
 public class BookService {
 
     private final BookRepository repository;
@@ -39,8 +42,9 @@ public class BookService {
         this.inventoryService = inventoryService;
     }
 
-    public Response getBook(String id) {
-        return bookMapper.bookToBookResponse(getBookIfPresent(Long.valueOf(id)));
+    public Response getBookByIsbn(String isbn) {
+        log.debug("getBookByIsbn isbn {}", isbn);
+        return bookMapper.bookToBookResponse(getBookIfPresent(isbn));
     }
 
     public Response saveBook(BookRequest request) {
@@ -142,6 +146,21 @@ public class BookService {
         return optionalBook.get();
     }
 
+    private Book getBookIfPresent(String isbn) {
+        log.debug("getBookIfPresent: isbn={}", isbn);
+        if (StringUtils.isBlank(isbn)) {
+            throw new IllegalArgumentException();
+        }
+
+        Optional<Book> optionalBook = repository.findByIsbn(isbn);
+        log.debug("getBookIfPresent: optionalBook={}", optionalBook);
+
+        if (optionalBook.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        return optionalBook.get();
+    }
+
     public Response getIsbnList(List<String> isbnList) {
         List<Book> books = repository.findByIsbnIn(isbnList);
         if (books.isEmpty()) {
@@ -170,7 +189,7 @@ public class BookService {
     public InventoryResponse getInventoryByIsbn(String isbn) {
         try {
             return inventoryService.getInventoryByIsbn(isbn);
-        } catch (Exception e) {
+        } catch (FeignException e) {
             return new InventoryResponse();
         }
     }

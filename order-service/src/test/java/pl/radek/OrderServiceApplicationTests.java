@@ -1,4 +1,4 @@
-package com.orderservice;
+package pl.radek;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

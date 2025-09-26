@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 public interface BookApi {
 
-    @GetMapping(path = API.BOOK_GET_ID)
-    ResponseEntity<Response> getBook(@PathVariable String id);
+    @GetMapping(path = API.BOOK_GET_ISBN)
+    ResponseEntity<Response> getBookByIsbn(@PathVariable String isbn);
 
     @PostMapping(path = API.BOOK_SAVE)
     ResponseEntity<Response> saveBook(@Valid @RequestBody BookRequest request);
