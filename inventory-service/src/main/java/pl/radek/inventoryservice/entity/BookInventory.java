@@ -2,6 +2,7 @@ package pl.radek.inventoryservice.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "book_inventory")
 @Getter
+@Setter
 @ToString
 public class BookInventory {
 
@@ -39,6 +41,8 @@ public class BookInventory {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Version
+    private long version;
 
     @PrePersist
     protected void onCreate() {

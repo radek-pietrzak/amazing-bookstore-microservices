@@ -1,101 +1,123 @@
 package pl.radek.service;
 
-import lombok.RequiredArgsConstructor;
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.radek.client.InventoryServiceClient;
 import pl.radek.client.ProductServiceClient;
 import pl.radek.documents.Order;
 import pl.radek.documents.OrderItem;
-import pl.radek.documents.OrderStatus;
-import pl.radek.events.OrderBookEvent;
 import pl.radek.events.OrderPlacedEvent;
+import pl.radek.exceptions.InsufficientStockException;
+import pl.radek.exceptions.OrderCreationException;
+import pl.radek.exceptions.ServiceUnavailableException;
+import pl.radek.mapper.OrderMapper;
 import pl.radek.repository.OrderRepository;
-import pl.radek.request.BookRequest;
-import pl.radek.request.OrderRequest;
-import pl.radek.response.OrderResponse;
-import pl.radek.response.Response;
+import pl.radek.request.*;
+import pl.radek.response.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class OrderService {
+
     private final OrderRepository orderRepository;
-    private final OrderEventProducer orderEventProducer;
     private final InventoryServiceClient inventoryServiceClient;
     private final ProductServiceClient productServiceClient;
+    private final OrderEventProducer orderEventProducer;
+    private final OrderMapper orderMapper;
+
+    public OrderService(OrderRepository orderRepository,
+                        InventoryServiceClient inventoryServiceClient,
+                        ProductServiceClient productServiceClient,
+                        OrderEventProducer orderEventProducer,
+                        OrderMapper orderMapper) {
+        this.orderRepository = orderRepository;
+        this.inventoryServiceClient = inventoryServiceClient;
+        this.productServiceClient = productServiceClient;
+        this.orderEventProducer = orderEventProducer;
+        this.orderMapper = orderMapper;
+    }
 
     public Response createOrder(OrderRequest request) {
-        log.debug("Request to Create Order : {}", request);
+        ReservationResponse reservation;
+        try {
+            reservation = inventoryServiceClient.reserveStock(createReservationRequest(request));
+
+        } catch (FeignException ex) {
+            if (ex.status() == 409) {
+                throw new InsufficientStockException("Failed to reserve products: not enough stock.");
+            }
+            throw new ServiceUnavailableException("The warehouse service is temporarily unavailable. Please try again later.");
+        }
+
+        if (reservation == null || !"SUCCESS".equals(reservation.getStatus())) {
+            throw new OrderCreationException("Failed to reserve products in stock.");
+        }
+
+        Order newOrder;
         List<OrderItem> orderItems = request.getBooks().stream()
                 .map(this::createOrderItem)
                 .collect(Collectors.toList());
 
-        log.debug("Order items : {}", orderItems);
         BigDecimal totalPrice = orderItems.stream()
                 .map(item -> item.getPriceAtPurchase().multiply(new BigDecimal(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+        try {
+            newOrder = orderMapper.toOrder(request, orderItems, totalPrice);
+            Order savedOrder = orderRepository.save(newOrder);
+            OrderPlacedEvent event = orderEventProducer.sendOrderPlacedEvent(orderMapper.toOrderPlacedEvent(savedOrder));
+            orderEventProducer.sendOrderPlacedEvent(event);
 
-        log.debug("Total price : {}", totalPrice);
-        Order order = new Order();
-        order.setUserId(request.getUserId());
-        order.setItems(orderItems);
-        order.setTotalPrice(totalPrice);
-        order.setStatus(OrderStatus.CREATED);
-        order.setShippingAddress(request.getAddress());
-        order.setCreatedAt(LocalDateTime.now());
+            return orderMapper.toOrderResponse(savedOrder);
 
-        Order savedOrder = orderRepository.save(order);
+        } catch (Exception e) {
+            inventoryServiceClient.releaseStock(orderMapper.toReleaseRequest(reservation.getReservationUid()));
+            throw new OrderCreationException("Error creating order, reservation has been canceled.", e);
+        }
 
-        List<OrderBookEvent> orderBookEvents = orderItems.stream()
-                .map(item -> new OrderBookEvent(item.getIsbn(), item.getQuantity()))
-                .collect(Collectors.toList());
-        orderEventProducer.sendOrderPlacedEvent(new OrderPlacedEvent(savedOrder.getId(), orderBookEvents));
+    }
 
-        return OrderResponse.builder()
-                .orderId(savedOrder.getId())
-                .userId(savedOrder.getUserId())
-                .status(savedOrder.getStatus())
-                .totalPrice(savedOrder.getTotalPrice())
-                .createdAt(savedOrder.getCreatedAt())
-                .build();
+
+    private ReservationRequest createReservationRequest(OrderRequest request) {
+        List<ItemRequest> items = request.getBooks().stream()
+                .map(book -> ItemRequest.builder()
+                        .isbn(book.getIsbn())
+                        .quantity(book.getQuantity())
+                        .build())
+                .toList();
+
+        return new ReservationRequest(items);
     }
 
     private OrderItem createOrderItem(BookRequest bookRequest) {
-        var inventory = inventoryServiceClient.getInventoryByIsbn(bookRequest.getIsbn());
-        log.debug("Inventory : {}", inventory);
+        InventoryResponse inventoryResponse = inventoryServiceClient.getInventoryByIsbn(bookRequest.getIsbn());
+        log.debug("Inventory : {}", inventoryResponse);
 
-        if (inventory == null || inventory.getQuantity() < bookRequest.getQuantity()) {
+        if (inventoryResponse == null || inventoryResponse.getQuantity() < bookRequest.getQuantity()) {
             throw new IllegalArgumentException("Book with ISBN " + bookRequest.getIsbn() + " is out of stock.");
         }
 
-        var bookDetails = productServiceClient.getBookByIsbn(bookRequest.getIsbn());
-        log.debug("Book : {}", bookDetails);
+        ProductResponse productResponse = productServiceClient.getBookByIsbn(bookRequest.getIsbn());
+        log.debug("Book : {}", productResponse);
 
-        OrderItem item = new OrderItem();
-        item.setIsbn(bookRequest.getIsbn());
-        item.setQuantity(bookRequest.getQuantity());
-        item.setPriceAtPurchase(inventory.getPrice());
-        item.setTitle(bookDetails.getTitle());
-        return item;
+        return orderMapper.toOrderItem(bookRequest, inventoryResponse, productResponse);
     }
 
     public Response getOrder(String orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new NoSuchElementException("Order not found with id: " + orderId));
-        // TODO: implement mapper Order -> OrderResponse
-        return null;
+
+        return orderMapper.toOrderResponse(order);
     }
 
     public Response getOrderHistory(String userId) {
         List<Order> userOrders = orderRepository.findByUserId(userId);
-        // TODO: implement mapper List<Order> -> OrderHistoryResponse
-        return null;
+
+        return new OrderHistoryResponse(orderMapper.toOrderResponseList(userOrders));
     }
 }

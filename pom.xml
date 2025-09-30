@@ -29,6 +29,9 @@
         <module>inventory-service</module>
         <module>order-service</module>
 <!--        <module>user-service</module>-->
+<!--        <module>notification-service</module>-->
+<!--        <module>shipping-service</module>-->
+<!--        <module>analytics-service</module>-->
 
         <module>product-autofill-service</module>
         <module>shared-models</module>

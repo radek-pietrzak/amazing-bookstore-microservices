@@ -7,8 +7,10 @@ public interface API {
     String STOCK_CHECK = API + "/stock-check";
     String INVENTORY_ADD = API + "/add";
     String INVENTORY_UPDATE = API + "/update";
-    String INVENTORY_DECREMENT = API + "/decrement";
-    String INVENTORY_INCREMENT = API + "/increment";
+    String DECREMENT_STOCK = API + "/decrement";
+    String INCREMENT_STOCK = API + "/increment";
+    String RESERVE_STOCK = API + "/reserve-stock";
+    String RELEASE_STOCK = API + "/release-stock";
 
 
 }

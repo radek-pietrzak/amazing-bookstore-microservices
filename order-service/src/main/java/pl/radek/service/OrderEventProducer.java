@@ -17,7 +17,8 @@ public class OrderEventProducer {
         this.topicName = topicName;
     }
 
-    public void sendOrderPlacedEvent(OrderPlacedEvent event) {
+    public OrderPlacedEvent sendOrderPlacedEvent(OrderPlacedEvent event) {
         kafkaTemplate.send(topicName, event.getOrderId(), event);
+        return event;
     }
 }

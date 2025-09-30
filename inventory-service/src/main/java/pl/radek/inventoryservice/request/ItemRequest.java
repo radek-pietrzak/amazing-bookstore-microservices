@@ -3,7 +3,7 @@ package pl.radek.inventoryservice.request;
 import lombok.Data;
 
 @Data
-public class QuantityRequest {
+public class ItemRequest {
     private String isbn;
-    private int quantity;
+    private Integer quantity;
 }

@@ -3,9 +3,7 @@ package pl.radek.inventoryservice.controller;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.radek.inventoryservice.request.InventoryRequest;
-import pl.radek.inventoryservice.request.QuantityRequest;
-import pl.radek.inventoryservice.request.StockRequest;
+import pl.radek.inventoryservice.request.*;
 import pl.radek.inventoryservice.response.Response;
 
 import static pl.radek.inventoryservice.controller.API.*;
@@ -24,10 +22,16 @@ public interface InventoryApi {
     @PutMapping(path = INVENTORY_UPDATE)
     ResponseEntity<Response> updateInventory(@RequestBody InventoryRequest inventoryRequest);
 
-    @PostMapping(path = INVENTORY_DECREMENT)
-    ResponseEntity<Response> decrementInventory(@RequestBody QuantityRequest quantityRequest);
+    @PostMapping(path = DECREMENT_STOCK)
+    ResponseEntity<Void> decrementStock(@RequestBody QuantityRequest quantityRequest);
 
-    @PostMapping(path = INVENTORY_INCREMENT)
-    ResponseEntity<Response> incrementInventory(@RequestBody QuantityRequest quantityRequest);
+    @PostMapping(path = INCREMENT_STOCK)
+    ResponseEntity<Void> incrementStock(@RequestBody QuantityRequest quantityRequest);
+
+    @PostMapping(path = RESERVE_STOCK)
+    ResponseEntity<Void> reserveStock(@RequestBody ReservationRequest reservationRequest);
+
+    @PostMapping(path = RELEASE_STOCK)
+    ResponseEntity<Response> releaseStock(@RequestBody ReleaseRequest releaseRequest);
 
 }

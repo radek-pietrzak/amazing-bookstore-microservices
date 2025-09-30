@@ -3,9 +3,7 @@ package pl.radek.inventoryservice.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.radek.inventoryservice.request.InventoryRequest;
-import pl.radek.inventoryservice.request.QuantityRequest;
-import pl.radek.inventoryservice.request.StockRequest;
+import pl.radek.inventoryservice.request.*;
 import pl.radek.inventoryservice.response.Response;
 import pl.radek.inventoryservice.service.InventoryService;
 
@@ -44,14 +42,26 @@ public class InventoryController implements InventoryApi {
     }
 
     @Override
-    public ResponseEntity<Response> decrementInventory(QuantityRequest quantityRequest) {
-        Response response = inventoryService.decrementInventory(quantityRequest);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Void> decrementStock(QuantityRequest quantityRequest) {
+        inventoryService.decrementStock(quantityRequest);
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public ResponseEntity<Response> incrementInventory(QuantityRequest quantityRequest) {
-        Response response = inventoryService.incrementInventory(quantityRequest);
+    public ResponseEntity<Void> incrementStock(QuantityRequest quantityRequest) {
+        inventoryService.incrementStock(quantityRequest);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> reserveStock(ReservationRequest reservationRequest) {
+        inventoryService.reserveStock(reservationRequest);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<Response> releaseStock(ReleaseRequest releaseRequest) {
+        Response response = inventoryService.releaseStock(releaseRequest);
         return ResponseEntity.ok(response);
     }
 }
