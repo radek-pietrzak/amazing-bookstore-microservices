@@ -60,8 +60,8 @@ public class InventoryController implements InventoryApi {
     }
 
     @Override
-    public ResponseEntity<Response> releaseStock(ReleaseRequest releaseRequest) {
-        Response response = inventoryService.releaseStock(releaseRequest);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Void> releaseStock(ReleaseRequest releaseRequest) {
+        inventoryService.releaseStock(releaseRequest);
+        return ResponseEntity.ok().build();
     }
 }

@@ -32,6 +32,6 @@ public interface InventoryApi {
     ResponseEntity<Response> reserveStock(@RequestBody ReservationRequest reservationRequest);
 
     @PostMapping(path = RELEASE_STOCK)
-    ResponseEntity<Response> releaseStock(@RequestBody ReleaseRequest releaseRequest);
+    ResponseEntity<Void> releaseStock(@RequestBody ReleaseRequest releaseRequest);
 
 }

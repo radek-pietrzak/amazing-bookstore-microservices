@@ -21,6 +21,7 @@ import pl.radek.inventoryservice.response.Response;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -121,7 +122,23 @@ public class InventoryService {
         return inventoryMapper.toReservationResponse(reservation);
     }
 
-    public Response releaseStock(ReleaseRequest releaseRequest) {
-        return null;
+    public void releaseStock(ReleaseRequest releaseRequest) {
+        String uid = releaseRequest.getReservationUid();
+
+        try {
+            UUID reservationUuid = UUID.fromString(uid);
+            Reservation reservation = reservationRepository.findByReservationUid(reservationUuid);
+
+            if (reservation == null) {
+                log.warn("No reservation found with UID: {}", uid);
+                return;
+            }
+
+            reservation.setStatus(Reservation.ReservationStatus.EXPIRED);
+            reservationRepository.save(reservation);
+
+        } catch (IllegalArgumentException e) {
+            log.error("The provided reservation ID '{}' is in an invalid format.", uid, e);
+        }
     }
 }
