@@ -9,7 +9,7 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.radek.inventoryservice.dto.Dto;
+import pl.radek.inventoryservice.mapper.InventoryMapper;
 import pl.radek.inventoryservice.entity.BookInventory;
 import pl.radek.inventoryservice.entity.Reservation;
 import pl.radek.inventoryservice.entity.ReservationItem;
@@ -30,14 +30,14 @@ public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
     private final ReservationRepository reservationRepository;
-    private final Dto dto;
+    private final InventoryMapper inventoryMapper;
 
 
     public Response getPriceAndQuantity(String isbn) {
         BookInventory bookInventory = inventoryRepository.findByIsbn(isbn)
                 .orElseThrow(() -> new EntityNotFoundException("Inventory for ISBN: " + isbn + " not found"));
 
-        return dto.bookInventoryToPriceAndQuantity(bookInventory);
+        return inventoryMapper.toPriceAndQuantity(bookInventory);
     }
 
     public Response getStockCheck(StockRequest stockRequest) {
@@ -100,7 +100,7 @@ public class InventoryService {
     }
 
     @Transactional
-    public void reserveStock(ReservationRequest reservationRequest) {
+    public Response reserveStock(ReservationRequest reservationRequest) {
         Reservation reservation = Reservation.builder()
                 .status(Reservation.ReservationStatus.PENDING)
                 .build();
@@ -118,7 +118,7 @@ public class InventoryService {
 
         reservation.setItems(reservationItems);
         reservationRepository.save(reservation);
-
+        return inventoryMapper.toReservationResponse(reservation);
     }
 
     public Response releaseStock(ReleaseRequest releaseRequest) {

@@ -54,9 +54,9 @@ public class InventoryController implements InventoryApi {
     }
 
     @Override
-    public ResponseEntity<Void> reserveStock(ReservationRequest reservationRequest) {
-        inventoryService.reserveStock(reservationRequest);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Response> reserveStock(ReservationRequest reservationRequest) {
+        Response response = inventoryService.reserveStock(reservationRequest);
+        return ResponseEntity.ok(response);
     }
 
     @Override

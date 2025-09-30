@@ -29,7 +29,7 @@ public interface InventoryApi {
     ResponseEntity<Void> incrementStock(@RequestBody QuantityRequest quantityRequest);
 
     @PostMapping(path = RESERVE_STOCK)
-    ResponseEntity<Void> reserveStock(@RequestBody ReservationRequest reservationRequest);
+    ResponseEntity<Response> reserveStock(@RequestBody ReservationRequest reservationRequest);
 
     @PostMapping(path = RELEASE_STOCK)
     ResponseEntity<Response> releaseStock(@RequestBody ReleaseRequest releaseRequest);

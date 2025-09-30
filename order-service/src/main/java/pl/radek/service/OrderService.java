@@ -46,16 +46,16 @@ public class OrderService {
     public Response createOrder(OrderRequest request) {
         ReservationResponse reservation;
         try {
-            reservation = inventoryServiceClient.reserveStock(createReservationRequest(request));
+            ReservationRequest reservationRequest = createReservationRequest(request);
+            reservation = inventoryServiceClient.reserveStock(reservationRequest);
 
         } catch (FeignException ex) {
             if (ex.status() == 409) {
                 throw new InsufficientStockException("Failed to reserve products: not enough stock.");
             }
-            throw new ServiceUnavailableException("The warehouse service is temporarily unavailable. Please try again later.");
+            throw new ServiceUnavailableException("The inventory service is temporarily unavailable. Please try again later.");
         }
-
-        if (reservation == null || !"SUCCESS".equals(reservation.getStatus())) {
+        if (reservation == null || !"PENDING".equals(reservation.getStatus())) {
             throw new OrderCreationException("Failed to reserve products in stock.");
         }
 
