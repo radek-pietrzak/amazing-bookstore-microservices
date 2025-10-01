@@ -2,8 +2,8 @@ package pl.radek.inventoryservice.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.OptimisticLockException;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -20,11 +20,11 @@ import pl.radek.inventoryservice.repository.ReservationRepository;
 import pl.radek.inventoryservice.request.*;
 import pl.radek.inventoryservice.response.Response;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
 @Slf4j
 public class InventoryService {
 
@@ -32,7 +32,19 @@ public class InventoryService {
     private final ReservationRepository reservationRepository;
     private final ReservationItemRepository reservationItemRepository;
     private final InventoryMapper inventoryMapper;
+    private final Integer expiresAtMinutes;
 
+    public InventoryService(InventoryRepository inventoryRepository,
+                            ReservationRepository reservationRepository,
+                            ReservationItemRepository reservationItemRepository,
+                            InventoryMapper inventoryMapper,
+                            @Value("${app.reservation.expires-at-minutes}") Integer expiresAtMinutes) {
+        this.inventoryRepository = inventoryRepository;
+        this.reservationRepository = reservationRepository;
+        this.reservationItemRepository = reservationItemRepository;
+        this.inventoryMapper = inventoryMapper;
+        this.expiresAtMinutes = expiresAtMinutes;
+    }
 
     public Response getPriceAndQuantity(String isbn) {
         BookInventory bookInventory = inventoryRepository.findByIsbn(isbn)
@@ -118,8 +130,10 @@ public class InventoryService {
 
     @Transactional
     public Response reserveStock(ReservationRequest reservationRequest) {
+        LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(expiresAtMinutes);
         Reservation reservation = Reservation.builder()
                 .status(Reservation.ReservationStatus.PENDING)
+                .expiresAt(expiresAt)
                 .build();
 
         List<ReservationItem> reservationItems = reservationRequest.getItems().stream()

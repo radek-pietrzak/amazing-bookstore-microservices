@@ -12,7 +12,7 @@ import java.util.UUID;
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Integer>, JpaSpecificationExecutor<Reservation> {
 
-    List<Reservation> findByStatusAndCreatedAtBefore(Reservation.ReservationStatus reservationStatus, LocalDateTime expirationTime);
+    List<Reservation> findByStatusAndExpiresAtBefore(Reservation.ReservationStatus reservationStatus, LocalDateTime expirationTime);
 
     Reservation findByReservationUid(UUID reservationUid);
 }

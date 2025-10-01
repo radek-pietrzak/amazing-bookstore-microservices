@@ -43,7 +43,6 @@ public class Reservation {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         reservationUid = UUID.randomUUID();
-        expiresAt = createdAt.plusMinutes(30);
     }
 
     public enum ReservationStatus {

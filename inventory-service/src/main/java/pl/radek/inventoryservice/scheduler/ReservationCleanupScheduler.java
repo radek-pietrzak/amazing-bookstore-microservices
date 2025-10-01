@@ -1,8 +1,6 @@
 package pl.radek.inventoryservice.scheduler;
 
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import pl.radek.inventoryservice.entity.Reservation;
@@ -20,26 +18,23 @@ public class ReservationCleanupScheduler {
 
     private final ReservationRepository reservationRepository;
     private final InventoryService inventoryService;
-    private final int timeoutMinutes;
     private final InventoryMapper inventoryMapper;
 
     public ReservationCleanupScheduler(ReservationRepository reservationRepository,
                                        InventoryService inventoryService,
-                                       @Value("${app.reservation.timeout-minutes}") int timeoutMinutes,
                                        InventoryMapper inventoryMapper) {
         this.reservationRepository = reservationRepository;
         this.inventoryService = inventoryService;
-        this.timeoutMinutes = timeoutMinutes;
         this.inventoryMapper = inventoryMapper;
     }
 
-    @Scheduled(fixedRate = 300000)
+    @Scheduled(fixedRateString = "${app.reservation.cleanup-fixed-rate-milis}")
     public void releaseExpiredReservations() {
-        LocalDateTime expirationTime = LocalDateTime.now().minusMinutes(timeoutMinutes);
-        log.info("Running a cleanup job. Searching for reservations older than {}", expirationTime);
+        LocalDateTime now = LocalDateTime.now();
+        log.info("Running a cleanup job. Searching for reservations older than {}", now);
 
         List<Reservation> expiredReservations = reservationRepository
-                .findByStatusAndCreatedAtBefore(Reservation.ReservationStatus.PENDING, expirationTime);
+                .findByStatusAndExpiresAtBefore(Reservation.ReservationStatus.PENDING, now);
 
         if (expiredReservations.isEmpty()) {
             log.info("No expired reservations found.");
