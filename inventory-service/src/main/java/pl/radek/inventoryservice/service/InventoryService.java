@@ -15,13 +15,12 @@ import pl.radek.inventoryservice.entity.Reservation;
 import pl.radek.inventoryservice.entity.ReservationItem;
 import pl.radek.inventoryservice.exception.InsufficientStockException;
 import pl.radek.inventoryservice.repository.InventoryRepository;
+import pl.radek.inventoryservice.repository.ReservationItemRepository;
 import pl.radek.inventoryservice.repository.ReservationRepository;
 import pl.radek.inventoryservice.request.*;
 import pl.radek.inventoryservice.response.Response;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +30,7 @@ public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
     private final ReservationRepository reservationRepository;
+    private final ReservationItemRepository reservationItemRepository;
     private final InventoryMapper inventoryMapper;
 
 
@@ -84,6 +84,22 @@ public class InventoryService {
 
     @Transactional
     @Retryable(retryFor = {OptimisticLockException.class}, backoff = @Backoff(delay = 100))
+    public void incrementStock(Collection<QuantityRequest> quantityRequests) {
+
+        Map<String, Integer> itemsToIncrement = quantityRequests.stream()
+                .collect(Collectors.toMap(QuantityRequest::getIsbn, QuantityRequest::getQuantity));
+        List<BookInventory> inventoriesToUpdate = inventoryRepository.findByIsbnIn(itemsToIncrement.keySet());
+
+        inventoriesToUpdate.forEach(inv -> {
+            int quantityToIncrement = itemsToIncrement.get(inv.getIsbn());
+            inv.setQuantity(inv.getQuantity() + quantityToIncrement);
+        });
+
+        inventoryRepository.saveAll(inventoriesToUpdate);
+    }
+
+    @Transactional
+    @Retryable(retryFor = {OptimisticLockException.class}, backoff = @Backoff(delay = 100))
     public void incrementStock(QuantityRequest quantityRequest) {
         String isbn = quantityRequest.getIsbn();
         int quantity = quantityRequest.getQuantity();
@@ -122,6 +138,7 @@ public class InventoryService {
         return inventoryMapper.toReservationResponse(reservation);
     }
 
+    @Transactional
     public void releaseStock(ReleaseRequest releaseRequest) {
         String uid = releaseRequest.getReservationUid();
 
@@ -129,13 +146,14 @@ public class InventoryService {
             UUID reservationUuid = UUID.fromString(uid);
             Reservation reservation = reservationRepository.findByReservationUid(reservationUuid);
 
-            if (reservation == null) {
-                log.warn("No reservation found with UID: {}", uid);
-                return;
-            }
-
             reservation.setStatus(Reservation.ReservationStatus.EXPIRED);
             reservationRepository.save(reservation);
+
+            Set<QuantityRequest> quantityRequests = reservation.getItems().stream()
+                    .map(res -> new QuantityRequest(res.getIsbn(), res.getQuantity()))
+                    .collect(Collectors.toSet());
+
+            incrementStock(quantityRequests);
 
         } catch (IllegalArgumentException e) {
             log.error("The provided reservation ID '{}' is in an invalid format.", uid, e);
