@@ -70,7 +70,9 @@ public class OrderService {
         try {
             newOrder = orderMapper.toOrder(request, orderItems, totalPrice);
             Order savedOrder = orderRepository.save(newOrder);
-            OrderPlacedEvent event = orderEventProducer.sendOrderPlacedEvent(orderMapper.toOrderPlacedEvent(savedOrder));
+            String reservationUid =  reservation.getReservationUid();
+            OrderPlacedEvent event = orderEventProducer
+                    .sendOrderPlacedEvent(orderMapper.toOrderPlacedEvent(savedOrder, reservationUid));
             orderEventProducer.sendOrderPlacedEvent(event);
 
             return orderMapper.toOrderResponse(savedOrder);

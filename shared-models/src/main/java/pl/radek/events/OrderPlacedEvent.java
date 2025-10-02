@@ -14,4 +14,5 @@ import java.util.List;
 public class OrderPlacedEvent {
     private String orderId;
     private List<OrderBookEvent> items;
+    private String reservationUid;
 }

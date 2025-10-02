@@ -59,7 +59,7 @@ public class OrderMapper {
                 .collect(Collectors.toList());
     }
 
-    public OrderPlacedEvent toOrderPlacedEvent(Order order) {
+    public OrderPlacedEvent toOrderPlacedEvent(Order order, String reservationUid) {
         if (order == null) {
             return null;
         }
@@ -68,7 +68,7 @@ public class OrderMapper {
                 .map(item -> new OrderBookEvent(item.getIsbn(), item.getQuantity()))
                 .collect(Collectors.toList());
 
-        return new OrderPlacedEvent(order.getId(), eventItems);
+        return new OrderPlacedEvent(order.getId(), eventItems, reservationUid);
     }
 
     public ReleaseRequest toReleaseRequest(String reservationUid) {
