@@ -33,7 +33,6 @@
 <!--        <module>shipping-service</module>-->
 <!--        <module>analytics-service</module>-->
 
-        <module>product-autofill-service</module>
         <module>shared-models</module>
     </modules>
 
