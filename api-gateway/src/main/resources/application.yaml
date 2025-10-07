@@ -2,11 +2,43 @@ spring:
   application:
     name: api-gateway
   cloud:
-      gateway:
-        server:
-          webflux:
-            routes:
-              - id: PRODUCT-SERVICE
-                uri: lb://PRODUCT-SERVICE
-                predicates:
-                  - Path=/product-service/**
+    gateway:
+      # This enables the Gateway to automatically create routes based on services discovered in Eureka
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+          routes:
+            - id: product-service
+              uri: lb://product-service # "lb" stands for "load balanced" - finds the service in Eureka
+              predicates:
+                - Path=/api/product/** # All requests starting with /api/product/...
+              filters:
+                - RewritePath=/api/product/(?<segment>.*), /api/product/$\{segment}
+
+            - id: order-service
+              uri: lb://order-service
+              predicates:
+                - Path=/api/orders/**
+              filters:
+                - RewritePath=/api/orders/(?<segment>.*), /api/orders/$\{segment}
+
+            - id: inventory-service
+              uri: lb://inventory-service
+              predicates:
+                - Path=/api/inventory/**
+              filters:
+                - RewritePath=/api/inventory/(?<segment>.*), /api/inventory/$\{segment}
+
+server:
+  port: 8080
+
+# Eureka client configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}

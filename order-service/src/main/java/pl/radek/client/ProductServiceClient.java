@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import pl.radek.response.ProductResponse;
 
-@FeignClient(name = "product-service")
+@FeignClient(name = "product-service", fallback = ProductServiceClientFallback.class)
 public interface ProductServiceClient {
 
     @GetMapping("/api/product/book/{isbn}")
