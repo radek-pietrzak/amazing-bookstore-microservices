@@ -38,6 +38,7 @@ public class FindJavaFilesContent {
         saveFileContent(startPaths, ".yaml", outputFileNamePrefix + "yaml_files_content.txt");
         saveFileContent(startPaths, ".sql", outputFileNamePrefix + "sql_files_content.txt");
         saveFileContent(startPaths, "pom.xml", outputFileNamePrefix + "pom_files_content.txt");
+        saveFileContent(startPaths, ".md", outputFileNamePrefix + "readme_md.txt");
     }
 
     private static void saveFilePaths(List<Path> startPaths, String outputFileName) {

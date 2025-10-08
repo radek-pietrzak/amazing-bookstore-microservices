@@ -29,6 +29,7 @@
         <module>inventory-service</module>
         <module>order-service</module>
 <!--        <module>user-service</module>-->
+<!--        <module>employee-service</module>-->
 <!--        <module>notification-service</module>-->
 <!--        <module>shipping-service</module>-->
 <!--        <module>analytics-service</module>-->
